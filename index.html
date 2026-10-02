@@ -21,7 +21,7 @@ button{font:inherit;cursor:pointer;touch-action:none;border:0;color:inherit}
 button:focus-visible{outline:4px solid #fff3ba;outline-offset:4px}
 button:active{transform:translateY(3px) scale(.97)}
 [hidden]{display:none!important}
-#app{position:fixed;inset:0;display:grid;grid-template-rows:64px 1fr 96px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);isolation:isolate}
+#app{position:fixed;inset:0;display:grid;grid-template-rows:64px 1fr 112px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);isolation:isolate}
 #world{grid-row:2;position:relative;min-height:0;background:#211837;overflow:hidden}
 #game{width:100%;height:100%;display:block;touch-action:none}
 #hud{grid-row:1;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px max(16px,env(safe-area-inset-right)) 7px max(16px,env(safe-area-inset-left));background:linear-gradient(#302142,#21172f);border-bottom:2px solid #80639d;box-shadow:0 2px 16px #10082055}
@@ -38,7 +38,7 @@ button:active{transform:translateY(3px) scale(.97)}
 #bagGoal img{width:31px;height:43px;object-fit:contain}
 #dock{grid-row:3;position:relative;background:linear-gradient(#2f2141,#20162e);border-top:2px solid #876491;display:flex;align-items:center;justify-content:flex-end;padding:5px max(14px,env(safe-area-inset-right)) 5px max(14px,env(safe-area-inset-left));gap:12px;z-index:2}
 #actions{display:flex;align-items:center;gap:12px;margin-left:auto}
-.action{position:relative;display:grid;place-items:center;width:166px;height:82px;background:#44314c65;border-radius:22px;box-shadow:0 4px 0 #120c25,inset 0 0 0 2px #8b649947;transition:transform .07s,box-shadow .1s;overflow:visible}
+.action{position:relative;display:grid;place-items:center;width:184px;height:96px;background:#44314c65;border-radius:22px;box-shadow:0 4px 0 #120c25,inset 0 0 0 2px #8b649947;transition:transform .07s,box-shadow .1s;overflow:visible}
 .action img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .action.down{transform:translateY(4px) scale(.95);box-shadow:0 0 0 4px #ffe7ac,inset 0 0 20px #ffe7ac4d}
 .action[aria-pressed="true"]{box-shadow:0 0 0 3px #fff1ad,0 0 0 7px #a977bf66,0 5px 0 #120c25}
@@ -79,8 +79,8 @@ button:active{transform:translateY(3px) scale(.97)}
 #status button{min-height:80px;min-width:180px;border-radius:20px;background:#e0bed9;color:#362340;font-size:24px;margin-top:20px}
 #status .loadingStar{width:58px;height:58px;display:block;margin:20px auto;border:4px solid #775286;border-top-color:#ffda97;border-radius:50%;animation:loadSpin 1.7s linear infinite}
 @keyframes loadSpin{to{transform:rotate(360deg)}}
-@media(max-width:520px){#app{grid-template-rows:58px 1fr 102px}#hud{padding-left:7px;padding-right:7px;gap:3px}.life{width:28px;height:35px}#lives{min-width:84px}#mission{gap:2px}.slot{width:30px;height:35px;border-radius:10px}.slot img{width:25px;height:27px}#bagGoal img{width:21px;height:31px}#bagGoal{min-width:24px}#dock{padding-left:8px;padding-right:8px;gap:4px}#actions{gap:8px}.action{width:104px;height:88px;border-radius:21px}.panel{padding:21px 14px;border-radius:27px}#brand{letter-spacing:-1px;font-size:44px}.kicker{font-size:10px;letter-spacing:3px}#levelCards{grid-template-columns:1fr;gap:13px}.levelCard{min-height:130px;display:grid;grid-template-columns:135px 1fr;align-items:stretch}.levelCard .map{height:130px}.cardFoot{flex-direction:column;justify-content:center;gap:9px;padding:10px}.cardFoot span{text-align:center;font-size:18px}.bestStars{left:10px;right:auto;top:8px}.menuTool{padding:8px 11px}#menuTools{margin-top:14px;gap:10px}#subline{margin:10px 0 15px;font-size:13px}.bigButton{min-width:120px;padding:12px 15px;font-size:17px}}
-@media(max-height:480px) and (orientation:landscape){#app{grid-template-rows:52px 1fr 86px}.action{height:74px;width:144px}.life{height:37px;width:32px}.slot{height:39px;width:40px}.slot img{width:30px;height:32px}#bagGoal img{height:32px}#hud{padding-top:3px;padding-bottom:3px}.panel{padding:14px 23px;max-width:720px;border-radius:25px}.kicker{font-size:10px;margin:0 0 4px;letter-spacing:3px}#brand{font-size:39px}#subline{margin:6px 0 10px;font-size:12px}.levelCard{min-height:135px}.levelCard .map{height:88px}.cardFoot{padding:6px 12px}.cardFoot span{font-size:16px}.playMark{height:28px;width:28px}#menuTools{position:absolute;top:9px;right:12px;margin:0;gap:5px}.menuTool{padding:6px;min-width:72px;height:72px;border:0;background:#34233d}.menuTool span{display:none}#winHero{width:82px;height:76px;margin:-5px auto -5px}#resultStars{height:43px;margin:5px 0}#resultStars img{width:42px;height:42px}#resultItems{margin:7px 0 12px}#resultItems img{width:33px;height:33px}.bigButton{min-height:72px;padding:10px 20px}#overlay:not(.menu) #subline{margin:5px 0}#overlay:not(.menu) #brand{font-size:32px}}
+@media(max-width:520px){#app{grid-template-rows:58px 1fr 116px}#hud{padding-left:7px;padding-right:7px;gap:3px}.life{width:28px;height:35px}#lives{min-width:84px}#mission{gap:2px}.slot{width:30px;height:35px;border-radius:10px}.slot img{width:25px;height:27px}#bagGoal img{width:21px;height:31px}#bagGoal{min-width:24px}#dock{padding-left:6px;padding-right:6px;gap:2px}#actions{gap:8px;width:100%;justify-content:flex-end}.action{width:146px;height:100px;border-radius:23px}.panel{padding:21px 14px;border-radius:27px}#brand{letter-spacing:-1px;font-size:44px}.kicker{font-size:10px;letter-spacing:3px}#levelCards{grid-template-columns:1fr;gap:13px}.levelCard{min-height:130px;display:grid;grid-template-columns:135px 1fr;align-items:stretch}.levelCard .map{height:130px}.cardFoot{flex-direction:column;justify-content:center;gap:9px;padding:10px}.cardFoot span{text-align:center;font-size:18px}.bestStars{left:10px;right:auto;top:8px}.menuTool{padding:8px 11px}#menuTools{margin-top:14px;gap:10px}#subline{margin:10px 0 15px;font-size:13px}.bigButton{min-width:120px;padding:12px 15px;font-size:17px}}
+@media(max-height:480px) and (orientation:landscape){#app{grid-template-rows:52px 1fr 102px}.action{height:86px;width:172px}.life{height:37px;width:32px}.slot{height:39px;width:40px}.slot img{width:30px;height:32px}#bagGoal img{height:32px}#hud{padding-top:3px;padding-bottom:3px}.panel{padding:14px 23px;max-width:720px;border-radius:25px}.kicker{font-size:10px;margin:0 0 4px;letter-spacing:3px}#brand{font-size:39px}#subline{margin:6px 0 10px;font-size:12px}.levelCard{min-height:135px}.levelCard .map{height:88px}.cardFoot{padding:6px 12px}.cardFoot span{font-size:16px}.playMark{height:28px;width:28px}#menuTools{position:absolute;top:9px;right:12px;margin:0;gap:5px}.menuTool{padding:6px;min-width:72px;height:72px;border:0;background:#34233d}.menuTool span{display:none}#winHero{width:82px;height:76px;margin:-5px auto -5px}#resultStars{height:43px;margin:5px 0}#resultStars img{width:42px;height:42px}#resultItems{margin:7px 0 12px}#resultItems img{width:33px;height:33px}.bigButton{min-height:72px;padding:10px 20px}#overlay:not(.menu) #subline{margin:5px 0}#overlay:not(.menu) #brand{font-size:32px}}
 @media(max-height:480px) and (orientation:landscape){#overlay.menu .kicker{display:none}}
 .gentle *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -95,7 +95,7 @@ button:active{transform:translateY(3px) scale(.97)}
 <section id="overlay" class="menu" hidden aria-label="Game menu"><div class="panel">
  <div class="kicker" id="kicker">TWO LITTLE MIDNIGHT ADVENTURES</div>
  <img id="winHero" alt="Happy unicorn" data-img="u_happy0" hidden>
- <h1 id="brand">Sneaky<br>Unicorn</h1><p id="subline">Grab the unicorn. Drag her to steal things. Bring them home.</p>
+ <h1 id="brand">Sneaky<br>Unicorn</h1><p id="subline">Touch anywhere. Drag the way you want her to go. Bring the stolen things home.</p>
  <div id="levelCards"></div><div id="resultStars" hidden></div><div id="resultItems" hidden></div><div id="resultButtons" hidden></div>
  <div id="menuTools"><button id="sound" class="menuTool" aria-label="Toggle sound"></button><button id="motion" class="menuTool" aria-label="Toggle reduced motion"></button></div>
 </div></section>
@@ -356,20 +356,21 @@ function prepareLayers(level){
 function clearInput(){input.keys.clear();input.jump=0;input.sneak=false;input.primary=false;input.joy=null;input.drag=null;for(const id of ['jump','sneak'])$(id).classList.remove('down');}
 function movement(){let x=0,y=0;if(input.keys.has('ArrowLeft')||input.keys.has('KeyA'))x--;if(input.keys.has('ArrowRight')||input.keys.has('KeyD'))x++;if(input.keys.has('ArrowUp')||input.keys.has('KeyW'))y--;if(input.keys.has('ArrowDown')||input.keys.has('KeyS'))y++;
  if(input.joy){x+=input.joy.x;y+=input.joy.y;}
- if(input.drag){const dx=input.drag.tx-P.x,dy=input.drag.ty-P.y,d=Math.hypot(dx,dy);if(d>7){const m=clamp((d-7)/42,0,1);x+=dx/d*m;y+=dy/d*m;}}
+ // Touch is an invisible floating joystick: touch anywhere in the playfield, drag in a direction,
+ // and the unicorn keeps moving that direction until the finger lifts. Her position never has to
+ // catch up to the finger, so the control cannot stall just because she reaches the touch point.
+ if(input.drag){const dx=input.drag.cx-input.drag.sx,dy=input.drag.cy-input.drag.sy,d=Math.hypot(dx,dy);if(d>8){const m=clamp(.58+(d-8)/44,0,1);x+=dx/d*m;y+=dy/d*m;}}
  const d=Math.hypot(x,y);return d>1?{x:x/d,y:y/d}:{x,y};}
 function action(kind){audio.gesture();if(G.mode!=='play')return;if(kind==='jump')input.jump=T.JUMP_BUFFER;else input.sneak=true;}
-function clientWorld(e){const r=canvas.getBoundingClientRect();return{x:view.x+(e.clientX-r.left)/view.scale,y:view.y+(e.clientY-r.top)/view.scale};}
-function nearPlayerOnScreen(e){const r=canvas.getBoundingClientRect(),px=r.left+(P.x-view.x)*view.scale,py=r.top+(P.y-P.z-67)*view.scale;return Math.hypot(e.clientX-px,e.clientY-py)<=100;}
-function beginDirectDrag(e){
- if(G.mode!=='play'||input.drag||!nearPlayerOnScreen(e))return;
- audio.gesture();e.preventDefault();const w=clientWorld(e);input.drag={id:e.pointerId,offX:P.x-w.x,offY:P.y-w.y,tx:P.x,ty:P.y};
+function beginAnywhereDrag(e){
+ if(G.mode!=='play'||input.drag||e.pointerType==='mouse'&&e.button!==0)return;
+ audio.gesture();e.preventDefault();input.drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,cx:e.clientX,cy:e.clientY};
  try{canvas.setPointerCapture(e.pointerId);}catch(_){}
 }
-function updateDirectDrag(e){const d=input.drag;if(!d||d.id!==e.pointerId)return;e.preventDefault();const w=clientWorld(e);d.tx=w.x+d.offX;d.ty=w.y+d.offY;}
-function endDirectDrag(e){if(input.drag?.id===e.pointerId)input.drag=null;}
-canvas.addEventListener('pointerdown',e=>{if(G.mode==='win'&&!G.resultShown){if(G.winTime>.85)showResult('win');return;}beginDirectDrag(e);});
-canvas.addEventListener('pointermove',updateDirectDrag);canvas.addEventListener('pointerup',endDirectDrag);canvas.addEventListener('pointercancel',endDirectDrag);canvas.addEventListener('lostpointercapture',endDirectDrag);
+function updateAnywhereDrag(e){const d=input.drag;if(!d||d.id!==e.pointerId)return;e.preventDefault();d.cx=e.clientX;d.cy=e.clientY;}
+function endAnywhereDrag(e){if(input.drag?.id===e.pointerId)input.drag=null;}
+canvas.addEventListener('pointerdown',e=>{if(G.mode==='win'&&!G.resultShown){if(G.winTime>.85)showResult('win');return;}beginAnywhereDrag(e);});
+canvas.addEventListener('pointermove',updateAnywhereDrag);canvas.addEventListener('pointerup',endAnywhereDrag);canvas.addEventListener('pointercancel',endAnywhereDrag);canvas.addEventListener('lostpointercapture',endAnywhereDrag);
 for(const id of ['jump','sneak']){
  const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(G.mode!=='play')return;b.classList.add('down');try{b.setPointerCapture(e.pointerId);}catch(_){}action(id);});
  for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>b.classList.remove('down'));
@@ -420,7 +421,7 @@ $('motion').addEventListener('click',()=>{audio.gesture();saved.reduced=!saved.r
 function setMenuCommon(){clearInput();$('overlay').hidden=false;refreshTools();$('winHero').hidden=true;$('resultButtons').innerHTML='';}
 function showMenu(){
  G.mode='menu';G.catch=null;G.resultShown=false;setMenuCommon();showChrome(false);$('overlay').className='menu';
- $('kicker').textContent='TWO LITTLE MIDNIGHT ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';$('subline').textContent='Grab the unicorn. Drag her to steal things. Bring them home.';
+ $('kicker').textContent='TWO LITTLE MIDNIGHT ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';$('subline').textContent='Touch anywhere. Drag the way you want her to go. Bring the stolen things home.';
  $('levelCards').hidden=false;$('resultStars').hidden=true;$('resultItems').hidden=true;$('resultButtons').hidden=true;
  $('levelCards').innerHTML=LEVELS.map((l,i)=>`<button class="levelCard" data-level="${i}" aria-label="Play ${l.title}"><img class="map" src="${DATA[l.map]}" alt="${i?'After-hours grocery store':'Cozy moonlit house'}"><div class="bestStars">${[0,1,2].map(j=>`<img src="${DATA.star}" style="opacity:${j<saved.best[l.id]?1:.22}" alt="${j<saved.best[l.id]?'Earned star':'Unfilled star'}">`).join('')}</div><div class="cardFoot"><span>${l.title}</span><b class="playMark">${playSVG}</b></div></button>`).join('');
  for(const b of $('levelCards').querySelectorAll('button'))b.onclick=()=>{audio.gesture();startLevel(Number(b.dataset.level));};
@@ -819,14 +820,14 @@ function draw(){
  c.restore();drawScreenGuide();
 }
 /* --------------------- INITIALIZATION --------------------- */
-function snapshot(){return {version:'1.1.0-direct-drag',mode:G.mode,level:scene?.id,
+function snapshot(){return {version:'1.2.0-anywhere-drag',mode:G.mode,level:scene?.id,
  player:{x:P.x,y:P.y,z:P.z,vx:P.vx,vy:P.vy,sneak:P.sneak,air:P.air,boost:P.boost,carry:P.carry},
  lives:G.lives,catches:G.catches,alerts:G.alerts,items:items.map(it=>({id:it.id,status:it.status,x:it.x,y:it.y,z:it.z})),
  enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,seeing:e.seeing,accum:e.accum,lost:e.lost,target:e.target})),
  catchPhase:G.catch?.phase||null,winTime:G.winTime,resultShown:G.resultShown,rings:G.rings.length,fx:G.fx.length,
  audio:audio.ctx?.state||'not-started',muted:saved.muted,safe:scene?isSafe():true,
  camera:{...view},best:{...saved.best},mastery:{...G.mastery},saveAvailable:(()=>{try{return !!localStorage;}catch(_){return false;}})()};}
-window.SneakyUnicorn=Object.freeze({snapshot,version:'1.1.0-direct-drag'});
+window.SneakyUnicorn=Object.freeze({snapshot,version:'1.2.0-anywhere-drag'});
 let last=performance.now(),accum=0,frameCount=0,fpsTime=0;
 function loop(now){
  const elapsed=Math.min(T.MAX_FRAME,Math.max(0,(now-last)/1000));last=now;

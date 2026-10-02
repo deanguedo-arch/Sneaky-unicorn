@@ -1,20 +1,19 @@
-SNEAKY UNICORN — iPHONE WEB APP v3
+SNEAKY UNICORN — iPHONE WEB APP v4
 
-CHILD-PLAYTEST CHANGES
-- Movement is now direct manipulation: put a finger ON the unicorn and drag her.
-- Touching empty floor does not steer her.
-- Keep the drag finger down and use a second finger for JUMP or SNEAK.
-- House now has 5 things to steal, including a framed unicorn picture and a little lamp.
-- Market now has 6 things to steal, adding banana and chips.
-- The phone wishlist HUD was compacted for the larger loot sets.
+PHONE-CONTROL REPAIR
+- Touch anywhere in the playfield, then drag in the direction you want the unicorn to move.
+- The unicorn now keeps moving in that direction while the finger stays down. She no longer stops because she catches up to the finger.
+- Slide the same finger around to steer without lifting, or lift and start another drag anywhere.
+- JUMP and SNEAK now have substantially larger visible buttons and actual touch boxes.
+- Multi-touch is retained: one finger steers while another finger presses JUMP or SNEAK.
 
 IMPORTANT
 Do not open index.html directly from the iPhone Files app. Host this folder over HTTPS.
 
-IF YOU ALREADY HOSTED v2
+IF YOU ALREADY HOSTED v3
 1. Replace the old site contents with everything in this folder.
 2. Open the site once in Safari while online.
-3. Refresh once if the old build appears. The service-worker cache is now v3 and deletes older caches on activation.
+3. Refresh once if the old controls appear. The service-worker cache is now v4 and removes older caches after activation.
 4. If it is already on the Home Screen, fully close the app and relaunch after the online refresh.
 
 INSTALL
