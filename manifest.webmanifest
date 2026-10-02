@@ -1,7 +1,7 @@
 {
-  "name": "Sneaky Unicorn v7 \u2014 Easy Adventures",
+  "name": "Sneaky Unicorn v8 — Camera & UI Fix",
   "short_name": "Sneaky Unicorn",
-  "description": "Four cozy collect-and-return adventures. Easy and Sneaky modes.",
+  "description": "Four cozy collect-and-return adventures with child-friendly clamped camera and translucent action controls.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

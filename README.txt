@@ -1,46 +1,24 @@
-SNEAKY UNICORN v7 — EASY ADVENTURES
+SNEAKY UNICORN v8 — CAMERA + TRANSLUCENT BUTTON FIX
 
-WHAT TO UPLOAD
-Upload this folder's CONTENTS to the same HTTPS website you already use.
-Keep index.html, sw.js, manifest.webmanifest and icons/ together.
-Do not open index.html from the iPhone Files preview.
+WHAT CHANGED
+- Camera can no longer overscroll beyond a level and reveal large empty/black space.
+- If a level is smaller than the visible area on one axis, it is centered symmetrically.
+- JUMP and SNEAK keep the same large kid-friendly touch targets.
+- JUMP and SNEAK are now 58% opaque at rest so the world remains visible underneath.
+- A pressed button becomes ~96% opaque for strong feedback.
+- Active SNEAK stays slightly brighter (72%) without becoming a solid visual blocker.
+- The floating buttons no longer reduce the camera's usable height.
+- All v7 maps, Easy/Sneaky modes, drag-anywhere steering, loot rules, guards, and progression remain intact.
 
-UPDATING FROM v6
-1. Replace the old site's files with all the files in this folder.
-2. Close the old Home Screen game and any open Safari game tabs.
-3. Open the hosted address in Safari while online.
-4. Verify the menu says “V7 / FOUR LITTLE ADVENTURES” and has four map cards.
-5. Wait for “v7 offline copy ready” at the bottom of the menu.
-6. Reopen from the Home Screen. The old v6 tab itself cannot turn into v7 without reopening.
-7. Check one launch in Airplane Mode before relying on offline play.
-
-INSTALLING A HOME SCREEN ICON
-Open the hosted game in Safari, use Share > Add to Home Screen, then Add.
-An HTTPS site is needed for service-worker installation. The first download is online.
-Storage limits, private browsing, or browser eviction may make an offline copy unavailable;
-the game and its offline status message handle that without blocking online play.
-
-WHAT v7 DOES
-Easy Adventure is the default. Each of four environments has one guard, five giggles,
-a protected start, generous paths and 10–12 objects. Bring ANY THREE to the basket.
-After three deliveries choose the pictures for MORE treasures or HOME. Bonus objects
-remain available after MORE; a contextual door button appears at home when ready.
-Sneaky Adventure has separate layouts, specific wishlists, harder guards and three giggles.
-Both carried and deposited objects survive catches and retries.
+UPDATING THE IPHONE WEB APP
+1. Replace the old hosted site's files with every file in this folder.
+2. Close the Home Screen game and any Safari tabs running the old build.
+3. Open the hosted HTTPS address in Safari while online and refresh once.
+4. Verify the menu says “V8 / FOUR LITTLE ADVENTURES”.
+5. Wait for “v8 offline copy ready”.
+6. Reopen from the Home Screen.
+7. Walk the unicorn to all four map edges: the map should stay framed with no large empty void.
 
 CONTROLS
-Drag anywhere on the playfield to steer; keep holding for continuous movement.
-A second finger can press the large circular JUMP or SNEAK button. There is no bottom bar.
-Keyboard: WASD/arrows; Space or X to jump; Shift to toggle sneak; Escape to pause.
-Music and reduced-motion choices live on menus. Progress is local only.
-
-ART FIX
-25 source-sheet item crops were measured again. The cereal and chips no longer include
-fragments from a neighbouring row; apple, banana, doughnut and other silhouettes are complete.
-Items are drawn from isolated transparent images, including while carried and in results.
-The floating heart rug on market fixtures and its soft-landing zone are removed.
-
-TEST LIMITS
-Headless Chromium tests and real-time touch-input runs are documented in the source.
-This package has not been installed on a physical iPhone in this session. No hosted URL
-has been published or changed by this build process.
+Drag anywhere on the playfield to steer. Keep holding for continuous movement.
+Use a second finger for the large circular JUMP and SNEAK buttons.

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17132e">
 <meta name="color-scheme" content="dark">
-<title>Sneaky Unicorn v7 — Easy Adventures</title>
+<title>Sneaky Unicorn v8 — Camera & UI Fix</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath fill=%27%23f7ce84%27 d=%27M32 3l9 18 20 3-15 15 4 21-18-10-18 10 4-21L3 24l20-3z%27/%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -99,6 +99,20 @@ button:active{transform:translateY(3px) scale(.97)}
 .choicePicture{display:flex;align-items:center;justify-content:center;gap:8px}.choicePicture img{width:38px;height:44px;object-fit:contain}.bigButton{min-height:90px;flex-direction:column}.bigButton svg{width:29px;height:29px}.bigButton span{font-size:16px}
 @media(max-width:520px){#app{grid-template-rows:62px 1fr}#lives .life{width:23px;height:31px}#mission{gap:3px}.goalDot{width:29px;height:31px}.goalDot img{width:24px;height:27px}#goalCount{font-size:17px}.slot{width:26px;height:34px}.slot img{width:24px;height:29px}#bagGoal img{width:22px;height:32px}#levelCards{grid-template-columns:1fr 1fr;gap:10px}.levelCard{display:flex;flex-direction:column;min-height:155px}.levelCard .map{height:100px}.cardFoot{padding:8px 6px;flex-direction:row;gap:3px;width:100%;flex:1}.cardFoot span{font-size:15px;text-align:left}.playMark{width:26px;height:26px}.bestStars{left:auto;right:5px;padding:3px}.bestStars img{width:19px;height:19px}#brand{font-size:40px}.modeChoice{font-size:14px;gap:6px;padding:8px}.modeChoice img{width:25px}.kicker{letter-spacing:2px}.panel{padding:18px 12px}.bigButton{min-width:115px}.goalArrow{width:15px}#finishLevel{top:calc(74px + env(safe-area-inset-top));width:98px;min-height:94px}#finishLevel img{width:43px;height:64px}}
 @media(max-height:480px) and (orientation:landscape){#modePicker{margin:8px 0 10px}#levelCards{grid-template-columns:repeat(4,1fr);gap:9px}.levelCard{min-height:136px}.levelCard .map{height:84px}.cardFoot span{font-size:14px}.cardFoot{padding:7px 5px}.bestStars img{width:17px;height:17px}#menuTools{position:relative;top:auto;right:auto;margin:11px 0 0}.menuTool span{display:inline}.life{width:25px;height:33px}.bigButton{min-height:82px}#finishLevel{top:calc(66px + env(safe-area-inset-top))}#brand{font-size:35px}.panel{max-width:850px}#winHero{width:76px;height:68px}}
+
+
+/* v8: large kid-friendly action buttons remain full-size hit targets but no longer hide the world. */
+.action{
+  opacity:.58;
+  border-color:#f9e3ffb8;
+  box-shadow:0 5px 0 #160d2988,0 0 0 4px #704d9540,inset 0 0 22px #fff4ce20;
+  transition:transform .07s,box-shadow .1s,opacity .08s;
+}
+#sneak{border-color:#ffe2f6b8}
+.action.down{opacity:.96}
+.action[aria-pressed="true"]{opacity:.72}
+.action[aria-pressed="true"].down{opacity:.98}
+.action.teach{opacity:.80}
 
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -351,24 +365,35 @@ window.addEventListener('contextmenu',e=>e.preventDefault());
 function resize(){
  const r=canvas.getBoundingClientRect();view.w=Math.max(1,r.width);view.h=Math.max(1,r.height);view.dpr=Math.min(2,window.devicePixelRatio||1);
  canvas.width=Math.round(view.w*view.dpr);canvas.height=Math.round(view.h*view.dpr);
- // Portrait crops the world rather than shrinking 1,672 pixels onto a phone.
+ // Keep the player readable on phones, but never use camera overscroll to create empty voids.
  view.scale=clamp(view.h/610,.53,1.05);if(G.mode==='menu')view.scale=Math.max(view.w/1672,view.h/941);
  if(scene)updateCamera(1,true); // URL-bar resizes must not release a child's held steering finger.
 }
 window.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>{if(G.mode==='play')pause();requestAnimationFrame(resize);});
 function showChrome(play){$('hud').hidden=!play;$('dock').hidden=!play;$('app').style.gridTemplateRows=play?'':'0px 1fr';requestAnimationFrame(resize);}
+function clampCameraAxis(target,worldSize,visibleSize){
+ // If the level is larger than the view, never reveal space outside it.
+ if(worldSize>visibleSize)return clamp(target,0,worldSize-visibleSize);
+ // If a level is smaller than the view, center it symmetrically (intentional letterbox only).
+ return -(visibleSize-worldSize)/2;
+}
 function updateCamera(dt,snap=false){
  if(!scene)return;
- const landscape=view.w>view.h,focusX=view.w*(landscape?.42:.5);
- const dockHeight=$('dock').hidden?0:Math.min(view.h*.44,$('dock').getBoundingClientRect().height+20);
- const focusY=Math.max(95,(view.h-dockHeight)*.53);
- let q=G.catch?catchPosition():P;
- let tx=q.x-focusX/view.scale,ty=q.y-focusY/view.scale;
- if(G.mode==='menu'){tx=(scene.w-view.w/view.scale)/2;ty=(scene.h-view.h/view.scale)/2;}
- // Allow decorative margins beyond the floor. No gameplay can hide under the action cluster.
  const vw=view.w/view.scale,vh=view.h/view.scale;
- tx=clamp(tx,-vw*.5,scene.w-vw*.5);ty=clamp(ty,-vh*.34,scene.h-vh*.28);
- const k=snap||saved.reduced?1:1-Math.exp(-dt*9);view.x=lerp(view.x,tx,k);view.y=lerp(view.y,ty,k);
+ let tx,ty;
+ if(G.mode==='menu'){
+  tx=(scene.w-vw)/2;ty=(scene.h-vh)/2;
+ }else{
+  const q=G.catch?catchPosition():P;
+  // Buttons float over the world, so they must NOT steal camera height. Bias a little left/up
+  // in landscape so nearby danger remains readable without ever overscrolling the map.
+  const landscape=view.w>view.h;
+  const focusX=vw*(landscape?.44:.50),focusY=vh*.46;
+  tx=q.x-focusX;ty=q.y-focusY;
+ }
+ tx=clampCameraAxis(tx,scene.w,vw);ty=clampCameraAxis(ty,scene.h,vh);
+ const k=snap||saved.reduced?1:1-Math.exp(-dt*8);
+ view.x=lerp(view.x,tx,k);view.y=lerp(view.y,ty,k);
 }
 function imageHTML(name,alt=''){return `<img src="${DATA[name]}" alt="${alt}">`;}
 function refreshTools(){
@@ -383,7 +408,7 @@ $('motion').addEventListener('click',()=>{audio.gesture();saved.reduced=!saved.r
 function setMenuCommon(){clearInput();$('modePicker').hidden=true;$('finishLevel').hidden=true;$('overlay').hidden=false;refreshTools();$('winHero').hidden=true;$('resultButtons').innerHTML='';}
 function showMenu(){
  G.mode='menu';G.catch=null;G.resultShown=false;setMenuCommon();showChrome(false);$('overlay').className='menu';
- $('kicker').textContent='V7 / FOUR LITTLE ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';
+ $('kicker').textContent='V8 / FOUR LITTLE ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';
  $('subline').textContent=G.adventure==='easy'?'Bring home any three treasures. Stay for more, or head home.':'A special wishlist. Busier rooms. A little more mischief.';
  $('modePicker').hidden=false;
  $('modePicker').innerHTML=[['easy','Easy Adventure','face_laugh'],['sneaky','Sneaky Adventure','star']].map(([id,name,icon])=>`<button class="modeChoice" data-mode="${id}" aria-pressed="${G.adventure===id}">${imageHTML(icon)}<span>${name}</span></button>`).join('');
@@ -820,14 +845,14 @@ function draw(){
  c.restore();drawScreenGuide();
 }
 /* --------------------- INITIALIZATION --------------------- */
-function snapshot(){return {version:'7.0.0-easy-adventures',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
+function snapshot(){return {version:'8.0.0-camera-ui',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
  player:{x:P.x,y:P.y,z:P.z,vx:P.vx,vy:P.vy,sneak:P.sneak,air:P.air,boost:P.boost,carry:P.carry},
  lives:G.lives,catches:G.catches,alerts:G.alerts,items:items.map(it=>({id:it.id,status:it.status,x:it.x,y:it.y,z:it.z})),
  enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,seeing:e.seeing,accum:e.accum,lost:e.lost,target:e.target})),
  catchPhase:G.catch?.phase||null,winTime:G.winTime,resultShown:G.resultShown,rings:G.rings.length,fx:G.fx.length,
  audio:audio.ctx?.state||'not-started',muted:saved.muted,safe:scene?isSafe():true,
  camera:{...view},best:{...saved.best},mastery:{...G.mastery},saveAvailable:(()=>{try{return !!localStorage;}catch(_){return false;}})()};}
-window.SneakyUnicorn=Object.freeze({snapshot,version:'7.0.0-easy-adventures'});
+window.SneakyUnicorn=Object.freeze({snapshot,version:'8.0.0-camera-ui'});
 let last=performance.now(),accum=0,frameCount=0,fpsTime=0;
 function loop(now){
  const elapsed=Math.min(T.MAX_FRAME,Math.max(0,(now-last)/1000));last=now;
@@ -871,7 +896,7 @@ init().catch(()=>{$('status').innerHTML='<div><h1>The art needs another try.</h1
  const note=document.createElement('p');note.style.cssText='font-size:12px;color:#cfb6df;margin:12px 0 0';
  note.textContent='Preparing offline copy…';document.querySelector('.panel').appendChild(note);
  function ask(worker){if(!worker)return;const channel=new MessageChannel();channel.port1.onmessage=e=>{
-  const d=e.data||{};note.textContent=d.version==='7.0.0'&&d.cached?'v7 offline copy ready':'Updating offline copy…';channel.port1.close();
+  const d=e.data||{};note.textContent=d.version==='8.0.0'&&d.cached?'v8 offline copy ready':'Updating offline copy…';channel.port1.close();
  };worker.postMessage({type:'APP_STATUS'},[channel.port2]);}
  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
   ask(reg.active);const watch=w=>{if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='activated')ask(reg.active||w);});};

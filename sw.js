@@ -1,5 +1,5 @@
-/* Sneaky Unicorn v7. Only this app's cache is managed here. */
-const VERSION='7.0.0';
+/* Sneaky Unicorn v8. Only this app's cache is managed here. */
+const VERSION='8.0.0';
 const ROOT=new URL(self.registration.scope);
 const PREFIX='sneaky-unicorn-scope-'+encodeURIComponent(ROOT.pathname)+'-';
 const CACHE=PREFIX+VERSION;
@@ -9,7 +9,7 @@ self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP)).then(()=>self.skipWaiting()));
 });
 self.addEventListener('activate',event=>{
- event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE&&(k.startsWith(PREFIX)||/^sneaky-unicorn-v[1-6]$/.test(k))).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+ event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE&&(k.startsWith(PREFIX)||/^sneaky-unicorn-v[1-7]$/.test(k))).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
 self.addEventListener('fetch',event=>{
  const req=event.request,url=new URL(req.url);
