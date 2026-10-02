@@ -1,4 +1,4 @@
-const CACHE = 'sneaky-unicorn-v2';
+const CACHE = 'sneaky-unicorn-v3';
 const APP = [
   './',
   './index.html',
