@@ -1,25 +1,46 @@
-SNEAKY UNICORN — iPHONE WEB APP v5
+SNEAKY UNICORN v7 — EASY ADVENTURES
 
-LATEST PLAYTEST CHANGES
-- Collected items stay visibly themselves beside the unicorn, only smaller. The old square inventory box around the carried item is gone.
-- The bottom control bar is gone.
-- SNEAK and JUMP are now huge floating CIRCLES over the game: 176 px on common portrait iPhones, 154 px at 320 px width, and 164 px in short landscape.
-- The circles use the supplied sneak/jump unicorn art.
-- Anywhere-drag movement remains: touch anywhere in the playfield and drag in the desired direction. Keep holding to keep moving.
-- Multi-touch remains: one finger steers, another finger presses JUMP or SNEAK.
+WHAT TO UPLOAD
+Upload this folder's CONTENTS to the same HTTPS website you already use.
+Keep index.html, sw.js, manifest.webmanifest and icons/ together.
+Do not open index.html from the iPhone Files preview.
 
-IMPORTANT
-Do not open index.html directly from the iPhone Files app. Host this folder over HTTPS.
+UPDATING FROM v6
+1. Replace the old site's files with all the files in this folder.
+2. Close the old Home Screen game and any open Safari game tabs.
+3. Open the hosted address in Safari while online.
+4. Verify the menu says “V7 / FOUR LITTLE ADVENTURES” and has four map cards.
+5. Wait for “v7 offline copy ready” at the bottom of the menu.
+6. Reopen from the Home Screen. The old v6 tab itself cannot turn into v7 without reopening.
+7. Check one launch in Airplane Mode before relying on offline play.
 
-IF YOU ALREADY HOSTED v4
-1. Replace the old site contents with everything in this folder.
-2. Open the site in Safari while online.
-3. Refresh once. The service-worker cache is now v5 and deletes older Sneaky Unicorn caches after activation.
-4. Fully close the Home Screen version if it is open, then relaunch it.
+INSTALLING A HOME SCREEN ICON
+Open the hosted game in Safari, use Share > Add to Home Screen, then Add.
+An HTTPS site is needed for service-worker installation. The first download is online.
+Storage limits, private browsing, or browser eviction may make an offline copy unavailable;
+the game and its offline status message handle that without blocking online play.
 
-INSTALL
-1. Upload the CONTENTS of this folder, preserving icons/.
-2. Open the HTTPS URL in Safari on iPhone.
-3. Play once online so the app caches itself.
-4. Safari Share > Add to Home Screen > Add.
-5. Launch from the Sneaky Unicorn Home Screen icon.
+WHAT v7 DOES
+Easy Adventure is the default. Each of four environments has one guard, five giggles,
+a protected start, generous paths and 10–12 objects. Bring ANY THREE to the basket.
+After three deliveries choose the pictures for MORE treasures or HOME. Bonus objects
+remain available after MORE; a contextual door button appears at home when ready.
+Sneaky Adventure has separate layouts, specific wishlists, harder guards and three giggles.
+Both carried and deposited objects survive catches and retries.
+
+CONTROLS
+Drag anywhere on the playfield to steer; keep holding for continuous movement.
+A second finger can press the large circular JUMP or SNEAK button. There is no bottom bar.
+Keyboard: WASD/arrows; Space or X to jump; Shift to toggle sneak; Escape to pause.
+Music and reduced-motion choices live on menus. Progress is local only.
+
+ART FIX
+25 source-sheet item crops were measured again. The cereal and chips no longer include
+fragments from a neighbouring row; apple, banana, doughnut and other silhouettes are complete.
+Items are drawn from isolated transparent images, including while carried and in results.
+The floating heart rug on market fixtures and its soft-landing zone are removed.
+
+TEST LIMITS
+Headless Chromium tests and real-time touch-input runs are documented in the source.
+This package has not been installed on a physical iPhone in this session. No hosted URL
+has been published or changed by this build process.
