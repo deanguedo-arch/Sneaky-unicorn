@@ -1,24 +1,28 @@
-Sneaky Unicorn v9.1 — Rainbow Patrol
+SNEAKY UNICORN v12 — RAINBOW PATROL
 
-PHONE CONTROLS
-- Drag anywhere on the playfield to move the unicorn in that direction.
-- Tap the large RAINBOW BLAST button to fire in the unicorn's most recent movement direction.
+HOW TO PLAY ON iPHONE
+1. Upload every file in this folder to the same HTTPS site.
+2. Open the site in Safari while online and refresh once.
+3. Wait for the offline-copy message, then Add to Home Screen if desired.
 
-TREASURE ADVENTURES
-- There are no vision cones.
-- People follow fixed patrol routes with gently changing speeds.
-- Collect EVERY treasure on the map and bring each one to the sparkle-door basket.
-- Rainbow-blast a person to send them to the visible jail lane for a short time; they then return to their patrol.
-- Touching a person only resets the unicorn to the start. Treasures are not lost.
+CONTROLS
+- Drag anywhere in the play area to steer.
+- Tap the giant RAINBOW BLAST button to fire in the unicorn's last movement direction.
+- Tap the small translucent HOME button at upper-left during play to pause / reach Places.
 
-POLICE UNICORN PATROL
-- No treasure task.
-- Catch every bad guy with the rainbow blast.
-- Captured bad guys stay in jail permanently.
-- The level ends when every bad guy is caught.
+ADVENTURE MAPS
+- Collect EVERY treasure and bring each one home.
+- Every map has TWO people following fixed patrol patterns.
+- Their speed changes naturally between slow and quick.
+- Rainbow-blast a person to send them to the temporary jail lane; they return to their route.
+- Touching a person triggers a sparkly flight back to the start instead of an instant teleport.
+- Carried and delivered treasure is kept.
 
-For iPhone: host this folder over HTTPS, open it in Safari once, then Add to Home Screen.
+POLICE UNICORN
+- There are five silly bandits with distinct robber costumes.
+- Each bandit needs THREE rainbow-blast hits.
+- Three little stars above each bad guy show the hits remaining.
+- On the third hit, that bad guy goes to jail permanently.
+- Catch all five to win.
 
-V9.1 HOTFIX
-- Fixed startup crash caused by the old JUMP/SNEAK cleanup code referencing controls that no longer exist.
-- Offline cache version bumped to 9.0.1 so hosted installs receive the repaired build.
+No vision cones. No Jump. No Sneak. No external libraries or gameplay network requests.

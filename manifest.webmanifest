@@ -1,7 +1,7 @@
 {
-  "name": "Sneaky Unicorn v9.1 — Rainbow Patrol",
+  "name": "Sneaky Unicorn v10 \u2014 Rainbow Patrol",
   "short_name": "Sneaky Unicorn",
-  "description": "Collect-everything adventures and Police Unicorn rainbow-blast patrols for young kids.",
+  "description": "Collect every treasure, discover hidden sparkle rooms, rescue baby unicorns, ride rainbow slides, and defeat the Police Unicorn boss.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,17 @@
   "background_color": "#21182f",
   "theme_color": "#231936",
   "icons": [
-    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
