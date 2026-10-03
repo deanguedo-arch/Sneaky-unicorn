@@ -353,7 +353,7 @@ function sees(e){
  if(Math.abs(angleDiff(Math.atan2(P.y-e.y,P.x-e.x),e.angle))>T.SIGHT_ANGLE/2)return false;
  return !occluded(e,P,P.z);
 }
-function clearInput(){input.keys.clear();input.jump=0;input.sneak=false;input.primary=false;input.joy=null;input.drag=null;for(const id of ['jump','sneak'])$(id).classList.remove('down');}
+function clearInput(){input.keys.clear();input.jump=0;input.sneak=false;input.primary=false;input.joy=null;input.drag=null;const blast=$('blast');if(blast)blast.classList.remove('down');}
 function movement(){let x=0,y=0;if(input.keys.has('ArrowLeft')||input.keys.has('KeyA'))x--;if(input.keys.has('ArrowRight')||input.keys.has('KeyD'))x++;if(input.keys.has('ArrowUp')||input.keys.has('KeyW'))y--;if(input.keys.has('ArrowDown')||input.keys.has('KeyS'))y++;
  if(input.joy){x+=input.joy.x;y+=input.joy.y;}
  // Touch is an invisible floating joystick: touch anywhere in the playfield, drag in a direction,
@@ -426,7 +426,7 @@ $('motion').addEventListener('click',()=>{audio.gesture();saved.reduced=!saved.r
 function setMenuCommon(){clearInput();$('modePicker').hidden=true;$('finishLevel').hidden=true;$('overlay').hidden=false;refreshTools();$('winHero').hidden=true;$('resultButtons').innerHTML='';}
 function showMenu(){
  G.mode='menu';G.catch=null;G.resultShown=false;setMenuCommon();showChrome(false);$('overlay').className='menu';
- $('kicker').textContent='V9 / RAINBOW ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';
+ $('kicker').textContent='V9.1 / RAINBOW ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';
  $('subline').textContent='Collect every treasure — or become Police Unicorn and catch every bad guy.';
  $('modePicker').hidden=true;$('levelCards').hidden=false;$('resultStars').hidden=true;$('resultItems').hidden=true;$('resultButtons').hidden=true;
  const choices=V9_PLAYABLE.map(i=>({l:LEVELS[i],i}));
@@ -707,14 +707,14 @@ function draw(){
  c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#1b152b';c.fillRect(0,0,view.w,view.h);if(!loaded||!scene)return;c.save();if(G.shake>0&&!saved.reduced)c.translate(Math.sin(G.clock*57)*2,Math.cos(G.clock*46)*1.5);c.scale(view.scale,view.scale);c.translate(-view.x,-view.y);drawRoom();drawDoor();drawJail();drawRoute();let playerSort=P.y;const layers=scene.obstacles.filter(o=>o.prop).map(o=>({y:o.sort,run:()=>prop(o.prop,o.x,o.y,o.width)}));for(const e of enemies)layers.push({y:e.y,run:()=>drawEnemy(e)});if(scene.dog)layers.push({y:scene.dog.y,run:drawDog});for(const it of items)if(it.status==='floor')layers.push({y:itemSort(it),run:()=>drawItem(it)});layers.push({y:playerSort,run:drawPlayer});layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.run();drawBlasts();drawFX();drawTutorial();c.restore();drawScreenGuide();
 }
 /* --------------------- INITIALIZATION --------------------- */
-function snapshot(){return {version:'9.0.0-rainbow-patrol',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
+function snapshot(){return {version:'9.0.1-rainbow-patrol',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
  player:{x:P.x,y:P.y,vx:P.vx,vy:P.vy,carry:P.carry},
  lives:G.lives,catches:G.catches,alerts:G.alerts,items:items.map(it=>({id:it.id,status:it.status,x:it.x,y:it.y,z:it.z})),
  enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,speedMul:e.speedMul,jailTimer:e.jailTimer,target:e.target})),
  catchPhase:null,winTime:G.winTime,resultShown:G.resultShown,blasts:G.blasts.length,jailed:enemies.filter(e=>e.state==='JAILED').length,fx:G.fx.length,
  audio:audio.ctx?.state||'not-started',muted:saved.muted,safe:scene?isSafe():true,
  camera:{...view},best:{...saved.best},mastery:{...G.mastery},saveAvailable:(()=>{try{return !!localStorage;}catch(_){return false;}})()};}
-window.SneakyUnicorn=Object.freeze({snapshot,version:'9.0.0-rainbow-patrol'});
+window.SneakyUnicorn=Object.freeze({snapshot,version:'9.0.1-rainbow-patrol'});
 let last=performance.now(),accum=0,frameCount=0,fpsTime=0;
 function loop(now){
  const elapsed=Math.min(T.MAX_FRAME,Math.max(0,(now-last)/1000));last=now;
@@ -758,7 +758,7 @@ init().catch(()=>{$('status').innerHTML='<div><h1>The art needs another try.</h1
  const note=document.createElement('p');note.style.cssText='font-size:12px;color:#cfb6df;margin:12px 0 0';
  note.textContent='Preparing offline copy…';document.querySelector('.panel').appendChild(note);
  function ask(worker){if(!worker)return;const channel=new MessageChannel();channel.port1.onmessage=e=>{
-  const d=e.data||{};note.textContent=d.version==='9.0.0'&&d.cached?'v9 offline copy ready':'Updating offline copy…';channel.port1.close();
+  const d=e.data||{};note.textContent=d.version==='9.0.1'&&d.cached?'v9 offline copy ready':'Updating offline copy…';channel.port1.close();
  };worker.postMessage({type:'APP_STATUS'},[channel.port2]);}
  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
   ask(reg.active);const watch=w=>{if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='activated')ask(reg.active||w);});};

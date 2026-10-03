@@ -1,4 +1,4 @@
-Sneaky Unicorn v9 — Rainbow Patrol
+Sneaky Unicorn v9.1 — Rainbow Patrol
 
 PHONE CONTROLS
 - Drag anywhere on the playfield to move the unicorn in that direction.
@@ -18,3 +18,7 @@ POLICE UNICORN PATROL
 - The level ends when every bad guy is caught.
 
 For iPhone: host this folder over HTTPS, open it in Safari once, then Add to Home Screen.
+
+V9.1 HOTFIX
+- Fixed startup crash caused by the old JUMP/SNEAK cleanup code referencing controls that no longer exist.
+- Offline cache version bumped to 9.0.1 so hosted installs receive the repaired build.
