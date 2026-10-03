@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17132e">
 <meta name="color-scheme" content="dark">
-<title>Sneaky Unicorn v14 — Magic Doors & Halloween Squishies</title>
+<title>Sneaky Unicorn v15 — Family Treasure Team</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath fill=%27%23f7ce84%27 d=%27M32 3l9 18 20 3-15 15 4 21-18-10-18 10 4-21L3 24l20-3z%27/%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -190,7 +190,7 @@ const LEVELS = [{"id":"easy_house","place":"house","title":"Big Cozy House","sub
 ;
 LEVELS.push({"map":"easy_toys","w":2052,"h":1254,"home":{"x":255,"y":1129,"r":65,"safe":190},"spawn":{"x":301,"y":1003},"floors":[[68,270,1915,919]],"soft":[[584,591,826,475]],"obstacles":[{"id":"plush-display","r":[116,450,266,160],"height":103,"sort":611},{"id":"toy-island","r":[683,427,275,92],"height":100,"sort":520},{"id":"book-display","r":[1701,390,243,174],"height":130,"sort":565},{"id":"checkout","r":[1459,1080,463,109],"height":120,"sort":1190},{"id":"puzzle-box","r":[1035,840,100,74],"height":35,"sort":915},{"id":"toy-smallbox","r":[416,741,80,65],"height":34,"sort":807}],"easy":true,"id":"police_patrol","place":"police","title":"Police Unicorn Patrol","subtitle":"Catch every bad guy with rainbow magic","items":[],"police":true,"required":0,"maxLives":0,"dog":null,"jail":{"x":1485,"y":780,"w":430,"h":170},"enemies":[{"id":"bandit1","sheet":"w","x":575,"y":405,"angle":0,"patrol":82,"route":[[575,405],[1020,350],[1320,560],[775,700],[420,470]],"hitsNeeded":3,"banditStyle":0,"banditColor":"#ee6f9f","speedMin":0.74,"speedMax":1.24,"speedChangeMin":0.95,"speedChangeMax":2.35},{"id":"bandit2","sheet":"m","x":1320,"y":410,"angle":3.14,"patrol":94,"route":[[1320,410],[1020,500],[1220,820],[910,580],[1160,420]],"hitsNeeded":3,"banditStyle":1,"banditColor":"#7b7df2","speedMin":0.78,"speedMax":1.29,"speedChangeMin":1.0999999999999999,"speedChangeMax":2.5500000000000003},{"id":"bandit3","sheet":"h","x":520,"y":900,"angle":0,"patrol":104,"route":[[520,900],[860,1040],[1180,945],[895,770],[590,790]],"hitsNeeded":3,"banditStyle":2,"banditColor":"#f3a24f","speedMin":0.74,"speedMax":1.34,"speedChangeMin":0.95,"speedChangeMax":2.75},{"id":"bandit4","sheet":"w","x":1510,"y":910,"angle":3.14,"patrol":112,"route":[[1510,910],[1680,670],[1370,580],[1230,875],[1510,1010]],"hitsNeeded":3,"banditStyle":3,"banditColor":"#50b6a3","speedMin":0.78,"speedMax":1.24,"speedChangeMin":1.0999999999999999,"speedChangeMax":2.35},{"id":"bandit5","sheet":"m","x":960,"y":650,"angle":0,"patrol":124,"route":[[960,650],[1170,520],[1450,680],[1178,900],[760,855],[690,610]],"hitsNeeded":3,"banditStyle":4,"banditColor":"#b877e8","speedMin":0.74,"speedMax":1.29,"speedChangeMin":0.95,"speedChangeMax":2.5500000000000003}]});
 const V9_PLAYABLE=[0,1,2,3,LEVELS.length-1];
-const V9={BLAST_SPEED:610,BLAST_LIFE:.90,BLAST_RADIUS:50,BLAST_COOLDOWN:.48,JAIL_TIME:2.65,CONTACT_DISTANCE:48,RESET_TIME:1.08,POLICE_HITS:3};
+const V9={BLAST_SPEED:610,BLAST_LIFE:.90,BLAST_RADIUS:50,BLAST_COOLDOWN:.48,JAIL_TIME:2.65,GROUP_RELEASE_DELAY:1.25,CONTACT_DISTANCE:48,RESET_TIME:1.08,POLICE_HITS:3};
 const SECRET_BY_LEVEL={easy_house:'picture',easy_market:'donut',easy_restaurant:'cake',easy_toys:'picture'};
 for(const l of LEVELS){if(!l.police){l.required=l.items.length;const sid=SECRET_BY_LEVEL[l.id]||l.items[l.items.length-1]?.id;const it=l.items.find(v=>v.id===sid)||l.items[l.items.length-1];if(it)it.secret=true;}}
 
@@ -275,11 +275,11 @@ const canvas=$('game'),c=canvas.getContext('2d',{alpha:false});
 const QA_MODE=new URLSearchParams(location.search).get('qa')==='1';
 const flags={manual:QA_MODE};
 const reducedQuery=matchMedia('(prefers-reduced-motion: reduce)');
-const PREF_KEY='sneaky-unicorn-midnight-v14';
-let saved={version:14,best:{},stickers:[],secrets:[],babies:[],muted:false,reduced:reducedQuery.matches,costume:'classic',pet:'sparkle'};
+const PREF_KEY='sneaky-unicorn-midnight-v15';
+let saved={version:15,best:{},stickers:[],secrets:[],babies:[],muted:false,reduced:reducedQuery.matches,costume:'classic',pet:'sparkle'};
 try{
  const s=JSON.parse(localStorage.getItem(PREF_KEY)||'null')||JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v13')||'null')||JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v12')||'null')||JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v11')||'null')||JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v10')||'null');
- if(s&&(s.version===9||s.version===10||s.version===11||s.version===12||s.version===13||s.version===14)){for(const l of LEVELS)saved.best[l.id]=Math.max(0,Math.min(3,Number(s.best?.[l.id])||0));
+ if(s&&(s.version===9||s.version===10||s.version===11||s.version===12||s.version===13||s.version===14||s.version===15)){for(const l of LEVELS)saved.best[l.id]=Math.max(0,Math.min(3,Number(s.best?.[l.id])||0));
  saved.stickers=Array.isArray(s.stickers)?s.stickers.filter(x=>typeof x==='string'&&x.length<32):[];
  saved.secrets=Array.isArray(s.secrets)?s.secrets.filter(x=>typeof x==='string'&&x.length<32):[];
  saved.babies=Array.isArray(s.babies)?s.babies.filter(x=>typeof x==='string'&&x.length<40):[];
@@ -314,13 +314,13 @@ const G={mode:'loading',adventure:'easy',clock:0,runTime:0,levelIndex:0,lives:5,
  catch:null,delivery:null,hintPath:[],hintTarget:null,hintTimer:0,levelBanner:0,
  dogHappy:false,mastery:{move:false,sneak:false,jump:false},practiceDistance:0,tutorialTime:0,
  hudStamp:'',fps:60,entryGrace:0};
-const P={x:0,y:0,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,
+const P={x:0,y:0,vx:0,vy:0,dirX:0,dirY:0,hasAim:false,facing:-1,sneak:false,z:0,
  air:false,jumpTime:0,cooldown:0,boost:0,anim:0,idle:0,land:0,launch:0,
  carry:null,stepNoise:0,lastSafe:{x:0,y:0},apex:false,blocked:0};
 let enemies=[],items=[];
 const view={w:1280,h:560,dpr:1,scale:1,x:0,y:0};
 const input={keys:new Set(),jump:0,sneak:false,joy:null,drag:null,primary:false};
-Object.assign(G,{blasts:[],blastCooldown:0,jailed:0,resetFlash:0,reset:null,inSecretRoom:false,roomCooldown:0,roomReturn:null,slideRide:null,slideCooldown:0,activeSecretRoom:-1,activeSecretDoor:-1,rescuedBabies:[],followers:[],followTrail:[]});
+Object.assign(G,{blasts:[],blastCooldown:0,jailed:0,jailRelease:null,resetFlash:0,reset:null,inSecretRoom:false,roomCooldown:0,roomReturn:null,slideRide:null,slideCooldown:0,activeSecretRoom:-1,activeSecretDoor:-1,rescuedBabies:[],followers:[],followTrail:[]});
 const playSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3L21 12 7 21Z" fill="currentColor"/></svg>';
 const repeatSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v7h7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const homeSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11L12 3l9 8M6 10v11h12V10M10 21v-7h4v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>';
@@ -533,7 +533,7 @@ function showTreasureRoom(){G.mode='menu';setMenuCommon();showChrome(false);$('o
 function showCloset(){G.mode='menu';setMenuCommon();showChrome(false);$('overlay').className='menu';$('levelCards').hidden=true;$('resultStars').hidden=true;$('resultButtons').hidden=false;$('resultItems').hidden=false;$('winHero').hidden=true;$('kicker').textContent='COSTUME CLOSET';$('brand').innerHTML='Costume<br>Closet';$('subline').innerHTML='Pick a silly look. Secret treasures unlock more costumes.';const cards=costumeOptions().map(opt=>{const unlocked=isCostumeUnlocked(opt);return `<button class="costumeCard ${saved.costume===opt.id?'active':''}" data-costume="${opt.id}" ${unlocked?'':'disabled'}><div class="mini">${opt.mini}</div><div>${opt.name}</div><div class="tiny">${unlocked?opt.desc:`Unlock at ${opt.unlock} secrets`}</div></button>`;}).join('');$('resultItems').innerHTML=`<div class="costumeGrid">${cards}</div>`;for(const b of $('resultItems').querySelectorAll('[data-costume]'))b.onclick=()=>{const id=b.dataset.costume;const opt=costumeOptions().find(o=>o.id===id);if(opt&&!isCostumeUnlocked(opt))return;audio.gesture();saved.costume=id;save();showCloset();};$('resultButtons').innerHTML='';resultButton('Back to places',homeSVG,showMenu,true);resultButton('Treasure room',playSVG,showTreasureRoom);}
 function showMenu(){
  G.mode='menu';G.catch=null;G.resultShown=false;setMenuCommon();showChrome(false);$('overlay').className='menu';
- $('kicker').textContent='V14 / MAGIC DOORS + HALLOWEEN SQUISHIES';$('brand').innerHTML='Sneaky<br>Unicorn';
+ $('kicker').textContent='V15 / FAMILY TREASURE TEAM';$('brand').innerHTML='Sneaky<br>Unicorn';
  $('subline').innerHTML=`Collect everything, reveal two high-end magical doors in every treasure map, rescue two animated baby unicorns, make a duckling parade, ride sparkling portals, and catch the Halloween squishy dumplings. <span class="unlockPill">${saved.stickers.length} treasures</span><span class="unlockPill">${saved.babies.length} babies</span>`;
  $('modePicker').hidden=true;$('levelCards').hidden=false;$('resultStars').hidden=true;$('resultItems').hidden=true;$('resultButtons').hidden=true;
  const choices=V9_PLAYABLE.map(i=>({l:LEVELS[i],i}));
@@ -557,7 +557,7 @@ function showResult(kind){
 }
 function continueCollecting(){G.mode='play';$('overlay').hidden=true;clearInput();G.entryGrace=Math.max(G.entryGrace,.6);last=performance.now();accum=0;syncHUD(true);}
 $('finishLevel').innerHTML=imageHTML('door')+playSVG;
-$('finishLevel').addEventListener('click',()=>{audio.gesture();if(G.mode==='play'&&scene.easy&&G.goalReady&&!P.carry&&isSafe()){enterWin();}});
+$('finishLevel').addEventListener('click',()=>{audio.gesture();if(G.mode==='play'&&scene.easy&&G.goalReady&&carryCount()===0&&isSafe()){enterWin();}});
 function pause(){if(G.mode!=='play')return;G.mode='pause';showResult('pause');audio.suspend();}
 function resume(){if(G.mode!=='pause')return;audio.gesture();G.mode='play';$('overlay').hidden=true;clearInput();last=performance.now();accum=0;}
 $('gameMenu').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();audio.gesture();pause();});
@@ -567,9 +567,9 @@ function startLevel(index,keep=false){
  G.levelIndex=index;scene=cloneScene(LEVELS[index]);G.adventure=scene.police?'police':'collect';navPlayer=new Grid(false);navEnemy=new Grid(true);
  if(scene.secretDoors){scene.secretDoors=scene.secretDoors.map((d,i)=>({...freeNear(d),index:i,revealRadius:d.revealRadius||275}));scene.secretDoor=scene.secretDoors[0];scene.slide.start=freeNear(scene.slide.start);scene.slide.end=freeNear(scene.slide.end);}
  if(scene.police){for(const d of scene.enemies)if(d.boss){d.route=d.route.map(p=>{const q=freeNear({x:p[0],y:p[1]},true);return[q.x,q.y]});d.x=d.route[0][0];d.y=d.route[0][1];}}
- items=scene.items.map(d=>({...d,status:'floor'}));G.inSecretRoom=false;G.roomCooldown=0;G.roomReturn=null;G.slideRide=null;G.slideCooldown=0;G.catches=0;G.alerts=0;G.runTime=0;G.mastery={move:false,blast:false};G.dogHappy=false;G.practiceDistance=0;G.goalPromptShown=false;G.goalReady=false;G.sinceProgress=0;G.helped=false;G.jailed=0;G.blasts=[];G.blastCooldown=0;G.resetFlash=0;G.activeSecretRoom=-1;G.activeSecretDoor=-1;G.rescuedBabies=[];G.followers=[];G.followTrail=[];
+ items=scene.items.map(d=>({...d,status:'floor'}));G.inSecretRoom=false;G.roomCooldown=0;G.roomReturn=null;G.slideRide=null;G.slideCooldown=0;G.catches=0;G.alerts=0;G.runTime=0;G.mastery={move:false,blast:false};G.dogHappy=false;G.practiceDistance=0;G.goalPromptShown=false;G.goalReady=false;G.sinceProgress=0;G.helped=false;G.jailed=0;G.jailRelease=null;G.blasts=[];G.blastCooldown=0;G.resetFlash=0;G.activeSecretRoom=-1;G.activeSecretDoor=-1;G.rescuedBabies=[];G.followers=[];G.followTrail=[];
  G.mode='play';G.reset=null;G.lives=0;G.hitStop=0;G.winTime=0;G.resultShown=false;G.catch=null;G.delivery=null;G.fx.length=0;G.texts.length=0;G.rings.length=0;G.ribbon.length=0;G.hintPath=[];G.hintTimer=0;G.levelBanner=2.7;G.tutorialTime=0;G.entryGrace=1.2;
- Object.assign(P,{...scene.spawn,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,air:false,jumpTime:0,cooldown:0,boost:0,anim:0,idle:0,land:0,launch:0,carry:null,stepNoise:0,apex:false,blocked:0});
+ Object.assign(P,{...scene.spawn,vx:0,vy:0,dirX:0,dirY:0,hasAim:false,facing:-1,sneak:false,z:0,air:false,jumpTime:0,cooldown:0,boost:0,anim:0,idle:0,land:0,launch:0,carry:null,stepNoise:0,apex:false,blocked:0});
  if(!valid(P.x,P.y))Object.assign(P,freeNear(scene.spawn));P.lastSafe={x:P.x,y:P.y};enemies=freshEnemies();
  clearInput();$('overlay').hidden=true;showChrome(true);syncHUD(true);updateCamera(1,true);last=performance.now();accum=0;
 }
@@ -577,10 +577,10 @@ function startLevel(index,keep=false){
 function syncHUD(force=false){
  const count=items.filter(it=>it.status==='delivered').length,caught=enemies.filter(e=>e.state==='JAILED').length;
  G.goalReady=scene.police?caught===enemies.length:count===items.length;$('finishLevel').hidden=true;
- const stamp=scene.id+':'+items.map(it=>it.status).join(',')+':'+enemies.map(e=>e.state).join(',');if(!force&&G.hudStamp===stamp)return;G.hudStamp=stamp;
+ const stamp=scene.id+':'+items.map(it=>it.status+':'+(it.carrier||'')).join(',')+':'+enemies.map(e=>e.state).join(',')+':cap'+carryCapacity()+':j'+(G.jailRelease?'1':'0');if(!force&&G.hudStamp===stamp)return;G.hudStamp=stamp;
  $('lives').innerHTML='';$('lives').setAttribute('aria-label','');
  if(scene.police){$('mission').innerHTML=`<div class="v9Count">${imageHTML('star_happy','Caught')}<b>${caught}/${enemies.length}</b><span>CAUGHT</span></div>`;}
- else{$('mission').innerHTML=`<div class="v9Count">${imageHTML('door','Treasure home')}<b>${count}/${items.length}</b><span>COLLECT ALL</span></div><div class="v9LootStrip">${items.map(it=>`<img class="${it.status==='delivered'?'done':''}" src="${DATA[it.id]}" alt="${it.name}">`).join('')}</div>`;}
+ else{$('mission').innerHTML=`<div class="v9Count">${imageHTML('door','Treasure home')}<b>${count}/${items.length}</b><span>COLLECT ALL</span></div><div class="v9Count"><b>${carryCount()}/${carryCapacity()}</b><span>CARRY</span></div><div class="v9LootStrip">${items.map(it=>`<img class="${it.status==='delivered'?'done':''}" src="${DATA[it.id]}" alt="${it.name}">`).join('')}</div>`;}
 }
 function spawnFX(x,y,count=10,kind='sparkle',color=null){
  const factor=saved.reduced?.35:(enemies.some(e=>e.state==='CHASE')||G.mode==='catch')?.62:1;
@@ -608,26 +608,40 @@ function updatePlayer(dt){
  G.blastCooldown=Math.max(0,G.blastCooldown-dt);G.resetFlash=Math.max(0,G.resetFlash-dt);P.blocked=Math.max(0,P.blocked-dt);
  const m=movement(),speed=T.WALK;const a=Math.hypot(m.x,m.y)>.01?T.ACCEL:T.DECEL;P.vx=approach(P.vx,m.x*speed,a*dt);P.vy=approach(P.vy,m.y*speed,a*dt);
  const old={x:P.x,y:P.y},blocked=slide(P,P.vx*dt,P.vy*dt,T.PLAYER_R,0);const dist=hypot(P,old),moving=dist>dt*8;if(blocked)P.blocked=.1;
- if(moving){P.anim+=dist/28;P.idle=0;P.dirX=m.x;P.dirY=m.y;if(Math.abs(P.vx)>15)P.facing=P.vx<0?-1:1;G.mastery.move=true;}else P.idle+=dt;
+ if(moving){P.anim+=dist/28;P.idle=0;const actual=norm(P.x-old.x,P.y-old.y);if(dist>1.15&&Math.hypot(actual.x,actual.y)>.5){P.dirX=actual.x;P.dirY=actual.y;P.hasAim=true;}if(Math.abs(P.vx)>15)P.facing=P.vx<0?-1:1;G.mastery.move=true;}else P.idle+=dt;
  if(valid(P.x,P.y))P.lastSafe={x:P.x,y:P.y};
 }
 
+function carriedEntries(){
+ const out=[];
+ if(P.carry)out.push({id:P.carry,kind:'parent',index:-1,x:P.x,y:P.y-42});
+ for(let i=0;i<G.followers.length;i++){const f=G.followers[i];if(f.carry)out.push({id:f.carry,kind:'baby',index:i,x:f.x,y:(f.drawY||f.y)-30});}
+ return out;
+}
+function carryCount(){return carriedEntries().length;}
+function carryCapacity(){return scene?.police?0:1+G.followers.length;}
+function firstFreeCarrier(){if(!P.carry)return{kind:'parent',index:-1};for(let i=0;i<G.followers.length;i++)if(!G.followers[i].carry)return{kind:'baby',index:i};return null;}
+function assignCarrier(item,slot){item.status='carried';item.carrier=slot.kind==='parent'?'parent':`baby${slot.index}`;if(slot.kind==='parent')P.carry=item.id;else G.followers[slot.index].carry=item.id;}
+function clearCarrierFor(id){if(P.carry===id)P.carry=null;for(const f of G.followers)if(f.carry===id)f.carry=null;}
+function snapFollowersToPlayer(){G.followTrail=[];const back=P.hasAim?norm(-P.dirX,-P.dirY):{x:-P.facing||1,y:0};for(let i=0;i<G.followers.length;i++){const f=G.followers[i],gap=38+(i*32);f.x=P.x+back.x*gap;f.y=P.y+back.y*gap+18;f.drawY=f.y;}}
 function nearestGoal(){
  const room=currentSecretRoom();
  if(G.inSecretRoom&&room)return{x:room.exit.x,y:room.exit.y,id:'star_happy',kind:'roomExit'};
  if(scene.police){const live=enemies.filter(e=>e.state!=='JAILED'&&e.state!=='WAIT_BOSS');if(!live.length)return null;live.sort((a,b)=>hypot(a,P)-hypot(b,P));return{x:live[0].x,y:live[0].y,id:'star_happy',kind:'enemy'};}
- if(P.carry)return{x:scene.home.x,y:scene.home.y,id:'door'};
+ if(carryCount()>0)return{x:scene.home.x,y:scene.home.y,id:'door'};
  const choices=items.filter(it=>it.status==='floor');if(!choices.length)return{x:scene.home.x,y:scene.home.y,id:'door'};choices.sort((a,b)=>hypot(a,P)-hypot(b,P));return choices[0];
 }
 
 function pickupCheck(){
- if(scene.police||P.carry||G.mode!=='play')return;
+ if(scene.police||G.mode!=='play'||carryCount()>=carryCapacity())return;
  const candidates=items.filter(it=>it.status==='floor'&&hypot(it,P)<T.PICKUP_RADIUS);candidates.sort((a,b)=>hypot(a,P)-hypot(b,P));const it=candidates[0];if(!it)return;
- it.status='carried';P.carry=it.id;G.sinceProgress=0;G.hitStop=.07;G.delivery={kind:'pickup',id:it.id,x:it.x,y:it.y-it.z,t:0,life:.42};spawnFX(it.x,it.y-it.z-24,it.secret?30:18,it.secret?'confetti':'sparkle');textPop(it.x,it.y-it.z-80,it.secret?'Secret treasure!':'Got it!');audio.sfx('pickup');G.hintTimer=0;syncHUD();
+ const slot=firstFreeCarrier();if(!slot)return;assignCarrier(it,slot);G.sinceProgress=0;G.hitStop=.07;G.delivery={kind:'pickup',id:it.id,x:it.x,y:it.y-it.z,t:0,life:.42};spawnFX(it.x,it.y-it.z-24,it.secret?30:18,it.secret?'confetti':'sparkle');textPop(it.x,it.y-it.z-80,slot.kind==='parent'?(it.secret?'Secret treasure!':'Got it!'):'Baby helper!');audio.sfx('pickup');G.hintTimer=0;syncHUD(true);
 }
 function depositCheck(){
- if(scene.police||G.mode!=='play'||!P.carry||hypot(P,scene.home)>scene.home.r)return;
- const it=items.find(it=>it.id===P.carry);if(!it||it.status!=='carried')return;it.status='delivered';P.carry=null;G.sinceProgress=0;G.delivery={kind:'deposit',id:it.id,x:P.x,y:P.y-82,t:0,life:.65};spawnFX(scene.home.x,scene.home.y-45,it.secret?40:24,it.secret?'confetti':'sparkle');audio.sfx('deposit',scene.home.x);G.hintTimer=0;syncHUD();if(!saved.stickers.includes(it.id))saved.stickers.push(it.id);if(it.secret){const tag=scene.id+':'+it.id;if(!saved.secrets.includes(tag)){saved.secrets.push(tag);textPop(scene.home.x,scene.home.y-92,'Secret unlocked!');}}save();if(items.every(it=>it.status==='delivered'))enterWin();
+ if(scene.police||G.mode!=='play'||carryCount()===0||hypot(P,scene.home)>scene.home.r)return;
+ const carrying=carriedEntries();let secretCount=0;
+ for(const carried of carrying){const it=items.find(x=>x.id===carried.id&&x.status==='carried');if(!it)continue;it.status='delivered';it.carrier=null;clearCarrierFor(it.id);if(!saved.stickers.includes(it.id))saved.stickers.push(it.id);if(it.secret){secretCount++;const tag=scene.id+':'+it.id;if(!saved.secrets.includes(tag))saved.secrets.push(tag);}}
+ G.sinceProgress=0;G.delivery=carrying[0]?{kind:'deposit',id:carrying[0].id,x:P.x,y:P.y-82,t:0,life:.65}:null;spawnFX(scene.home.x,scene.home.y-45,28+carrying.length*8,carrying.length>1?'confetti':'sparkle');audio.sfx('deposit',scene.home.x);textPop(scene.home.x,scene.home.y-92,carrying.length>1?`${carrying.length} treasures home!`:'Treasure home!');if(secretCount)spawnFX(scene.home.x,scene.home.y-80,20,'confetti');G.hintTimer=0;save();syncHUD(true);if(items.every(it=>it.status==='delivered'))enterWin();
 }
 function starsEarned(){if(scene.police)return 3;const resets=G.catches;return 1+(resets<=2?1:0)+(resets===0?1:0);}
 function enterWin(){G.mode='win';G.winTime=0;G.resultShown=false;clearInput();P.vx=P.vy=0;G.rings.length=0;G.hintPath=[];G.blasts=[];G.shake=0;$('finishLevel').hidden=true;saved.best[scene.id]=Math.max(saved.best[scene.id]||0,starsEarned());save();spawnFX(P.x,P.y-70,65,'confetti');audio.sfx('win');textPop(P.x,P.y-142,scene.police?'All caught!':'All home!');}
@@ -662,8 +676,8 @@ function updateEnemy(e,dt){
  e.stateTime+=dt;
  if(e.state==='WAIT_BOSS'){const minions=enemies.filter(x=>!x.boss);if(minions.length&&minions.every(x=>x.state==='JAILED')){e.state='PATROL';e.stateTime=0;e.routeIndex=1;e.x=e.route[0][0];e.y=e.route[0][1];e.target={x:e.route[1][0],y:e.route[1][1]};e.path=[];e.wait=.65;spawnFX(e.x,e.y-80,50,'confetti');textPop(e.x,e.y-155,'BIG BOSS!');audio.glide(180,720,.45,.14);syncHUD(true);}return;}
  if(e.state==='JAILED'){
-  if(scene.police)return;
-  e.jailTimer-=dt;if(e.jailTimer<=0){const q=e.route[e.preJailRouteIndex%e.route.length];e.x=q[0];e.y=q[1];e.routeIndex=(e.preJailRouteIndex+1)%e.route.length;e.target={x:e.route[e.routeIndex][0],y:e.route[e.routeIndex][1]};e.path=[];e.pathTimer=0;e.wait=.55;e.state='PATROL';spawnFX(e.x,e.y-55,10);textPop(e.x,e.y-120,'Back!');}
+  // Adventure opponents remain in jail until every regular opponent is jailed.
+  // Police Unicorn captures remain permanent for the level.
   return;
  }
  e.hitLock=Math.max(0,(e.hitLock||0)-dt);e.stunTimer=Math.max(0,(e.stunTimer||0)-dt);if(e.stunTimer>0)return;
@@ -688,7 +702,7 @@ function updateReset(dt){
  const r=G.reset;if(!r)return;const prev=r.time;r.time+=dt;const t=clamp(r.time/r.duration,0,1);const u=ease(clamp((t-.12)/.88,0,1));
  P.x=lerp(r.start.x,scene.spawn.x,u);P.y=lerp(r.start.y,scene.spawn.y,u);P.z=Math.sin(Math.PI*u)*92;
  const step=Math.floor(r.time*30);if(step!==r.lastTrail){r.lastTrail=step;spawnFX(P.x,P.y-P.z-38,3);G.ribbon.push({x:P.x,y:P.y-P.z-28,t:0,life:.52});if(G.ribbon.length>36)G.ribbon.shift();}
- if(t>=1){P.x=scene.spawn.x;P.y=scene.spawn.y;P.z=0;P.vx=P.vy=0;P.lastSafe={x:P.x,y:P.y};G.reset=null;G.mode='play';G.entryGrace=1.35;clearInput();spawnFX(P.x,P.y-42,34);audio.glide(360,920,.28,.10);updateCamera(1,true);}
+ if(t>=1){P.x=scene.spawn.x;P.y=scene.spawn.y;P.z=0;P.vx=P.vy=0;P.lastSafe={x:P.x,y:P.y};G.reset=null;G.mode='play';G.entryGrace=1.35;clearInput();spawnFX(P.x,P.y-42,34);audio.glide(360,920,.28,.10);snapFollowersToPlayer();updateCamera(1,true);}
 }
 function catchPosition(){
  const q=G.catch;if(!q)return {x:P.x,y:P.y,z:P.z};
@@ -706,20 +720,25 @@ function updateCatch(dt){
  }
 }
 function jailSlot(e){const j=scene.jail||{x:scene.w-360,y:135,w:300,h:145},n=Math.max(1,enemies.length),i=Math.max(0,enemies.indexOf(e)),pad=18,cw=(j.w-pad*2)/n;return{x:j.x+pad+cw*(i+.5),y:j.y+j.h-28};}
-function sendToJail(e){if(!e||e.state==='JAILED')return;e.preJailRouteIndex=e.routeIndex;e.state='JAILED';e.jailTimer=scene.police?999999:V9.JAIL_TIME;e.path=[];e.wait=0;const q=jailSlot(e);e.x=q.x;e.y=q.y;G.jailed++;spawnFX(q.x,q.y-65,32);textPop(q.x,q.y-125,scene.police?'LOCKED UP!':'Jail!');audio.glide(360,920,.30,.12);syncHUD(true);if(scene.police&&enemies.every(x=>x.state==='JAILED'))enterWin();}
+function allAdventureOpponentsJailed(){return !scene.police&&enemies.length>0&&enemies.every(e=>e.state==='JAILED');}
+function safestRoutePoint(e,offset=0){let best=null,bestScore=-Infinity;for(let i=0;i<e.route.length;i++){const idx=(i+offset)%e.route.length,p=e.route[idx],q=freeNear({x:p[0],y:p[1]},true),dPlayer=Math.hypot(q.x-P.x,q.y-P.y),dHome=Math.hypot(q.x-scene.home.x,q.y-scene.home.y),score=dPlayer+Math.min(220,dHome)*.25;if(score>bestScore){bestScore=score;best={q,idx};}}return best||{q:freeNear(scene.spawn,true),idx:0};}
+function beginGroupJailRelease(){if(scene.police||G.jailRelease||!allAdventureOpponentsJailed())return;G.jailRelease={time:0,duration:V9.GROUP_RELEASE_DELAY,burst:false};const j=scene.jail;spawnFX(j.x+j.w/2,j.y+j.h/2-25,42,'confetti');textPop(j.x+j.w/2,j.y-18,'Rainbow release!');audio.glide(460,1160,.42,.12);}
+function releaseAdventureJailGroup(){if(scene.police)return;const jailed=enemies.filter(e=>e.state==='JAILED');jailed.forEach((e,i)=>{const pick=safestRoutePoint(e,i+1);e.x=pick.q.x;e.y=pick.q.y;e.routeIndex=(pick.idx+1)%e.route.length;e.target={x:e.route[e.routeIndex][0],y:e.route[e.routeIndex][1]};e.path=[];e.pathTimer=0;e.wait=.65+i*.12;e.state='PATROL';e.jailTimer=0;e.hitLock=.28;e.speedClock=Math.max(.8,e.speedChangeMin||1);spawnFX(e.x,e.y-55,18,'confetti');});G.jailed=0;G.jailRelease=null;G.entryGrace=Math.max(G.entryGrace,1.35);textPop(P.x,P.y-120,'They are back!');audio.glide(900,430,.30,.10);syncHUD(true);}
+function updateJailRelease(dt){if(!G.jailRelease)return;G.jailRelease.time+=dt;if(!G.jailRelease.burst&&G.jailRelease.time>G.jailRelease.duration*.55){G.jailRelease.burst=true;const j=scene.jail;spawnFX(j.x+j.w/2,j.y+j.h/2-15,54,'confetti');}if(G.jailRelease.time>=G.jailRelease.duration)releaseAdventureJailGroup();}
+function sendToJail(e){if(!e||e.state==='JAILED')return;e.preJailRouteIndex=e.routeIndex;e.state='JAILED';e.jailTimer=scene.police?999999:0;e.path=[];e.wait=0;const q=jailSlot(e);e.x=q.x;e.y=q.y;G.jailed++;spawnFX(q.x,q.y-65,32);textPop(q.x,q.y-125,scene.police?'LOCKED UP!':'Jail!');audio.glide(360,920,.30,.12);syncHUD(true);if(scene.police&&enemies.every(x=>x.state==='JAILED'))enterWin();else if(!scene.police)beginGroupJailRelease();}
 function hitEnemy(e){
  if(!e||e.state==='JAILED'||e.state==='WAIT_BOSS'||e.hitLock>0)return false;e.hitLock=.24;
  if(scene.police){e.hits=Math.min(e.hitsNeeded||V9.POLICE_HITS,(e.hits||0)+1);spawnFX(e.x,e.y-80,24);audio.glide(440,1060,.18,.08);if(e.hits>=e.hitsNeeded){sendToJail(e);}else{e.stunTimer=.42;e.wait=Math.max(e.wait,.42);textPop(e.x,e.y-135,`${e.hitsNeeded-e.hits} MORE!`);}return true;}
  sendToJail(e);return true;
 }
-function fireBlast(){if(G.mode!=='play'||G.blastCooldown>0)return;let d=norm(P.dirX,P.dirY);if(Math.hypot(d.x,d.y)<.1)d={x:P.facing||1,y:0};G.blastCooldown=V9.BLAST_COOLDOWN;G.mastery.blast=true;G.blasts.push({x:P.x+d.x*38,y:P.y-38+d.y*20,vx:d.x*V9.BLAST_SPEED,vy:d.y*V9.BLAST_SPEED,age:0,life:V9.BLAST_LIFE,hit:false});spawnFX(P.x+d.x*45,P.y-42+d.y*18,12);audio.glide(290,1180,.28,.13);$('blast').classList.remove('teach');}
+function fireBlast(){if(G.mode!=='play'||G.blastCooldown>0)return;let d=P.hasAim?norm(P.dirX,P.dirY):{x:0,y:0};if(Math.hypot(d.x,d.y)<.1){const live=movement();if(Math.hypot(live.x,live.y)>.22){d=norm(live.x,live.y);P.dirX=d.x;P.dirY=d.y;P.hasAim=true;}else{spawnFX(P.x,P.y-54,5);return;}}G.blastCooldown=V9.BLAST_COOLDOWN;G.mastery.blast=true;G.blasts.push({x:P.x+d.x*38,y:P.y-38+d.y*20,vx:d.x*V9.BLAST_SPEED,vy:d.y*V9.BLAST_SPEED,age:0,life:V9.BLAST_LIFE,hit:false});spawnFX(P.x+d.x*45,P.y-42+d.y*18,12);audio.glide(290,1180,.28,.13);$('blast').classList.remove('teach');}
 function updateBlasts(dt){for(const b of G.blasts){b.age+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;for(const e of enemies){if(e.state==='JAILED'||e.state==='WAIT_BOSS')continue;if(Math.hypot(b.x-e.x,b.y-(e.y-45))<=V9.BLAST_RADIUS+22){if(hitEnemy(e)){b.hit=true;break;}}}}G.blasts=G.blasts.filter(b=>!b.hit&&b.age<b.life);}
 function startRainbowSlide(){if(!scene.slide||G.inSecretRoom||G.slideCooldown>0||G.slideRide)return;const s=scene.slide.start;if(hypot(P,s)>37)return;G.slideRide={time:0,duration:.88,start:{x:P.x,y:P.y},end:{x:scene.slide.end.x,y:scene.slide.end.y},trail:-1};P.vx=P.vy=0;clearInput();spawnFX(P.x,P.y-25,42,'confetti');textPop(P.x,P.y-105,'MAGIC WHEEE!');audio.glide(260,1180,.55,.14);}
-function updateRainbowSlide(dt){const r=G.slideRide;if(!r)return;r.time+=dt;const t=clamp(r.time/r.duration,0,1),u=ease(t);P.x=lerp(r.start.x,r.end.x,u);P.y=lerp(r.start.y,r.end.y,u);P.z=Math.sin(Math.PI*t)*105;const step=Math.floor(r.time*32);if(step!==r.trail){r.trail=step;G.ribbon.push({x:P.x,y:P.y-P.z-18,t:0,life:.60});if(G.ribbon.length>44)G.ribbon.shift();spawnFX(P.x,P.y-P.z-22,2);}if(t>=1){P.x=r.end.x;P.y=r.end.y;P.z=0;P.vx=P.vy=0;G.slideRide=null;G.slideCooldown=1.25;G.entryGrace=Math.max(G.entryGrace,.5);spawnFX(P.x,P.y-25,26,'confetti');audio.glide(580,1100,.22,.1);}}
+function updateRainbowSlide(dt){const r=G.slideRide;if(!r)return;r.time+=dt;const t=clamp(r.time/r.duration,0,1),u=ease(t);P.x=lerp(r.start.x,r.end.x,u);P.y=lerp(r.start.y,r.end.y,u);P.z=Math.sin(Math.PI*t)*105;const step=Math.floor(r.time*32);if(step!==r.trail){r.trail=step;G.ribbon.push({x:P.x,y:P.y-P.z-18,t:0,life:.60});if(G.ribbon.length>44)G.ribbon.shift();spawnFX(P.x,P.y-P.z-22,2);}if(t>=1){P.x=r.end.x;P.y=r.end.y;P.z=0;P.vx=P.vy=0;G.slideRide=null;G.slideCooldown=1.25;G.entryGrace=Math.max(G.entryGrace,.5);spawnFX(P.x,P.y-25,26,'confetti');audio.glide(580,1100,.22,.1);snapFollowersToPlayer();}}
 
 function enterSecretRoom(index=0){const room=scene.secretRooms?.[index]||scene.secretRoom,door=scene.secretDoors?.[index]||scene.secretDoor;if(!room||!door||G.inSecretRoom||G.roomCooldown>0)return;let away=norm(P.dirX,P.dirY);if(Math.hypot(away.x,away.y)<.2)away={x:1,y:0};G.roomReturn=freeNear({x:door.x-away.x*96,y:door.y-away.y*96});G.inSecretRoom=true;G.activeSecretDoor=index;G.activeSecretRoom=index;G.roomCooldown=1.15;P.x=room.spawn.x;P.y=room.spawn.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-35,55,'confetti');textPop(P.x,P.y-125,'Magic secret room!');audio.glide(380,1280,.42,.13);updateCamera(1,true);}
-function leaveSecretRoom(){const room=currentSecretRoom(),door=currentSecretDoor();if(!G.inSecretRoom||!room||G.roomCooldown>0)return;const q=G.roomReturn?freeNear(G.roomReturn):freeNear({x:(door?.x||scene.spawn.x)-95,y:door?.y||scene.spawn.y});G.inSecretRoom=false;G.roomCooldown=1.55;P.x=q.x;P.y=q.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-30,42,'confetti');textPop(P.x,P.y-110,'Back through the magic door!');audio.glide(980,380,.35,.1);G.activeSecretRoom=-1;G.activeSecretDoor=-1;updateCamera(1,true);}
-function rescueBaby(){const room=currentSecretRoom();if(!G.inSecretRoom||!room)return;const tag=babyTag(room.index);if(G.rescuedBabies.includes(tag))return;const b=room.baby;if(hypot(P,b)>62)return;G.rescuedBabies.push(tag);if(!saved.babies.includes(tag)){saved.babies.push(tag);save();}G.followers.push({x:b.x,y:b.y,variant:room.babyVariant||0,phase:Math.random()*TAU});spawnFX(b.x,b.y-40,70,'confetti');textPop(b.x,b.y-120,room.index===0?'Pink baby rescued!':'Blue baby rescued!');audio.sfx('win');}
+function leaveSecretRoom(){const room=currentSecretRoom(),door=currentSecretDoor();if(!G.inSecretRoom||!room||G.roomCooldown>0)return;const q=G.roomReturn?freeNear(G.roomReturn):freeNear({x:(door?.x||scene.spawn.x)-95,y:door?.y||scene.spawn.y});G.inSecretRoom=false;G.roomCooldown=1.55;P.x=q.x;P.y=q.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-30,42,'confetti');textPop(P.x,P.y-110,'Back through the magic door!');audio.glide(980,380,.35,.1);G.activeSecretRoom=-1;G.activeSecretDoor=-1;snapFollowersToPlayer();updateCamera(1,true);}
+function rescueBaby(){const room=currentSecretRoom();if(!G.inSecretRoom||!room)return;const tag=babyTag(room.index);if(G.rescuedBabies.includes(tag))return;const b=room.baby;if(hypot(P,b)>62)return;G.rescuedBabies.push(tag);if(!saved.babies.includes(tag)){saved.babies.push(tag);save();}G.followers.push({x:b.x,y:b.y,variant:room.babyVariant||0,phase:Math.random()*TAU,carry:null});spawnFX(b.x,b.y-40,70,'confetti');textPop(b.x,b.y-120,room.index===0?'Pink baby rescued!':'Blue baby rescued!');audio.sfx('win');}
 function updateFollowers(dt){if(!G.followTrail)G.followTrail=[];G.followTrail.unshift({x:P.x,y:P.y,z:P.z});if(G.followTrail.length>180)G.followTrail.length=180;for(let i=0;i<G.followers.length;i++){const f=G.followers[i],target=G.followTrail[Math.min(G.followTrail.length-1,15+i*18)]||G.followTrail[G.followTrail.length-1]||{x:P.x,y:P.y,z:0};const bob=saved.reduced?0:Math.sin(G.clock*7+f.phase)*4;const k=1-Math.exp(-dt*9);f.x=lerp(f.x,target.x,k);f.y=lerp(f.y,target.y+18,k);f.drawY=f.y+bob;f.moving=Math.hypot(P.vx,P.vy)>16;}}
 function updateWorldFeatures(dt){G.roomCooldown=Math.max(0,G.roomCooldown-dt);G.slideCooldown=Math.max(0,G.slideCooldown-dt);const room=currentSecretRoom();if(!scene.police&&scene.secretRooms?.length){if(G.inSecretRoom&&room){rescueBaby();if(hypot(P,room.exit)<48)leaveSecretRoom();}else if(G.roomCooldown<=0){for(let i=0;i<scene.secretDoors.length;i++){const d=scene.secretDoors[i],progress=clamp(((d.revealRadius||275)-hypot(P,d))/220,0,1);if(progress>.82&&hypot(P,d)<45){enterSecretRoom(i);break;}}}}if(!G.inSecretRoom)startRainbowSlide();updateFollowers(dt);}
 
@@ -732,7 +751,7 @@ function updateEffects(dt){
 }
 function update(dt){
  if(G.mode==='pause'||G.mode==='loading'||document.hidden)return;G.clock+=dt;updateEffects(dt);if(G.mode==='menu')return;if(G.slideRide){updateRainbowSlide(dt);updateCamera(dt);return;}if(G.mode==='reset'){updateReset(dt);updateCamera(dt);return;}if(G.mode==='win'){G.winTime+=dt;if(Math.floor(G.winTime*3)!==Math.floor((G.winTime-dt)*3)&&G.winTime<1.5)spawnFX(P.x,P.y-100,18,'confetti');if(G.winTime>=T.WIN_BEAT&&!G.resultShown)showResult('win');updateCamera(dt);return;}if(G.hitStop>0){G.hitStop=Math.max(0,G.hitStop-dt);return;}
- G.runTime+=dt;G.sinceProgress+=dt;G.tutorialTime+=dt;G.levelBanner=Math.max(0,G.levelBanner-dt);G.entryGrace=Math.max(0,G.entryGrace-dt);updatePlayer(dt);updateWorldFeatures(dt);if(G.slideRide){updateCamera(dt);return;}updateBlasts(dt);pickupCheck();if(G.hitStop>0){updateCamera(dt);return;}depositCheck();if(G.mode!=='play'){updateCamera(dt);return;}for(const e of enemies){updateEnemy(e,dt);if(G.mode!=='play')break;}if(scene.dog&&!G.dogHappy&&hypot(P,scene.dog)<110){G.dogHappy=true;spawnFX(scene.dog.x,scene.dog.y-70,10);audio.sfx('dog',scene.dog.x);}G.hintTimer-=dt;if(G.hintTimer<=0){G.hintTarget=nearestGoal();G.hintPath=G.hintTarget?navPlayer.path(P,G.hintTarget):[];G.hintTimer=.55;}updateTutorial();syncHUD();updateCamera(dt);
+ G.runTime+=dt;G.sinceProgress+=dt;G.tutorialTime+=dt;G.levelBanner=Math.max(0,G.levelBanner-dt);G.entryGrace=Math.max(0,G.entryGrace-dt);updatePlayer(dt);updateWorldFeatures(dt);if(G.slideRide){updateCamera(dt);return;}updateBlasts(dt);pickupCheck();if(G.hitStop>0){updateCamera(dt);return;}depositCheck();if(G.mode!=='play'){updateCamera(dt);return;}for(const e of enemies){updateEnemy(e,dt);if(G.mode!=='play')break;}updateJailRelease(dt);if(scene.dog&&!G.dogHappy&&hypot(P,scene.dog)<110){G.dogHappy=true;spawnFX(scene.dog.x,scene.dog.y-70,10);audio.sfx('dog',scene.dog.x);}G.hintTimer-=dt;if(G.hintTimer<=0){G.hintTarget=nearestGoal();G.hintPath=G.hintTarget?navPlayer.path(P,G.hintTarget):[];G.hintTimer=.55;}updateTutorial();syncHUD();updateCamera(dt);
 }
 function updateTutorial(){$('blast').classList.toggle('teach',G.mode==='play'&&!G.mastery.blast&&G.tutorialTime<9);}
 /* ----------------------- RENDERING ----------------------- */
@@ -793,7 +812,7 @@ function drawWorldFeatures(){if(scene.police)return;const room=currentSecretRoom
 function drawDoor(){
 
  if(scene.police)return;
- const d=scene.home,active=!!P.carry||G.goalReady,pulse=saved.reduced?.5:.5+.5*Math.sin(G.clock*(active?4:2));
+ const d=scene.home,active=carryCount()>0||G.goalReady,pulse=saved.reduced?.5:.5+.5*Math.sin(G.clock*(active?4:2));
  c.save();
  const glow=c.createRadialGradient(d.x,d.y,9,d.x,d.y,active?115:86);glow.addColorStop(0,active?'#ffe9aa70':'#b4a0eb26');glow.addColorStop(1,'#efd9ff00');c.fillStyle=glow;c.beginPath();c.ellipse(d.x,d.y,active?145:108,active?92:65,0,0,TAU);c.fill();
  // Protection is marked by a dotted boundary, not just a color change.
@@ -829,7 +848,7 @@ function drawRings(){
 }
 function drawRoute(){
  if(G.mode!=='play'||G.catch||!G.hintPath.length)return;
- if(!P.carry&&P.idle<3&&!isSafe()&&!(scene.easy&&G.sinceProgress>=8))return;
+ if(carryCount()===0&&P.idle<3&&!isSafe()&&!(scene.easy&&G.sinceProgress>=8))return;
  c.save();let prev={x:P.x,y:P.y},distance=0,points=[];
  for(const next of G.hintPath){const len=hypot(prev,next);const dir=norm(next.x-prev.x,next.y-prev.y);
   for(let d=23;d<len;d+=45){distance+=45;if(distance>290)break;points.push({x:prev.x+dir.x*d,y:prev.y+dir.y*d,a:Math.atan2(dir.y,dir.x)});}
@@ -839,12 +858,12 @@ function drawRoute(){
 }
 function itemSort(it){let s=it.y;for(const o of scene.obstacles)if(it.z>0&&insideRect(it.x,it.y,o.r))s=Math.max(s,o.sort+1);return s;}
 function drawItem(it){
- if(it.status!=='floor')return;const selected=G.hintTarget?.id===it.id&&!P.carry,t=G.clock,bob=saved.reduced?0:Math.sin(t*2.8+it.x)*3,sz=(selected?67:58)*(saved.reduced?1:1+Math.sin(t*2.5)*.025),y=it.y-it.z;c.save();shadow(it.x,it.y,25,.22);const gr=c.createRadialGradient(it.x,y-30,3,it.x,y-30,it.secret?72:55);gr.addColorStop(0,it.secret?'#fff2af88':'#ffe9b45d');gr.addColorStop(1,'#ffe9b400');c.fillStyle=gr;c.beginPath();c.arc(it.x,y-30,it.secret?72:55,0,TAU);c.fill();c.shadowColor='#2d123c';c.shadowBlur=4;lootArt(it.id,it.x,y+bob,it.secret?sz+7:sz);c.shadowBlur=0;for(let j=0;j<(it.secret?6:4);j++){const a=t*.8+j*TAU/(it.secret?6:4);star(it.x+Math.cos(a)*(it.secret?47:39),y-29+Math.sin(a)*(it.secret?31:24),it.secret?4.7:3.5,it.secret?'#ffe88a':'#fff2c1',a);}if(selected){c.strokeStyle='#fff1bce6';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath();c.ellipse(it.x,it.y+2,36,18,0,0,TAU);c.stroke();c.setLineDash([]);}c.restore();
+ if(it.status!=='floor')return;const selected=G.hintTarget?.id===it.id&&carryCount()<carryCapacity(),t=G.clock,bob=saved.reduced?0:Math.sin(t*2.8+it.x)*3,sz=(selected?67:58)*(saved.reduced?1:1+Math.sin(t*2.5)*.025),y=it.y-it.z;c.save();shadow(it.x,it.y,25,.22);const gr=c.createRadialGradient(it.x,y-30,3,it.x,y-30,it.secret?72:55);gr.addColorStop(0,it.secret?'#fff2af88':'#ffe9b45d');gr.addColorStop(1,'#ffe9b400');c.fillStyle=gr;c.beginPath();c.arc(it.x,y-30,it.secret?72:55,0,TAU);c.fill();c.shadowColor='#2d123c';c.shadowBlur=4;lootArt(it.id,it.x,y+bob,it.secret?sz+7:sz);c.shadowBlur=0;for(let j=0;j<(it.secret?6:4);j++){const a=t*.8+j*TAU/(it.secret?6:4);star(it.x+Math.cos(a)*(it.secret?47:39),y-29+Math.sin(a)*(it.secret?31:24),it.secret?4.7:3.5,it.secret?'#ffe88a':'#fff2c1',a);}if(selected){c.strokeStyle='#fff1bce6';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath();c.ellipse(it.x,it.y+2,36,18,0,0,TAU);c.stroke();c.setLineDash([]);}c.restore();
 }
 
 
 function drawFollowerPet(){if(G.followers.length)return;if(!saved.pet||saved.pet==='none')return;const tx=P.x-P.facing*38,ty=P.y+36+(saved.reduced?0:Math.sin(G.clock*5)*2);c.save();shadow(tx,ty,15,.12);c.translate(tx,ty-14);c.scale(.85,.85);c.fillStyle='#ffd882';c.beginPath();for(let j=0;j<10;j++){const a=-Math.PI/2+j*Math.PI/5,rad=j%2?6:12;c.lineTo(Math.cos(a)*rad,Math.sin(a)*rad);}c.closePath();c.fill();c.fillStyle='#3e2b56';c.beginPath();c.arc(-3,-1,1.7,0,TAU);c.arc(3,-1,1.7,0,TAU);c.fill();c.restore();}
-function drawBabyChain(){for(let i=G.followers.length-1;i>=0;i--){const f=G.followers[i],y=f.drawY||f.y;shadow(f.x,y,18,.14);drawBabySprite(f.x,y,f.variant||0,78,!!f.moving,P.facing<0,false);}}
+function drawBabyChain(){for(let i=G.followers.length-1;i>=0;i--){const f=G.followers[i],y=f.drawY||f.y;shadow(f.x,y,18,.14);drawBabySprite(f.x,y,f.variant||0,78,!!f.moving,P.facing<0,false);if(f.carry){const bob=saved.reduced?0:Math.sin(G.clock*5+f.phase)*2;c.save();c.shadowColor='#25142f';c.shadowBlur=4;lootArt(f.carry,f.x+(P.facing<0?22:-22),y-31+bob,29);c.restore();}}}
 function drawCostume(){
 
  const x=P.x,y=P.y;
@@ -896,14 +915,14 @@ function draw(){
  c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#1b152b';c.fillRect(0,0,view.w,view.h);if(!loaded||!scene)return;c.save();if(G.shake>0&&!saved.reduced)c.translate(Math.sin(G.clock*57)*2,Math.cos(G.clock*46)*1.5);c.scale(view.scale,view.scale);c.translate(-view.x,-view.y);drawRoom();drawDoor();drawJail();drawWorldFeatures();drawRoute();let playerSort=P.y;const layers=scene.obstacles.filter(o=>o.prop).map(o=>({y:o.sort,run:()=>prop(o.prop,o.x,o.y,o.width)}));for(const e of enemies)layers.push({y:e.y,run:()=>drawEnemy(e)});if(scene.dog)layers.push({y:scene.dog.y,run:drawDog});for(const it of items)if(it.status==='floor')layers.push({y:itemSort(it),run:()=>drawItem(it)});if(G.followers.length)layers.push({y:Math.max(...G.followers.map(f=>(f.drawY||f.y)))+4,run:drawBabyChain});layers.push({y:playerSort,run:drawPlayer});layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.run();if(G.slideRide)drawPortalPad({x:P.x,y:P.y+15},3,1.15);drawBlasts();drawFX();drawTutorial();c.restore();drawScreenGuide();
 }
 /* --------------------- INITIALIZATION --------------------- */
-function snapshot(){return {version:'14.0.0-generated-art-integration',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
- player:{x:P.x,y:P.y,vx:P.vx,vy:P.vy,carry:P.carry},
+function snapshot(){return {version:'15.0.0-family-carry-group-jail',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
+ player:{x:P.x,y:P.y,vx:P.vx,vy:P.vy,carry:P.carry,aim:{x:P.dirX,y:P.dirY,ready:P.hasAim}},carry:{count:carryCount(),capacity:carryCapacity(),entries:carriedEntries().map(x=>({id:x.id,kind:x.kind,index:x.index}))},
  lives:G.lives,catches:G.catches,alerts:G.alerts,items:items.map(it=>({id:it.id,status:it.status,x:it.x,y:it.y,z:it.z})),
  enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,speedMul:e.speedMul,jailTimer:e.jailTimer,hits:e.hits,hitsNeeded:e.hitsNeeded,target:e.target})),
- catchPhase:G.reset?'SPARKLE_RESET':null,winTime:G.winTime,resultShown:G.resultShown,blasts:G.blasts.length,jailed:enemies.filter(e=>e.state==='JAILED').length,fx:G.fx.length,inSecretRoom:G.inSecretRoom,slideRide:!!G.slideRide,babies:[...saved.babies],
+ catchPhase:G.reset?'SPARKLE_RESET':null,winTime:G.winTime,resultShown:G.resultShown,blasts:G.blasts.length,jailed:enemies.filter(e=>e.state==='JAILED').length,fx:G.fx.length,inSecretRoom:G.inSecretRoom,slideRide:!!G.slideRide,babies:[...saved.babies],followers:G.followers.map((f,i)=>({index:i,x:f.x,y:f.y,carry:f.carry||null})),jailRelease:G.jailRelease?{...G.jailRelease}:null,
  audio:audio.ctx?.state||'not-started',muted:saved.muted,safe:scene?isSafe():true,
  camera:{...view},best:{...saved.best},mastery:{...G.mastery},saveAvailable:(()=>{try{return !!localStorage;}catch(_){return false;}})()};}
-window.SneakyUnicorn=Object.freeze({snapshot,version:'14.0.0-generated-art-integration'});
+window.SneakyUnicorn=Object.freeze({snapshot,version:'15.0.0-family-carry-group-jail'});
 let last=performance.now(),accum=0,frameCount=0,fpsTime=0;
 function loop(now){
  const elapsed=Math.min(T.MAX_FRAME,Math.max(0,(now-last)/1000));last=now;
@@ -925,7 +944,7 @@ async function init(){
   path:(x,y,enemy=false)=> (enemy?navEnemy:navPlayer).path(P,{x,y}),
   valid:(x,y,r=T.PLAYER_R,z=0,enemy=false)=>valid(x,y,r,z,enemy),
   see:i=>sees(enemies[i]),occluded:(a,b,z=0)=>occluded(a,b,z),
-  catch:i=>beginCatch(enemies[i]),blast:()=>fireBlast(),jail:i=>sendToJail(enemies[i]),hit:i=>hitEnemy(enemies[i]),
+  catch:i=>beginCatch(enemies[i]),blast:()=>fireBlast(),jail:i=>sendToJail(enemies[i]),hit:i=>hitEnemy(enemies[i]),releaseJail:()=>releaseAdventureJailGroup(),carry:()=>({count:carryCount(),capacity:carryCapacity(),entries:carriedEntries()}),
   collect:pickupCheck,deposit:depositCheck,pause,resume,constants:()=>({...T}),
   level:()=>JSON.parse(JSON.stringify(scene,(key,val)=>key==='layer'?undefined:val)),
   levels:()=>LEVELS,continueCollecting,finish:()=>{if(G.goalReady){enterWin();draw();}},stars:starsEarned,showMenu,
@@ -947,7 +966,7 @@ init().catch(()=>{$('status').innerHTML='<div><h1>The art needs another try.</h1
  const note=document.createElement('p');note.style.cssText='font-size:12px;color:#cfb6df;margin:12px 0 0';
  note.textContent='Preparing offline copy…';document.querySelector('.panel').appendChild(note);
  function ask(worker){if(!worker)return;const channel=new MessageChannel();channel.port1.onmessage=e=>{
-  const d=e.data||{};note.textContent=d.version==='14.0.0'&&d.cached?'v14 offline copy ready':'Updating offline copy…';channel.port1.close();
+  const d=e.data||{};note.textContent=d.version==='15.0.0'&&d.cached?'v15 offline copy ready':'Updating offline copy…';channel.port1.close();
  };worker.postMessage({type:'APP_STATUS'},[channel.port2]);}
  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
   ask(reg.active);const watch=w=>{if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='activated')ask(reg.active||w);});};

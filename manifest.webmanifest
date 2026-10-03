@@ -1,7 +1,7 @@
 {
-  "name": "Sneaky Unicorn v14 \u2014 Magic Doors & Halloween Squishies",
+  "name": "Sneaky Unicorn v15 — Family Treasure Team",
   "short_name": "Sneaky Unicorn",
-  "description": "Collect every treasure, reveal two magical doors per level, rescue two animated baby unicorns, ride sparkling portals, and catch Halloween dumpling bad guys plus King Dumpling.",
+  "description": "Baby unicorns expand carry capacity, Rainbow Blast remembers the last movement direction, and regular opponents stay jailed until the whole patrol is captured and released together.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

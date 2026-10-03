@@ -32,3 +32,6 @@ V13 highlights: magical appearing secret doors, two baby rescues per treasure le
 
 
 V14: generated magical door art, two secret-room baby rescues per treasure level, animated duckling-style baby followers, upgraded portal effects, and a fully Halloween-themed Police Unicorn map with squishy dumpling enemies and King Dumpling boss.
+
+
+V15: family carrying (1 + one slot per rescued baby), group jail release for regular opponents, and last-movement Rainbow Blast aiming.
