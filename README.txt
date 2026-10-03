@@ -29,3 +29,6 @@ No vision cones. No Jump. No Sneak. No external libraries or gameplay network re
 
 
 V13 highlights: magical appearing secret doors, two baby rescues per treasure level, baby-follow parade, and Halloween dumpling police patrol.
+
+
+V14: generated magical door art, two secret-room baby rescues per treasure level, animated duckling-style baby followers, upgraded portal effects, and a fully Halloween-themed Police Unicorn map with squishy dumpling enemies and King Dumpling boss.

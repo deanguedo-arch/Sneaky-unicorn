@@ -1,7 +1,7 @@
 {
-  "name": "Sneaky Unicorn v10 \u2014 Rainbow Patrol",
+  "name": "Sneaky Unicorn v14 \u2014 Magic Doors & Halloween Squishies",
   "short_name": "Sneaky Unicorn",
-  "description": "Collect every treasure, discover hidden sparkle rooms, rescue baby unicorns, ride rainbow slides, and defeat the Police Unicorn boss.",
+  "description": "Collect every treasure, reveal two magical doors per level, rescue two animated baby unicorns, ride sparkling portals, and catch Halloween dumpling bad guys plus King Dumpling.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
