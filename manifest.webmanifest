@@ -1,7 +1,7 @@
 {
-  "name": "Sneaky Unicorn v8 — Camera & UI Fix",
+  "name": "Sneaky Unicorn v9 — Rainbow Patrol",
   "short_name": "Sneaky Unicorn",
-  "description": "Four cozy collect-and-return adventures with child-friendly clamped camera and translucent action controls.",
+  "description": "Collect-everything adventures and Police Unicorn rainbow-blast patrols for young kids.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,17 +9,7 @@
   "background_color": "#21182f",
   "theme_color": "#231936",
   "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}
   ]
 }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17132e">
 <meta name="color-scheme" content="dark">
-<title>Sneaky Unicorn v8 — Camera & UI Fix</title>
+<title>Sneaky Unicorn v9 — Rainbow Patrol</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath fill=%27%23f7ce84%27 d=%27M32 3l9 18 20 3-15 15 4 21-18-10-18 10 4-21L3 24l20-3z%27/%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -81,7 +81,7 @@ button:active{transform:translateY(3px) scale(.97)}
 .gentle *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* v7: menus carry settings; only JUMP and SNEAK are permanent play controls. */
+/* v9: drag-anywhere movement plus one giant RAINBOW BLAST action. */
 #modePicker{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 18px}
 .modeChoice{min-height:76px;border:2px solid #a787bc;border-radius:20px;background:#352442;color:#f3dded;padding:10px;display:flex;align-items:center;justify-content:center;gap:9px;font-weight:800;font-size:16px}
 .modeChoice img{width:32px;height:36px;object-fit:contain}.modeChoice[aria-pressed="true"]{background:#63427b;border:3px solid #ffe2a4;box-shadow:inset 0 0 0 3px #302037}
@@ -101,7 +101,7 @@ button:active{transform:translateY(3px) scale(.97)}
 @media(max-height:480px) and (orientation:landscape){#modePicker{margin:8px 0 10px}#levelCards{grid-template-columns:repeat(4,1fr);gap:9px}.levelCard{min-height:136px}.levelCard .map{height:84px}.cardFoot span{font-size:14px}.cardFoot{padding:7px 5px}.bestStars img{width:17px;height:17px}#menuTools{position:relative;top:auto;right:auto;margin:11px 0 0}.menuTool span{display:inline}.life{width:25px;height:33px}.bigButton{min-height:82px}#finishLevel{top:calc(66px + env(safe-area-inset-top))}#brand{font-size:35px}.panel{max-width:850px}#winHero{width:76px;height:68px}}
 
 
-/* v8: large kid-friendly action buttons remain full-size hit targets but no longer hide the world. */
+/* v9: translucent giant blast control; no jump/sneak controls. */
 .action{
   opacity:.58;
   border-color:#f9e3ffb8;
@@ -113,6 +113,28 @@ button:active{transform:translateY(3px) scale(.97)}
 .action[aria-pressed="true"]{opacity:.72}
 .action[aria-pressed="true"].down{opacity:.98}
 .action.teach{opacity:.80}
+
+
+/* v9 — one giant, translucent rainbow blast control. */
+#lives{display:none!important}
+#mission{flex:1;justify-content:center;min-width:0}
+#actions{gap:0}
+.action{width:196px;height:196px;opacity:.64;border-width:5px;background:conic-gradient(from 215deg,#ff72b8,#ffd36f,#88df9c,#72c8f5,#a98af7,#ff72b8);box-shadow:0 7px 0 #160d29aa,0 0 0 4px #fff4dd78,inset 0 0 36px #fff7df4d}
+.action::before{content:'';position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle at 34% 25%,#fffbe8c9 0 5%,#45276450 72%);pointer-events:none}
+.action img,.action span{position:relative;z-index:2}
+.action img{width:124px;height:102px;margin-top:-8px}
+.action span{font-size:19px;line-height:.92;margin-top:-6px;text-align:center}
+.action.down{opacity:.98;transform:translateY(4px) scale(.95)}
+.action.teach{opacity:.84}
+.v9Count{display:flex;align-items:center;gap:8px;min-width:0;padding:4px 10px;border-radius:18px;background:#24192fb5;border:1px solid #8c6f9b}
+.v9Count img{width:33px;height:33px;object-fit:contain;flex:none}
+.v9Count b{font-size:20px;color:#fff3c8;white-space:nowrap}
+.v9Count span{font-size:11px;color:#d8bedf;font-weight:900;letter-spacing:.7px;white-space:nowrap}
+.v9LootStrip{display:flex;gap:2px;align-items:center;min-width:0;overflow:hidden}
+.v9LootStrip img{width:27px;height:29px;object-fit:contain;opacity:.45}
+.v9LootStrip img.done{opacity:1;filter:drop-shadow(0 1px 2px #fff4bd88)}
+@media(max-width:520px){.action{width:168px;height:168px}.action img{width:108px;height:88px}.action span{font-size:17px}.v9Count{padding:3px 7px;gap:5px}.v9Count img{width:29px;height:29px}.v9Count b{font-size:18px}.v9Count span{display:none}}
+@media(max-height:470px){.action{width:150px;height:150px}.action img{width:96px;height:78px}.action span{font-size:15px}}
 
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -126,12 +148,12 @@ button:active{transform:translateY(3px) scale(.97)}
  <header id="hud" hidden><div id="lives" aria-label="Three giggles"></div><div id="mission" aria-label="Wishlist"></div></header>
  <main id="world"><canvas id="game" aria-label="Sneaky Unicorn top-down game"></canvas></main>
  <button id="finishLevel" hidden aria-label="Finish this adventure and take your treasures home"></button>
- <footer id="dock" hidden aria-label="Action buttons"><div id="actions"><button id="sneak" class="action" aria-label="Toggle tippy-toe sneak" aria-pressed="false"><img alt="" aria-hidden="true" data-img="sneak_icon"><span>SNEAK</span></button><button id="jump" class="action" aria-label="Super jump"><img alt="" aria-hidden="true" data-img="jump_icon"><span>JUMP</span></button></div></footer>
+ <footer id="dock" hidden aria-label="Rainbow blast control"><div id="actions"><button id="blast" class="action blast" aria-label="Rainbow blast"><img alt="" aria-hidden="true" data-img="u_happy0"><span>RAINBOW<br>BLAST</span></button></div></footer>
 </div>
 <section id="overlay" class="menu" hidden aria-label="Game menu"><div class="panel">
- <div class="kicker" id="kicker">TWO LITTLE MIDNIGHT ADVENTURES</div>
+ <div class="kicker" id="kicker">RAINBOW ADVENTURES</div>
  <img id="winHero" alt="Happy unicorn" data-img="u_happy0" hidden>
- <h1 id="brand">Sneaky<br>Unicorn</h1><p id="subline">Touch anywhere. Drag the way you want her to go. Bring the stolen things home.</p>
+ <h1 id="brand">Sneaky<br>Unicorn</h1><p id="subline">Drag anywhere to move. Tap RAINBOW BLAST to zap opponents. Collect everything!</p>
  <div id="modePicker" aria-label="Adventure difficulty"></div><div id="levelCards"></div><div id="resultStars" hidden></div><div id="resultItems" hidden></div><div id="resultButtons" hidden></div>
  <div id="menuTools"><button id="sound" class="menuTool" aria-label="Toggle sound"></button><button id="motion" class="menuTool" aria-label="Toggle reduced motion"></button></div>
 </div></section>
@@ -143,7 +165,13 @@ const ATLAS={"u_idle0":{"x":2,"y":2,"w":192,"h":192},"u_idle1":{"x":198,"y":2,"w
 /* These coordinates annotate the supplied 1672 x 941 paintings.
    Feet move on the ground plane. Furniture has a separate footprint and a
    painted foreground polygon, so both occlusion and collision are real. */
-const LEVELS = [{"id":"easy_house","place":"house","title":"Big Cozy House","subtitle":"A whole house of little treasures","map":"easy_house","w":2073,"h":1167,"home":{"x":1035,"y":817,"r":64,"safe":182},"spawn":{"x":1116,"y":790},"floors":[[74,270,1897,755],[1407,249,546,249],[732,944,589,136]],"soft":[[673,440,608,340],[32,673,382,321],[46,193,312,205]],"obstacles":[{"id":"bed","r":[62,155,122,248],"height":140,"sort":404},{"id":"bedside","r":[52,388,174,99],"height":110,"sort":488},{"id":"bed-shelf","r":[243,77,112,165],"height":110,"sort":243},{"id":"hall-dresser","r":[657,198,118,86],"height":110,"sort":285},{"id":"stairs","r":[849,62,107,210],"height":200,"sort":273},{"id":"top-shelf","r":[1049,156,200,112],"height":145,"sort":269},{"id":"sofa","r":[773,422,410,126],"height":120,"sort":549},{"id":"left-lamp","r":[682,415,95,79],"height":110,"sort":495},{"id":"right-lamp","r":[1193,415,87,79],"height":110,"sort":495},{"id":"left-armchair","r":[684,587,150,119],"height":90,"sort":707},{"id":"right-armchair","r":[1102,599,161,126],"height":90,"sort":726},{"id":"coffee","r":[882,577,200,98],"height":43,"sort":676},{"id":"tv","r":[1291,518,64,216],"height":145,"sort":735},{"id":"kitchen-island","r":[1476,322,239,138],"height":96,"sort":461},{"id":"kitchen-side","r":[1941,284,64,120],"height":125,"sort":405},{"id":"left-divider","r":[12,505,361,68],"height":200,"sort":574},{"id":"play-wall","r":[343,532,63,176],"height":200,"sort":709},{"id":"play-shelves","r":[56,688,113,99],"height":110,"sort":788},{"id":"play-table","r":[87,854,208,107],"height":40,"sort":962},{"id":"right-bath","r":[1835,596,226,124],"height":190,"sort":721},{"id":"bath-partition","r":[1813,681,51,188],"height":190,"sort":870}],"items":[{"id":"cupcake","name":"Cupcake","x":1205,"y":811,"z":0},{"id":"cookie","name":"Cookie","x":1011,"y":750,"z":0},{"id":"picture","name":"Unicorn picture","x":977,"y":620,"z":52},{"id":"lamp","name":"Lamp","x":1706,"y":588,"z":0},{"id":"book","name":"Book","x":567,"y":388,"z":0},{"id":"pillow","name":"Pillow","x":477,"y":715,"z":0},{"id":"flowers","name":"Flowers","x":1478,"y":522,"z":0},{"id":"teddy","name":"Teddy","x":480,"y":899,"z":0},{"id":"toyunicorn","name":"Toy unicorn","x":1596,"y":870,"z":0},{"id":"candy","name":"Candy","x":1458,"y":737,"z":0}],"enemies":[{"id":"homeowner","sheet":"h","x":1562,"y":701,"angle":3.141592653589793,"patrol":64,"chase":188,"range":266,"sightTime":1.05,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[1562,701],[1405,372],[1275,334],[980,331],[467,372],[498,794],[1463,799]]}],"dog":{"x":1414,"y":863},"tutorialJump":{"x":977,"y":704},"easy":true,"required":3,"maxLives":5},{"id":"easy_market","place":"market","title":"Big Friendly Market","subtitle":"Pick any three. Or a whole picnic.","map":"easy_market","w":2073,"h":1167,"home":{"x":1707,"y":363,"r":66,"safe":176},"spawn":{"x":1776,"y":454},"floors":[[74,305,1912,697]],"soft":[],"obstacles":[{"id":"produce-upper","r":[76,342,418,175],"height":110,"sort":518},{"id":"produce-lower","r":[72,584,405,170],"height":110,"sort":755},{"id":"bakery-island","r":[804,472,384,241],"height":100,"sort":714},{"id":"right-aisle","r":[1426,455,177,260],"height":145,"sort":716},{"id":"flowers-edge","r":[1850,554,161,243],"height":110,"sort":798},{"id":"checkout","r":[1360,874,616,177],"height":130,"sort":1052},{"id":"left-snacks","r":[48,936,500,120],"height":115,"sort":1057},{"id":"carts","r":[1901,305,110,113],"height":105,"sort":419},{"id":"bonus-crate","r":[1224,591,94,67],"height":34,"sort":659}],"items":[{"id":"apple","name":"Apple","x":1643,"y":458,"z":0},{"id":"banana","name":"Banana","x":572,"y":485,"z":0},{"id":"donut","name":"Doughnut","x":1270,"y":625,"z":49},{"id":"cereal","name":"Cereal","x":1288,"y":391,"z":0},{"id":"chips","name":"Chips","x":1265,"y":833,"z":0},{"id":"milk","name":"Milk","x":745,"y":372,"z":0},{"id":"bread","name":"Bread","x":842,"y":797,"z":0},{"id":"cupcake","name":"Cupcake","x":1357,"y":337,"z":0},{"id":"icecream","name":"Icecream","x":625,"y":906,"z":0},{"id":"candy","name":"Candy","x":611,"y":743,"z":0},{"id":"carrots","name":"Carrots","x":542,"y":631,"z":0},{"id":"grapes","name":"Grapes","x":1039,"y":831,"z":0}],"enemies":[{"id":"worker","sheet":"w","x":639,"y":694,"angle":3.141592653589793,"patrol":66,"chase":193,"range":270,"sightTime":1.0,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[639,694],[1252,807],[1354,538],[703,372],[568,528]]}],"dog":null,"tutorialJump":{"x":1271,"y":719},"extraProps":[{"id":"box","x":1271,"y":665,"width":124}],"easy":true,"required":3,"maxLives":5},{"id":"easy_restaurant","place":"restaurant","title":"Moonlight Restaurant","subtitle":"A delicious little after-hours adventure","map":"easy_restaurant","w":2052,"h":1254,"home":{"x":262,"y":1121,"r":65,"safe":187},"spawn":{"x":308,"y":1007},"floors":[[68,279,1915,910]],"soft":[],"obstacles":[{"id":"kitchen-counter","r":[522,212,993,132],"height":135,"sort":345},{"id":"booth-one","r":[101,430,293,152],"height":105,"sort":583},{"id":"booth-two","r":[101,780,293,156],"height":105,"sort":937},{"id":"dessert-counter","r":[1677,404,249,144],"height":115,"sort":549},{"id":"dining-a","r":[660,494,230,141],"height":43,"sort":636},{"id":"dining-b","r":[1211,763,230,141],"height":43,"sort":905}],"items":[{"id":"cupcake","name":"Cupcake","x":409,"y":1065,"z":0},{"id":"cookie","name":"Cookie","x":531,"y":712,"z":0},{"id":"cake","name":"Cake slice","x":777,"y":571,"z":52},{"id":"pizza","name":"Pizza","x":1016,"y":415,"z":0},{"id":"milkshake","name":"Milkshake","x":1526,"y":463,"z":0},{"id":"teapot","name":"Teapot","x":1555,"y":918,"z":0},{"id":"flowers","name":"Flowers","x":534,"y":404,"z":0},{"id":"bread","name":"Bread","x":1303,"y":1053,"z":0},{"id":"burger","name":"Burger","x":1084,"y":648,"z":0},{"id":"cherries","name":"Cherries","x":1750,"y":992,"z":0}],"enemies":[{"id":"server","sheet":"w","x":1186,"y":634,"angle":3.141592653589793,"patrol":67,"chase":197,"range":280,"sightTime":1.02,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[1186,634],[1562,610],[1562,961],[1021,1011],[534,726],[465,389],[1342,390]]}],"dog":null,"tutorialJump":{"x":779,"y":691},"easy":true,"required":3,"maxLives":5},{"id":"easy_toys","place":"toys","title":"Twinkle Toy Store","subtitle":"A little bag of big imagination","map":"easy_toys","w":2052,"h":1254,"home":{"x":255,"y":1129,"r":65,"safe":190},"spawn":{"x":301,"y":1003},"floors":[[68,270,1915,919]],"soft":[[584,591,826,475]],"obstacles":[{"id":"plush-display","r":[116,450,266,160],"height":103,"sort":611},{"id":"toy-island","r":[683,427,275,92],"height":100,"sort":520},{"id":"book-display","r":[1701,390,243,174],"height":130,"sort":565},{"id":"checkout","r":[1459,1080,463,109],"height":120,"sort":1190},{"id":"puzzle-box","r":[1035,840,100,74],"height":35,"sort":915},{"id":"toy-smallbox","r":[416,741,80,65],"height":34,"sort":807}],"items":[{"id":"teddy","name":"Teddy","x":393,"y":1060,"z":0},{"id":"ball","name":"Ball","x":613,"y":636,"z":0},{"id":"book","name":"Book","x":1586,"y":613,"z":0},{"id":"toyunicorn","name":"Toy unicorn","x":1199,"y":564,"z":0},{"id":"robot","name":"Robot","x":724,"y":1075,"z":0},{"id":"picture","name":"Unicorn picture","x":982,"y":352,"z":0},{"id":"puzzle","name":"Puzzle box","x":1083,"y":886,"z":51},{"id":"pillow","name":"Pillow","x":477,"y":697,"z":0},{"id":"candy","name":"Candy","x":1495,"y":847,"z":0},{"id":"flowers","name":"Flowers","x":1330,"y":1076,"z":0}],"enemies":[{"id":"shopkeeper","sheet":"m","x":1303,"y":678,"angle":3.141592653589793,"patrol":66,"chase":198,"range":277,"sightTime":1.0,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[1303,678],[1431,343],[520,337],[505,853],[1303,1003]]}],"dog":null,"tutorialJump":{"x":1084,"y":976},"easy":true,"required":3,"maxLives":5},{"id":"sneak_house","title":"Cozy Cookie Run","subtitle":"A little moonlight mischief","map":"house","w":1672,"h":941,"home":{"x":1400,"y":269,"r":60,"safe":190},"spawn":{"x":1398,"y":355},"floors":[[192,235,1376,333],[232,519,422,78],[411,535,200,344],[931,542,626,110],[1001,615,557,228]],"soft":[[363,341,400,181],[1018,406,347,204],[1370,251,109,299],[455,686,125,189],[1160,802,189,40]],"obstacles":[{"id":"sofa","r":[412,291,296,67],"height":120,"sort":359,"poly":[[426,216],[465,201],[647,204],[684,217],[701,274],[719,299],[714,347],[697,361],[425,361],[401,347],[402,301],[412,266]]},{"id":"coffee-table","r":[463,399,213,61],"height":40,"sort":461,"poly":[[464,364],[669,364],[679,438],[669,466],[653,466],[654,453],[482,453],[480,469],[465,469],[456,441]]},{"id":"chair","r":[799,349,151,84],"height":100,"sort":434,"poly":[[850,263],[884,260],[941,288],[960,361],[943,412],[916,431],[824,439],[794,410],[782,352],[786,322],[819,300]]},{"id":"side-table","r":[728,297,72,46],"height":65,"sort":344,"poly":[[746,214],[776,214],[793,268],[815,284],[806,329],[789,348],[733,345],[720,299],[724,275]]},{"id":"dining","r":[1082,430,224,142],"height":44,"sort":573,"poly":[[1111,366],[1165,366],[1174,400],[1206,400],[1210,366],[1268,369],[1275,408],[1310,422],[1306,549],[1280,565],[1254,578],[1225,577],[1213,553],[1165,553],[1155,578],[1121,578],[1113,563],[1092,551],[1082,461],[1082,421],[1113,411]]},{"id":"counter","r":[1051,704,408,80],"height":105,"sort":785,"poly":[[1050,658],[1251,658],[1252,634],[1280,639],[1282,658],[1450,658],[1459,709],[1457,785],[1051,784]]},{"id":"fridge","r":[1453,680,95,145],"height":150,"sort":826,"poly":[[1450,613],[1545,605],[1552,826],[1448,826]]},{"id":"library","r":[1000,224,161,25],"height":160,"sort":250,"poly":[[1002,62],[1151,62],[1162,239],[1002,243]]},{"id":"foyer-toys","r":[491,614,68,34],"height":32,"sort":649,"prop":"toybox","x":525,"y":649,"width":102}],"items":[{"id":"cupcake","name":"Cupcake","x":1304,"y":335,"z":0},{"id":"cookie","name":"Cookie","x":567,"y":429,"z":52},{"id":"candy","name":"Rainbow candy","x":504,"y":800,"z":0},{"id":"picture","name":"Unicorn picture","x":1097,"y":472,"z":55},{"id":"lamp","name":"Little lamp","x":1490,"y":470,"z":0}],"enemies":[{"id":"homeowner","sheet":"h","x":978,"y":495,"angle":3.141592653589793,"patrol":88,"chase":225,"range":322,"sightTime":0.64,"edgeTime":0.27,"curious":135,"searchTime":1.85,"hearing":1,"route":[[978,495],[762,530],[739,372],[755,262],[979,302]]}],"dog":{"x":1250,"y":283},"tutorialJump":{"x":1355,"y":397},"place":"house","easy":false,"required":5,"maxLives":3},{"id":"sneak_market","title":"Moonlight Market","subtitle":"A tiny after-hours shopping trip","map":"store","w":1672,"h":941,"home":{"x":1508,"y":361,"r":60,"safe":158},"spawn":{"x":1438,"y":402},"floors":[[180,226,1443,613],[332,787,723,76]],"soft":[[1454,312,158,67],[1375,789,101,48]],"obstacles":[{"id":"cart","r":[230,260,123,68],"height":96,"sort":329,"poly":[[226,216],[244,214],[273,202],[324,202],[327,217],[355,214],[359,319],[343,335],[229,332],[216,301],[221,244]]},{"id":"aisle-a","r":[378,318,114,297],"height":150,"sort":616,"poly":[[411,250],[481,248],[506,400],[499,611],[358,618],[356,549],[380,457],[393,316]]},{"id":"aisle-b","r":[634,312,99,302],"height":150,"sort":615,"poly":[[640,246],[704,246],[739,285],[741,611],[619,619],[618,553],[631,367]]},{"id":"produce","r":[882,333,211,226],"height":88,"sort":560,"poly":[[879,268],[943,269],[946,259],[1041,261],[1060,305],[1087,320],[1084,499],[1100,521],[1088,563],[922,564],[920,543],[883,534],[879,462],[849,459],[850,311]]},{"id":"aisle-c","r":[1205,313,111,273],"height":150,"sort":587,"poly":[[1201,252],[1267,252],[1294,290],[1322,566],[1315,587],[1196,586],[1191,514],[1190,371]]},{"id":"donut-box","r":[744,557,49,55],"height":37,"sort":613,"poly":[[740,536],[770,531],[788,548],[792,610],[741,613]]},{"id":"right-box","r":[1320,503,64,58],"height":38,"sort":562,"poly":[[1318,459],[1359,456],[1383,510],[1384,568],[1320,563]]},{"id":"flowers","r":[634,718,225,68],"height":73,"sort":787,"poly":[[645,652],[733,650],[767,630],[834,658],[863,711],[863,782],[633,789],[631,706]]},{"id":"checkout","r":[1100,697,359,94],"height":94,"sort":792,"poly":[[1143,615],[1208,615],[1209,650],[1350,650],[1356,615],[1417,615],[1416,650],[1460,651],[1460,791],[1101,791],[1093,674],[1101,647],[1142,647]]},{"id":"endcap","r":[1033,720,61,65],"height":76,"sort":786,"poly":[[1034,658],[1091,659],[1097,779],[1033,786]]},{"id":"checkout-side","r":[1481,736,78,98],"height":77,"sort":835,"poly":[[1483,706],[1544,706],[1561,761],[1554,835],[1480,835]]},{"id":"left-produce","r":[28,661,297,96],"height":85,"sort":758,"poly":[[28,564],[126,566],[164,578],[275,587],[325,661],[322,758],[27,757]]},{"id":"trolleys","r":[1571,439,82,160],"height":115,"sort":600,"poly":[[1551,435],[1575,394],[1642,393],[1653,594],[1564,608],[1546,522]]},{"id":"baskets","r":[1586,714,64,69],"height":80,"sort":784,"poly":[[1584,660],[1640,660],[1653,725],[1648,789],[1586,785]]}],"items":[{"id":"apple","name":"Apple","x":1130,"y":566,"z":0},{"id":"donut","name":"Doughnut","x":767,"y":582,"z":48},{"id":"cereal","name":"Cereal","x":556,"y":448,"z":0},{"id":"milk","name":"Milk","x":562,"y":257,"z":0},{"id":"banana","name":"Banana","x":1125,"y":610,"z":0},{"id":"chips","name":"Chips","x":908,"y":684,"z":0}],"enemies":[{"id":"worker","sheet":"w","x":553,"y":649,"angle":-1.5707963267948966,"patrol":98,"chase":248,"range":338,"sightTime":0.5,"edgeTime":0.2,"curious":150,"searchTime":2.15,"hearing":1.08,"route":[[553,651],[550,281],[802,247],[802,655]]},{"id":"manager","sheet":"m","x":1136,"y":643,"angle":-1.5707963267948966,"patrol":90,"chase":270,"range":368,"sightTime":0.44,"edgeTime":0.18,"curious":162,"searchTime":2.35,"hearing":1.16,"route":[[1136,642],[1145,270],[1404,583],[1434,651]]}],"dog":null,"tutorialJump":{"x":764,"y":650},"place":"market","easy":false,"required":6,"maxLives":3},{"id":"sneak_restaurant","place":"restaurant","title":"Restaurant Rounds","subtitle":"A delicious little after-hours adventure","map":"easy_restaurant","w":1800,"h":1100,"home":{"x":230,"y":983,"r":65,"safe":187},"spawn":{"x":270,"y":883},"floors":[[60,245,1680,798]],"soft":[],"obstacles":[{"id":"kitchen-counter","r":[458,186,871,116],"height":135,"sort":303},{"id":"booth-one","r":[89,377,257,133],"height":105,"sort":511},{"id":"booth-two","r":[89,684,257,137],"height":105,"sort":822},{"id":"dessert-counter","r":[1471,354,218,126],"height":115,"sort":481},{"id":"dining-a","r":[579,433,202,124],"height":43,"sort":558},{"id":"dining-b","r":[1062,669,202,124],"height":43,"sort":794},{"id":"extra-table-a","r":[840,591,142,89],"height":44,"sort":681},{"id":"extra-table-b","r":[1130,414,142,89],"height":44,"sort":504}],"items":[{"id":"cake","name":"Cake slice","x":682,"y":501,"z":52},{"id":"pizza","name":"Pizza","x":891,"y":364,"z":0},{"id":"milkshake","name":"Milkshake","x":1339,"y":406,"z":0},{"id":"teapot","name":"Teapot","x":1364,"y":805,"z":0},{"id":"bread","name":"Bread","x":1143,"y":924,"z":0}],"enemies":[{"id":"server","sheet":"w","x":1040,"y":556,"angle":3.141592653589793,"patrol":89,"chase":239,"range":322,"sightTime":0.6,"edgeTime":0.25,"curious":146,"searchTime":2.1,"hearing":1,"loseTime":3.35,"route":[[1040,556],[1370,535],[1370,843],[896,887],[468,637],[408,341],[1177,342]]},{"id":"manager","sheet":"m","x":1300,"y":870,"angle":3.141592653589793,"patrol":90,"chase":255,"range":328,"sightTime":0.52,"edgeTime":0.22,"curious":152,"searchTime":2.2,"hearing":1,"loseTime":3.35,"route":[[1300,870],[1550,700],[1370,530],[972,520],[994,916]]}],"dog":null,"tutorialJump":{"x":683,"y":606},"easy":false,"required":5,"maxLives":3,"extraProps":[{"id":"table","x":911,"y":680,"width":173},{"id":"table","x":1201,"y":503,"width":173}]},{"id":"sneak_toys","place":"toys","title":"Toy Store Tiptoes","subtitle":"A little bag of big imagination","map":"easy_toys","w":1800,"h":1100,"home":{"x":224,"y":990,"r":65,"safe":190},"spawn":{"x":264,"y":880},"floors":[[60,237,1680,806]],"soft":[[512,518,725,417]],"obstacles":[{"id":"plush-display","r":[102,395,233,140],"height":103,"sort":536},{"id":"toy-island","r":[599,375,241,81],"height":100,"sort":457},{"id":"book-display","r":[1492,342,213,153],"height":130,"sort":496},{"id":"checkout","r":[1280,947,406,96],"height":120,"sort":1044},{"id":"puzzle-box","r":[908,737,88,65],"height":35,"sort":803},{"id":"toy-smallbox","r":[365,650,70,57],"height":34,"sort":708},{"id":"extra-display-a","r":[753,583,147,92],"height":100,"sort":676},{"id":"extra-display-b","r":[1110,731,144,98],"height":100,"sort":830}],"items":[{"id":"book","name":"Book","x":1391,"y":538,"z":0},{"id":"toyunicorn","name":"Toy unicorn","x":1052,"y":495,"z":0},{"id":"robot","name":"Robot","x":635,"y":943,"z":0},{"id":"picture","name":"Unicorn picture","x":861,"y":309,"z":0},{"id":"puzzle","name":"Puzzle box","x":950,"y":777,"z":51}],"enemies":[{"id":"shopkeeper","sheet":"m","x":1143,"y":595,"angle":3.141592653589793,"patrol":89,"chase":239,"range":322,"sightTime":0.6,"edgeTime":0.25,"curious":146,"searchTime":2.1,"hearing":1,"loseTime":3.35,"route":[[1143,595],[1255,301],[456,296],[443,748],[1143,880]]},{"id":"assistant","sheet":"w","x":1370,"y":838,"angle":3.141592653589793,"patrol":93,"chase":248,"range":333,"sightTime":0.5,"edgeTime":0.22,"curious":152,"searchTime":2.2,"hearing":1,"loseTime":3.35,"route":[[1370,838],[1400,578],[972,588],[664,800],[988,994]]}],"dog":null,"tutorialJump":{"x":951,"y":856},"easy":false,"required":5,"maxLives":3,"extraProps":[{"id":"toybox","x":826,"y":675,"width":175},{"id":"shelf","x":1182,"y":829,"width":164}]}];
+const LEVELS = [{"id":"easy_house","place":"house","title":"Big Cozy House","subtitle":"A whole house of little treasures","map":"easy_house","w":2073,"h":1167,"home":{"x":1035,"y":817,"r":64,"safe":182},"spawn":{"x":1116,"y":790},"floors":[[74,270,1897,755],[1407,249,546,249],[732,944,589,136]],"soft":[[673,440,608,340],[32,673,382,321],[46,193,312,205]],"obstacles":[{"id":"bed","r":[62,155,122,248],"height":140,"sort":404},{"id":"bedside","r":[52,388,174,99],"height":110,"sort":488},{"id":"bed-shelf","r":[243,77,112,165],"height":110,"sort":243},{"id":"hall-dresser","r":[657,198,118,86],"height":110,"sort":285},{"id":"stairs","r":[849,62,107,210],"height":200,"sort":273},{"id":"top-shelf","r":[1049,156,200,112],"height":145,"sort":269},{"id":"sofa","r":[773,422,410,126],"height":120,"sort":549},{"id":"left-lamp","r":[682,415,95,79],"height":110,"sort":495},{"id":"right-lamp","r":[1193,415,87,79],"height":110,"sort":495},{"id":"left-armchair","r":[684,587,150,119],"height":90,"sort":707},{"id":"right-armchair","r":[1102,599,161,126],"height":90,"sort":726},{"id":"coffee","r":[882,577,200,98],"height":43,"sort":676},{"id":"tv","r":[1291,518,64,216],"height":145,"sort":735},{"id":"kitchen-island","r":[1476,322,239,138],"height":96,"sort":461},{"id":"kitchen-side","r":[1941,284,64,120],"height":125,"sort":405},{"id":"left-divider","r":[12,505,361,68],"height":200,"sort":574},{"id":"play-wall","r":[343,532,63,176],"height":200,"sort":709},{"id":"play-shelves","r":[56,688,113,99],"height":110,"sort":788},{"id":"play-table","r":[87,854,208,107],"height":40,"sort":962},{"id":"right-bath","r":[1835,596,226,124],"height":190,"sort":721},{"id":"bath-partition","r":[1813,681,51,188],"height":190,"sort":870}],"items":[{"id":"cupcake","name":"Cupcake","x":1205,"y":811,"z":0},{"id":"cookie","name":"Cookie","x":1011,"y":750,"z":0},{"id":"picture","name":"Unicorn picture","x":977,"y":620,"z":52},{"id":"lamp","name":"Lamp","x":1706,"y":588,"z":0},{"id":"book","name":"Book","x":567,"y":388,"z":0},{"id":"pillow","name":"Pillow","x":477,"y":715,"z":0},{"id":"flowers","name":"Flowers","x":1478,"y":522,"z":0},{"id":"teddy","name":"Teddy","x":480,"y":899,"z":0},{"id":"toyunicorn","name":"Toy unicorn","x":1596,"y":870,"z":0},{"id":"candy","name":"Candy","x":1458,"y":737,"z":0}],"enemies":[{"id":"homeowner","sheet":"h","x":1562,"y":701,"angle":3.141592653589793,"patrol":64,"chase":188,"range":266,"sightTime":1.05,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[1562,701],[1405,372],[1275,334],[980,331],[467,372],[498,794],[1463,799]]}],"dog":{"x":1414,"y":863},"tutorialJump":{"x":977,"y":704},"easy":true,"required":3,"maxLives":5},{"id":"easy_market","place":"market","title":"Big Friendly Market","subtitle":"Pick any three. Or a whole picnic.","map":"easy_market","w":2073,"h":1167,"home":{"x":1707,"y":363,"r":66,"safe":176},"spawn":{"x":1776,"y":454},"floors":[[74,305,1912,697]],"soft":[],"obstacles":[{"id":"produce-upper","r":[76,342,418,175],"height":110,"sort":518},{"id":"produce-lower","r":[72,584,405,170],"height":110,"sort":755},{"id":"bakery-island","r":[804,472,384,241],"height":100,"sort":714},{"id":"right-aisle","r":[1426,455,177,260],"height":145,"sort":716},{"id":"flowers-edge","r":[1850,554,161,243],"height":110,"sort":798},{"id":"checkout","r":[1360,874,616,177],"height":130,"sort":1052},{"id":"left-snacks","r":[48,936,500,120],"height":115,"sort":1057},{"id":"carts","r":[1901,305,110,113],"height":105,"sort":419},{"id":"bonus-crate","r":[1224,591,94,67],"height":34,"sort":659}],"items":[{"id":"apple","name":"Apple","x":1643,"y":458,"z":0},{"id":"banana","name":"Banana","x":572,"y":485,"z":0},{"id":"donut","name":"Doughnut","x":1270,"y":625,"z":49},{"id":"cereal","name":"Cereal","x":1288,"y":391,"z":0},{"id":"chips","name":"Chips","x":1265,"y":833,"z":0},{"id":"milk","name":"Milk","x":745,"y":372,"z":0},{"id":"bread","name":"Bread","x":842,"y":797,"z":0},{"id":"cupcake","name":"Cupcake","x":1357,"y":337,"z":0},{"id":"icecream","name":"Icecream","x":625,"y":906,"z":0},{"id":"candy","name":"Candy","x":611,"y":743,"z":0},{"id":"carrots","name":"Carrots","x":542,"y":631,"z":0},{"id":"grapes","name":"Grapes","x":1039,"y":831,"z":0}],"enemies":[{"id":"worker","sheet":"w","x":639,"y":694,"angle":3.141592653589793,"patrol":66,"chase":193,"range":270,"sightTime":1.0,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[639,694],[1252,807],[1354,538],[703,372],[568,528]]}],"dog":null,"tutorialJump":{"x":1271,"y":719},"extraProps":[{"id":"box","x":1271,"y":665,"width":124}],"easy":true,"required":3,"maxLives":5},{"id":"easy_restaurant","place":"restaurant","title":"Moonlight Restaurant","subtitle":"A delicious little after-hours adventure","map":"easy_restaurant","w":2052,"h":1254,"home":{"x":262,"y":1121,"r":65,"safe":187},"spawn":{"x":308,"y":1007},"floors":[[68,279,1915,910]],"soft":[],"obstacles":[{"id":"kitchen-counter","r":[522,212,993,132],"height":135,"sort":345},{"id":"booth-one","r":[101,430,293,152],"height":105,"sort":583},{"id":"booth-two","r":[101,780,293,156],"height":105,"sort":937},{"id":"dessert-counter","r":[1677,404,249,144],"height":115,"sort":549},{"id":"dining-a","r":[660,494,230,141],"height":43,"sort":636},{"id":"dining-b","r":[1211,763,230,141],"height":43,"sort":905}],"items":[{"id":"cupcake","name":"Cupcake","x":409,"y":1065,"z":0},{"id":"cookie","name":"Cookie","x":531,"y":712,"z":0},{"id":"cake","name":"Cake slice","x":777,"y":571,"z":52},{"id":"pizza","name":"Pizza","x":1016,"y":415,"z":0},{"id":"milkshake","name":"Milkshake","x":1526,"y":463,"z":0},{"id":"teapot","name":"Teapot","x":1555,"y":918,"z":0},{"id":"flowers","name":"Flowers","x":534,"y":404,"z":0},{"id":"bread","name":"Bread","x":1303,"y":1053,"z":0},{"id":"burger","name":"Burger","x":1084,"y":648,"z":0},{"id":"cherries","name":"Cherries","x":1750,"y":992,"z":0}],"enemies":[{"id":"server","sheet":"w","x":1186,"y":634,"angle":3.141592653589793,"patrol":67,"chase":197,"range":280,"sightTime":1.02,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[1186,634],[1562,610],[1562,961],[1021,1011],[534,726],[465,389],[1342,390]]}],"dog":null,"tutorialJump":{"x":779,"y":691},"easy":true,"required":3,"maxLives":5},{"id":"easy_toys","place":"toys","title":"Twinkle Toy Store","subtitle":"A little bag of big imagination","map":"easy_toys","w":2052,"h":1254,"home":{"x":255,"y":1129,"r":65,"safe":190},"spawn":{"x":301,"y":1003},"floors":[[68,270,1915,919]],"soft":[[584,591,826,475]],"obstacles":[{"id":"plush-display","r":[116,450,266,160],"height":103,"sort":611},{"id":"toy-island","r":[683,427,275,92],"height":100,"sort":520},{"id":"book-display","r":[1701,390,243,174],"height":130,"sort":565},{"id":"checkout","r":[1459,1080,463,109],"height":120,"sort":1190},{"id":"puzzle-box","r":[1035,840,100,74],"height":35,"sort":915},{"id":"toy-smallbox","r":[416,741,80,65],"height":34,"sort":807}],"items":[{"id":"teddy","name":"Teddy","x":393,"y":1060,"z":0},{"id":"ball","name":"Ball","x":613,"y":636,"z":0},{"id":"book","name":"Book","x":1586,"y":613,"z":0},{"id":"toyunicorn","name":"Toy unicorn","x":1199,"y":564,"z":0},{"id":"robot","name":"Robot","x":724,"y":1075,"z":0},{"id":"picture","name":"Unicorn picture","x":982,"y":352,"z":0},{"id":"puzzle","name":"Puzzle box","x":1083,"y":886,"z":51},{"id":"pillow","name":"Pillow","x":477,"y":697,"z":0},{"id":"candy","name":"Candy","x":1495,"y":847,"z":0},{"id":"flowers","name":"Flowers","x":1330,"y":1076,"z":0}],"enemies":[{"id":"shopkeeper","sheet":"m","x":1303,"y":678,"angle":3.141592653589793,"patrol":66,"chase":198,"range":277,"sightTime":1.0,"edgeTime":0.48,"curious":103,"searchTime":1.2,"hearing":1,"loseTime":1.7,"route":[[1303,678],[1431,343],[520,337],[505,853],[1303,1003]]}],"dog":null,"tutorialJump":{"x":1084,"y":976},"easy":true,"required":3,"maxLives":5},{"id":"sneak_house","title":"Cozy Cookie Run","subtitle":"A little moonlight mischief","map":"house","w":1672,"h":941,"home":{"x":1400,"y":269,"r":60,"safe":190},"spawn":{"x":1398,"y":355},"floors":[[192,235,1376,333],[232,519,422,78],[411,535,200,344],[931,542,626,110],[1001,615,557,228]],"soft":[[363,341,400,181],[1018,406,347,204],[1370,251,109,299],[455,686,125,189],[1160,802,189,40]],"obstacles":[{"id":"sofa","r":[412,291,296,67],"height":120,"sort":359,"poly":[[426,216],[465,201],[647,204],[684,217],[701,274],[719,299],[714,347],[697,361],[425,361],[401,347],[402,301],[412,266]]},{"id":"coffee-table","r":[463,399,213,61],"height":40,"sort":461,"poly":[[464,364],[669,364],[679,438],[669,466],[653,466],[654,453],[482,453],[480,469],[465,469],[456,441]]},{"id":"chair","r":[799,349,151,84],"height":100,"sort":434,"poly":[[850,263],[884,260],[941,288],[960,361],[943,412],[916,431],[824,439],[794,410],[782,352],[786,322],[819,300]]},{"id":"side-table","r":[728,297,72,46],"height":65,"sort":344,"poly":[[746,214],[776,214],[793,268],[815,284],[806,329],[789,348],[733,345],[720,299],[724,275]]},{"id":"dining","r":[1082,430,224,142],"height":44,"sort":573,"poly":[[1111,366],[1165,366],[1174,400],[1206,400],[1210,366],[1268,369],[1275,408],[1310,422],[1306,549],[1280,565],[1254,578],[1225,577],[1213,553],[1165,553],[1155,578],[1121,578],[1113,563],[1092,551],[1082,461],[1082,421],[1113,411]]},{"id":"counter","r":[1051,704,408,80],"height":105,"sort":785,"poly":[[1050,658],[1251,658],[1252,634],[1280,639],[1282,658],[1450,658],[1459,709],[1457,785],[1051,784]]},{"id":"fridge","r":[1453,680,95,145],"height":150,"sort":826,"poly":[[1450,613],[1545,605],[1552,826],[1448,826]]},{"id":"library","r":[1000,224,161,25],"height":160,"sort":250,"poly":[[1002,62],[1151,62],[1162,239],[1002,243]]},{"id":"foyer-toys","r":[491,614,68,34],"height":32,"sort":649,"prop":"toybox","x":525,"y":649,"width":102}],"items":[{"id":"cupcake","name":"Cupcake","x":1304,"y":335,"z":0},{"id":"cookie","name":"Cookie","x":567,"y":429,"z":52},{"id":"candy","name":"Rainbow candy","x":504,"y":800,"z":0},{"id":"picture","name":"Unicorn picture","x":1097,"y":472,"z":55},{"id":"lamp","name":"Little lamp","x":1490,"y":470,"z":0}],"enemies":[{"id":"homeowner","sheet":"h","x":978,"y":495,"angle":3.141592653589793,"patrol":88,"chase":225,"range":322,"sightTime":0.64,"edgeTime":0.27,"curious":135,"searchTime":1.85,"hearing":1,"route":[[978,495],[762,530],[739,372],[755,262],[979,302]]}],"dog":{"x":1250,"y":283},"tutorialJump":{"x":1355,"y":397},"place":"house","easy":false,"required":5,"maxLives":3},{"id":"sneak_market","title":"Moonlight Market","subtitle":"A tiny after-hours shopping trip","map":"store","w":1672,"h":941,"home":{"x":1508,"y":361,"r":60,"safe":158},"spawn":{"x":1438,"y":402},"floors":[[180,226,1443,613],[332,787,723,76]],"soft":[[1454,312,158,67],[1375,789,101,48]],"obstacles":[{"id":"cart","r":[230,260,123,68],"height":96,"sort":329,"poly":[[226,216],[244,214],[273,202],[324,202],[327,217],[355,214],[359,319],[343,335],[229,332],[216,301],[221,244]]},{"id":"aisle-a","r":[378,318,114,297],"height":150,"sort":616,"poly":[[411,250],[481,248],[506,400],[499,611],[358,618],[356,549],[380,457],[393,316]]},{"id":"aisle-b","r":[634,312,99,302],"height":150,"sort":615,"poly":[[640,246],[704,246],[739,285],[741,611],[619,619],[618,553],[631,367]]},{"id":"produce","r":[882,333,211,226],"height":88,"sort":560,"poly":[[879,268],[943,269],[946,259],[1041,261],[1060,305],[1087,320],[1084,499],[1100,521],[1088,563],[922,564],[920,543],[883,534],[879,462],[849,459],[850,311]]},{"id":"aisle-c","r":[1205,313,111,273],"height":150,"sort":587,"poly":[[1201,252],[1267,252],[1294,290],[1322,566],[1315,587],[1196,586],[1191,514],[1190,371]]},{"id":"donut-box","r":[744,557,49,55],"height":37,"sort":613,"poly":[[740,536],[770,531],[788,548],[792,610],[741,613]]},{"id":"right-box","r":[1320,503,64,58],"height":38,"sort":562,"poly":[[1318,459],[1359,456],[1383,510],[1384,568],[1320,563]]},{"id":"flowers","r":[634,718,225,68],"height":73,"sort":787,"poly":[[645,652],[733,650],[767,630],[834,658],[863,711],[863,782],[633,789],[631,706]]},{"id":"checkout","r":[1100,697,359,94],"height":94,"sort":792,"poly":[[1143,615],[1208,615],[1209,650],[1350,650],[1356,615],[1417,615],[1416,650],[1460,651],[1460,791],[1101,791],[1093,674],[1101,647],[1142,647]]},{"id":"endcap","r":[1033,720,61,65],"height":76,"sort":786,"poly":[[1034,658],[1091,659],[1097,779],[1033,786]]},{"id":"checkout-side","r":[1481,736,78,98],"height":77,"sort":835,"poly":[[1483,706],[1544,706],[1561,761],[1554,835],[1480,835]]},{"id":"left-produce","r":[28,661,297,96],"height":85,"sort":758,"poly":[[28,564],[126,566],[164,578],[275,587],[325,661],[322,758],[27,757]]},{"id":"trolleys","r":[1571,439,82,160],"height":115,"sort":600,"poly":[[1551,435],[1575,394],[1642,393],[1653,594],[1564,608],[1546,522]]},{"id":"baskets","r":[1586,714,64,69],"height":80,"sort":784,"poly":[[1584,660],[1640,660],[1653,725],[1648,789],[1586,785]]}],"items":[{"id":"apple","name":"Apple","x":1130,"y":566,"z":0},{"id":"donut","name":"Doughnut","x":767,"y":582,"z":48},{"id":"cereal","name":"Cereal","x":556,"y":448,"z":0},{"id":"milk","name":"Milk","x":562,"y":257,"z":0},{"id":"banana","name":"Banana","x":1125,"y":610,"z":0},{"id":"chips","name":"Chips","x":908,"y":684,"z":0}],"enemies":[{"id":"worker","sheet":"w","x":553,"y":649,"angle":-1.5707963267948966,"patrol":98,"chase":248,"range":338,"sightTime":0.5,"edgeTime":0.2,"curious":150,"searchTime":2.15,"hearing":1.08,"route":[[553,651],[550,281],[802,247],[802,655]]},{"id":"manager","sheet":"m","x":1136,"y":643,"angle":-1.5707963267948966,"patrol":90,"chase":270,"range":368,"sightTime":0.44,"edgeTime":0.18,"curious":162,"searchTime":2.35,"hearing":1.16,"route":[[1136,642],[1145,270],[1404,583],[1434,651]]}],"dog":null,"tutorialJump":{"x":764,"y":650},"place":"market","easy":false,"required":6,"maxLives":3},{"id":"sneak_restaurant","place":"restaurant","title":"Restaurant Rounds","subtitle":"A delicious little after-hours adventure","map":"easy_restaurant","w":1800,"h":1100,"home":{"x":230,"y":983,"r":65,"safe":187},"spawn":{"x":270,"y":883},"floors":[[60,245,1680,798]],"soft":[],"obstacles":[{"id":"kitchen-counter","r":[458,186,871,116],"height":135,"sort":303},{"id":"booth-one","r":[89,377,257,133],"height":105,"sort":511},{"id":"booth-two","r":[89,684,257,137],"height":105,"sort":822},{"id":"dessert-counter","r":[1471,354,218,126],"height":115,"sort":481},{"id":"dining-a","r":[579,433,202,124],"height":43,"sort":558},{"id":"dining-b","r":[1062,669,202,124],"height":43,"sort":794},{"id":"extra-table-a","r":[840,591,142,89],"height":44,"sort":681},{"id":"extra-table-b","r":[1130,414,142,89],"height":44,"sort":504}],"items":[{"id":"cake","name":"Cake slice","x":682,"y":501,"z":52},{"id":"pizza","name":"Pizza","x":891,"y":364,"z":0},{"id":"milkshake","name":"Milkshake","x":1339,"y":406,"z":0},{"id":"teapot","name":"Teapot","x":1364,"y":805,"z":0},{"id":"bread","name":"Bread","x":1143,"y":924,"z":0}],"enemies":[{"id":"server","sheet":"w","x":1040,"y":556,"angle":3.141592653589793,"patrol":89,"chase":239,"range":322,"sightTime":0.6,"edgeTime":0.25,"curious":146,"searchTime":2.1,"hearing":1,"loseTime":3.35,"route":[[1040,556],[1370,535],[1370,843],[896,887],[468,637],[408,341],[1177,342]]},{"id":"manager","sheet":"m","x":1300,"y":870,"angle":3.141592653589793,"patrol":90,"chase":255,"range":328,"sightTime":0.52,"edgeTime":0.22,"curious":152,"searchTime":2.2,"hearing":1,"loseTime":3.35,"route":[[1300,870],[1550,700],[1370,530],[972,520],[994,916]]}],"dog":null,"tutorialJump":{"x":683,"y":606},"easy":false,"required":5,"maxLives":3,"extraProps":[{"id":"table","x":911,"y":680,"width":173},{"id":"table","x":1201,"y":503,"width":173}]},{"id":"sneak_toys","place":"toys","title":"Toy Store Tiptoes","subtitle":"A little bag of big imagination","map":"easy_toys","w":1800,"h":1100,"home":{"x":224,"y":990,"r":65,"safe":190},"spawn":{"x":264,"y":880},"floors":[[60,237,1680,806]],"soft":[[512,518,725,417]],"obstacles":[{"id":"plush-display","r":[102,395,233,140],"height":103,"sort":536},{"id":"toy-island","r":[599,375,241,81],"height":100,"sort":457},{"id":"book-display","r":[1492,342,213,153],"height":130,"sort":496},{"id":"checkout","r":[1280,947,406,96],"height":120,"sort":1044},{"id":"puzzle-box","r":[908,737,88,65],"height":35,"sort":803},{"id":"toy-smallbox","r":[365,650,70,57],"height":34,"sort":708},{"id":"extra-display-a","r":[753,583,147,92],"height":100,"sort":676},{"id":"extra-display-b","r":[1110,731,144,98],"height":100,"sort":830}],"items":[{"id":"book","name":"Book","x":1391,"y":538,"z":0},{"id":"toyunicorn","name":"Toy unicorn","x":1052,"y":495,"z":0},{"id":"robot","name":"Robot","x":635,"y":943,"z":0},{"id":"picture","name":"Unicorn picture","x":861,"y":309,"z":0},{"id":"puzzle","name":"Puzzle box","x":950,"y":777,"z":51}],"enemies":[{"id":"shopkeeper","sheet":"m","x":1143,"y":595,"angle":3.141592653589793,"patrol":89,"chase":239,"range":322,"sightTime":0.6,"edgeTime":0.25,"curious":146,"searchTime":2.1,"hearing":1,"loseTime":3.35,"route":[[1143,595],[1255,301],[456,296],[443,748],[1143,880]]},{"id":"assistant","sheet":"w","x":1370,"y":838,"angle":3.141592653589793,"patrol":93,"chase":248,"range":333,"sightTime":0.5,"edgeTime":0.22,"curious":152,"searchTime":2.2,"hearing":1,"loseTime":3.35,"route":[[1370,838],[1400,578],[972,588],[664,800],[988,994]]}],"dog":null,"tutorialJump":{"x":951,"y":856},"easy":false,"required":5,"maxLives":3,"extraProps":[{"id":"toybox","x":826,"y":675,"width":175},{"id":"shelf","x":1182,"y":829,"width":164}]}]
+;
+LEVELS.push({"map":"easy_toys","w":2052,"h":1254,"home":{"x":255,"y":1129,"r":65,"safe":190},"spawn":{"x":301,"y":1003},"floors":[[68,270,1915,919]],"soft":[[584,591,826,475]],"obstacles":[{"id":"plush-display","r":[116,450,266,160],"height":103,"sort":611},{"id":"toy-island","r":[683,427,275,92],"height":100,"sort":520},{"id":"book-display","r":[1701,390,243,174],"height":130,"sort":565},{"id":"checkout","r":[1459,1080,463,109],"height":120,"sort":1190},{"id":"puzzle-box","r":[1035,840,100,74],"height":35,"sort":915},{"id":"toy-smallbox","r":[416,741,80,65],"height":34,"sort":807}],"easy":true,"id":"police_patrol","place":"police","title":"Police Unicorn Patrol","subtitle":"Catch every bad guy with rainbow magic","items":[],"police":true,"required":0,"maxLives":0,"dog":null,"jail":{"x":1485,"y":780,"w":430,"h":170},"enemies":[{"id":"bandit1","sheet":"w","x":575,"y":405,"angle":0,"patrol":82,"route":[[575,405],[1020,350],[1320,560],[775,700],[530,540]]},{"id":"bandit2","sheet":"m","x":1320,"y":410,"angle":3.14,"patrol":94,"route":[[1320,410],[1575,655],[1220,820],[910,580],[1160,420]]},{"id":"bandit3","sheet":"h","x":520,"y":900,"angle":0,"patrol":104,"route":[[520,900],[860,1040],[1180,945],[895,770],[590,790]]},{"id":"bandit4","sheet":"w","x":1510,"y":910,"angle":3.14,"patrol":112,"route":[[1510,910],[1680,670],[1370,580],[1230,875],[1510,1010]]},{"id":"bandit5","sheet":"m","x":960,"y":650,"angle":0,"patrol":124,"route":[[960,650],[1170,520],[1450,680],[1160,900],[760,855],[690,610]]}]});
+const V9_PLAYABLE=[0,1,2,3,LEVELS.length-1];
+const V9={BLAST_SPEED:610,BLAST_LIFE:.90,BLAST_RADIUS:47,BLAST_COOLDOWN:.48,JAIL_TIME:2.65,CONTACT_DISTANCE:48};
+for(const l of LEVELS){if(!l.police)l.required=l.items.length;}
+
 
 /* SNEAKY UNICORN: MIDNIGHT MISCHIEF
    Original two-level top-down game. Fixed-step simulation; drawing never
@@ -161,11 +189,11 @@ const canvas=$('game'),c=canvas.getContext('2d',{alpha:false});
 const QA_MODE=new URLSearchParams(location.search).get('qa')==='1';
 const flags={manual:QA_MODE};
 const reducedQuery=matchMedia('(prefers-reduced-motion: reduce)');
-const PREF_KEY='sneaky-unicorn-midnight-v7';
-let saved={version:7,best:{},stickers:[],muted:false,reduced:reducedQuery.matches};
+const PREF_KEY='sneaky-unicorn-midnight-v9';
+let saved={version:9,best:{},stickers:[],muted:false,reduced:reducedQuery.matches};
 try{
  const s=JSON.parse(localStorage.getItem(PREF_KEY)||'null');
- if(s&&s.version===7){for(const l of LEVELS)saved.best[l.id]=Math.max(0,Math.min(3,Number(s.best?.[l.id])||0));
+ if(s&&s.version===9){for(const l of LEVELS)saved.best[l.id]=Math.max(0,Math.min(3,Number(s.best?.[l.id])||0));
  saved.stickers=Array.isArray(s.stickers)?s.stickers.filter(x=>typeof x==='string'&&x.length<32):[];
  saved.muted=s.muted===true;saved.reduced=typeof s.reduced==='boolean'?s.reduced:reducedQuery.matches;}
  else{const old=JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v1')||'null');if(old&&old.version===1){
@@ -203,6 +231,7 @@ const P={x:0,y:0,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,
 let enemies=[],items=[];
 const view={w:1280,h:560,dpr:1,scale:1,x:0,y:0};
 const input={keys:new Set(),jump:0,sneak:false,joy:null,drag:null,primary:false};
+Object.assign(G,{blasts:[],blastCooldown:0,jailed:0,resetFlash:0});
 const playSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3L21 12 7 21Z" fill="currentColor"/></svg>';
 const repeatSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v7h7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const homeSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11L12 3l9 8M6 10v11h12V10M10 21v-7h4v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>';
@@ -332,7 +361,7 @@ function movement(){let x=0,y=0;if(input.keys.has('ArrowLeft')||input.keys.has('
  // catch up to the finger, so the control cannot stall just because she reaches the touch point.
  if(input.drag){const dx=input.drag.cx-input.drag.sx,dy=input.drag.cy-input.drag.sy,d=Math.hypot(dx,dy);if(d>8){const m=clamp(.58+(d-8)/44,0,1);x+=dx/d*m;y+=dy/d*m;}}
  const d=Math.hypot(x,y);return d>1?{x:x/d,y:y/d}:{x,y};}
-function action(kind){audio.gesture();if(G.mode!=='play')return;if(kind==='jump')input.jump=T.JUMP_BUFFER;else input.sneak=true;}
+function action(kind){audio.gesture();if(G.mode!=='play')return;if(kind==='blast')fireBlast();}
 function beginAnywhereDrag(e){
  if(G.mode!=='play'||input.drag||e.pointerType==='mouse'&&e.button!==0)return;
  audio.gesture();e.preventDefault();input.drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,cx:e.clientX,cy:e.clientY};
@@ -342,22 +371,11 @@ function updateAnywhereDrag(e){const d=input.drag;if(!d||d.id!==e.pointerId)retu
 function endAnywhereDrag(e){if(input.drag?.id===e.pointerId)input.drag=null;}
 canvas.addEventListener('pointerdown',e=>{if(G.mode==='win'&&!G.resultShown){if(G.winTime>.85)showResult('win');return;}beginAnywhereDrag(e);});
 canvas.addEventListener('pointermove',updateAnywhereDrag);canvas.addEventListener('pointerup',endAnywhereDrag);canvas.addEventListener('pointercancel',endAnywhereDrag);canvas.addEventListener('lostpointercapture',endAnywhereDrag);
-for(const id of ['jump','sneak']){
- const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(G.mode!=='play')return;b.classList.add('down');try{b.setPointerCapture(e.pointerId);}catch(_){}action(id);});
- for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>b.classList.remove('down'));
- // Accessible keyboard activation, without generating a second action on touch.
- b.addEventListener('click',e=>{if(e.detail===0)action(id);});
-}
-window.addEventListener('keydown',e=>{
- const key=e.code,handled=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyA','KeyD','KeyW','KeyS','Space','ShiftLeft','ShiftRight','KeyX','Escape','Enter'];
- if(!handled.includes(key))return;
- if(['BUTTON','INPUT','SELECT'].includes(document.activeElement?.tagName)&&G.mode!=='play'&&G.mode!=='catch'&&key!=='Escape')return;
- e.preventDefault();audio.gesture();if(e.repeat)return;
- if(key==='Escape'){if(G.mode==='play')pause();else if(G.mode==='pause')resume();return;}
- if(G.mode==='win'){if((key==='Space'||key==='Enter')&&G.winTime>.85&&!G.resultShown)showResult('win');return;}
- if(G.mode!=='play')return;
- input.keys.add(key);if(key==='Space'||key==='KeyX')action('jump');if(key==='ShiftLeft'||key==='ShiftRight')action('sneak');
-});
+const blastButton=$('blast');
+blastButton.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(G.mode!=='play')return;blastButton.classList.add('down');try{blastButton.setPointerCapture(e.pointerId);}catch(_){}action('blast');});
+for(const ev of ['pointerup','pointercancel','lostpointercapture'])blastButton.addEventListener(ev,()=>blastButton.classList.remove('down'));
+blastButton.addEventListener('click',e=>{if(e.detail===0)action('blast');});
+window.addEventListener('keydown',e=>{const key=e.code,handled=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyA','KeyD','KeyW','KeyS','Space','KeyX','Escape','Enter'];if(!handled.includes(key))return;if(['BUTTON','INPUT','SELECT'].includes(document.activeElement?.tagName)&&G.mode!=='play'&&key!=='Escape')return;e.preventDefault();audio.gesture();if(e.repeat)return;if(key==='Escape'){if(G.mode==='play')pause();else if(G.mode==='pause')resume();return;}if(G.mode==='win'){if((key==='Space'||key==='Enter')&&G.winTime>.85&&!G.resultShown)showResult('win');return;}if(G.mode!=='play')return;input.keys.add(key);if(key==='Space'||key==='KeyX')action('blast');});
 window.addEventListener('keyup',e=>input.keys.delete(e.code));
 window.addEventListener('blur',()=>{clearInput();if(G.mode==='play')pause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInput();if(G.mode==='play')pause();audio.suspend();}last=performance.now();accum=0;});
@@ -408,61 +426,49 @@ $('motion').addEventListener('click',()=>{audio.gesture();saved.reduced=!saved.r
 function setMenuCommon(){clearInput();$('modePicker').hidden=true;$('finishLevel').hidden=true;$('overlay').hidden=false;refreshTools();$('winHero').hidden=true;$('resultButtons').innerHTML='';}
 function showMenu(){
  G.mode='menu';G.catch=null;G.resultShown=false;setMenuCommon();showChrome(false);$('overlay').className='menu';
- $('kicker').textContent='V8 / FOUR LITTLE ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';
- $('subline').textContent=G.adventure==='easy'?'Bring home any three treasures. Stay for more, or head home.':'A special wishlist. Busier rooms. A little more mischief.';
- $('modePicker').hidden=false;
- $('modePicker').innerHTML=[['easy','Easy Adventure','face_laugh'],['sneaky','Sneaky Adventure','star']].map(([id,name,icon])=>`<button class="modeChoice" data-mode="${id}" aria-pressed="${G.adventure===id}">${imageHTML(icon)}<span>${name}</span></button>`).join('');
- for(const b of $('modePicker').querySelectorAll('button'))b.onclick=()=>{audio.gesture();G.adventure=b.dataset.mode;showMenu();};
- $('levelCards').hidden=false;$('resultStars').hidden=true;$('resultItems').hidden=true;$('resultButtons').hidden=true;
- const choices=LEVELS.map((l,i)=>({l,i})).filter(({l})=>l.easy===(G.adventure==='easy'));
+ $('kicker').textContent='V9 / RAINBOW ADVENTURES';$('brand').innerHTML='Sneaky<br>Unicorn';
+ $('subline').textContent='Collect every treasure — or become Police Unicorn and catch every bad guy.';
+ $('modePicker').hidden=true;$('levelCards').hidden=false;$('resultStars').hidden=true;$('resultItems').hidden=true;$('resultButtons').hidden=true;
+ const choices=V9_PLAYABLE.map(i=>({l:LEVELS[i],i}));
  $('levelCards').innerHTML=choices.map(({l,i})=>`<button class="levelCard" data-level="${i}" aria-label="Play ${l.title}"><img class="map" src="${DATA[l.map]}" alt="${l.title}"><div class="bestStars">${[0,1,2].map(j=>`<img src="${DATA.star}" style="opacity:${j<(saved.best[l.id]||0)?1:.22}" alt="${j<(saved.best[l.id]||0)?'Earned':'Unfilled'} star">`).join('')}</div><div class="cardFoot"><span>${l.title}</span><b class="playMark">${playSVG}</b></div></button>`).join('');
  for(const b of $('levelCards').querySelectorAll('button'))b.onclick=()=>{audio.gesture();startLevel(Number(b.dataset.level));};
 }
 function resultButton(label,svg,fn,secondary=false){const b=document.createElement('button');b.className='bigButton '+(secondary?'secondary':'invite');b.innerHTML=svg+'<span>'+label+'</span>';b.onclick=()=>{audio.gesture();fn();};$('resultButtons').appendChild(b);}
 function showResult(kind){
  if(kind==='win')G.resultShown=true;setMenuCommon();$('overlay').className='';$('levelCards').hidden=true;$('resultButtons').hidden=false;$('resultStars').hidden=kind!=='win';$('resultItems').hidden=false;$('winHero').hidden=false;
- $('kicker').textContent=scene.title.toUpperCase();$('brand').textContent=kind==='win'?'Treasures home!':kind==='retry'?'Another little go?':kind==='goal'?'Three treasures home!':'A little break';
- const delivered=items.filter(it=>it.status==='delivered').length;
- $('subline').textContent=kind==='goal'?'Keep collecting, or take your treasures home.':kind==='win'?`${delivered} treasures safe at home.`:kind==='retry'?`${scene.maxLives} fresh giggles. Every treasure stays yours.`:'The room will wait for you.';
- $('resultItems').innerHTML=items.filter(it=>it.status!=='floor').map(it=>imageHTML(it.id,it.name)).join('');
- const sameMode=LEVELS.map((l,i)=>({l,i})).filter(({l})=>l.easy===scene.easy),pos=sameMode.findIndex(({i})=>i===G.levelIndex),next=sameMode[(pos+1)%sameMode.length];
+ $('kicker').textContent=scene.title.toUpperCase();
+ const delivered=items.filter(it=>it.status==='delivered').length, caught=enemies.filter(e=>e.state==='JAILED').length;
+ $('brand').textContent=kind==='win'?(scene.police?'All caught!':'Everything home!'):'A little break';
+ $('subline').textContent=kind==='win'?(scene.police?`${caught} bad guys safe in jail.`:`${delivered} treasures collected.`):'The adventure will wait for you.';
+ $('resultItems').innerHTML=scene.police?Array.from({length:caught},()=>imageHTML('star_happy','Caught')).join(''):items.filter(it=>it.status!=='floor').map(it=>imageHTML(it.id,it.name)).join('');
+ const pos=V9_PLAYABLE.indexOf(G.levelIndex),next=V9_PLAYABLE[(pos+1)%V9_PLAYABLE.length];
  if(kind==='win'){
   const earned=starsEarned();$('resultStars').innerHTML=[0,1,2].map(i=>`<img src="${DATA.star_happy}" style="opacity:${i<earned?1:.20}" alt="${i<earned?'Earned':'Unfilled'} star">`).join('');
-  resultButton('Again',repeatSVG,()=>startLevel(G.levelIndex));resultButton('Next place',playSVG,()=>startLevel(next.i));resultButton('Places',homeSVG,showMenu,true);
- }else if(kind==='goal'){
-  resultButton('More treasures',`<div class="choicePicture">${imageHTML('cookie')}${imageHTML('teddy')}<b style="font-size:28px">+</b></div>`,continueCollecting);
-  resultButton('Home!',`<div class="choicePicture">${imageHTML('door')}${playSVG}${imageHTML('star_happy')}</div>`,()=>{G.mode='play';$('overlay').hidden=true;enterWin();},true);
- }else if(kind==='retry'){resultButton('Try again',repeatSVG,()=>startLevel(G.levelIndex,true));resultButton('Places',homeSVG,showMenu,true);}
- else{resultButton('Keep playing',playSVG,resume);resultButton('Places',homeSVG,showMenu,true);}
- $('jump').classList.remove('teach');$('sneak').classList.remove('teach');
+  resultButton('Again',repeatSVG,()=>startLevel(G.levelIndex));resultButton('Next place',playSVG,()=>startLevel(next));resultButton('Places',homeSVG,showMenu,true);
+ }else{resultButton('Keep playing',playSVG,resume);resultButton('Places',homeSVG,showMenu,true);}
+ $('blast').classList.remove('teach');
 }
 function continueCollecting(){G.mode='play';$('overlay').hidden=true;clearInput();G.entryGrace=Math.max(G.entryGrace,.6);last=performance.now();accum=0;syncHUD(true);}
 $('finishLevel').innerHTML=imageHTML('door')+playSVG;
 $('finishLevel').addEventListener('click',()=>{audio.gesture();if(G.mode==='play'&&scene.easy&&G.goalReady&&!P.carry&&isSafe()){enterWin();}});
 function pause(){if(G.mode!=='play')return;G.mode='pause';showResult('pause');audio.suspend();}
 function resume(){if(G.mode!=='pause')return;audio.gesture();G.mode='play';$('overlay').hidden=true;clearInput();last=performance.now();accum=0;}
-function freshEnemies(){return scene.enemies.map(d=>({...d,state:'CALM',stateTime:0,routeIndex:1,path:[],pathTimer:0,wait:.7,search:0,seeing:false,accum:0,edge:0,lost:0,anim:0,giveup:0,target:{x:d.route[1][0],y:d.route[1][1]},lastSeen:{x:d.x,y:d.y},heard:0}));}
+function freshEnemies(){return scene.enemies.map((d,i)=>({...d,state:'PATROL',stateTime:0,routeIndex:1,path:[],pathTimer:0,wait:.45,anim:0,target:{x:d.route[1][0],y:d.route[1][1]},speedMul:.82+(i%4)*.11,speedClock:1.7+i*.33,jailTimer:0,preJailRouteIndex:1,jailIndex:i}));}
 function startLevel(index,keep=false){
- const oldCarry=keep?P.carry:null,oldItems=keep?items:null;G.levelIndex=index;scene=LEVELS[index];G.adventure=scene.easy?'easy':'sneaky';navPlayer=new Grid(false);navEnemy=new Grid(true);
- if(!keep){items=scene.items.map(d=>({...d,status:'floor'}));G.catches=0;G.alerts=0;G.runTime=0;G.mastery={move:false,sneak:false,jump:false};G.dogHappy=false;G.practiceDistance=0;G.goalPromptShown=false;G.goalReady=false;G.sinceProgress=0;G.helped=false;}
- else items=oldItems;
- G.mode='play';G.lives=scene.maxLives;G.hitStop=0;G.winTime=0;G.resultShown=false;G.catch=null;G.delivery=null;G.fx.length=0;G.texts.length=0;G.rings.length=0;G.ribbon.length=0;G.hintPath=[];G.hintTimer=0;G.levelBanner=2.7;G.tutorialTime=0;G.entryGrace=1.4;
- Object.assign(P,{...scene.spawn,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,air:false,jumpTime:0,cooldown:0,boost:0,anim:0,idle:0,land:0,launch:0,carry:oldCarry,stepNoise:0,apex:false,blocked:0});
+ G.levelIndex=index;scene=LEVELS[index];G.adventure=scene.police?'police':'collect';navPlayer=new Grid(false);navEnemy=new Grid(true);
+ items=scene.items.map(d=>({...d,status:'floor'}));G.catches=0;G.alerts=0;G.runTime=0;G.mastery={move:false,blast:false};G.dogHappy=false;G.practiceDistance=0;G.goalPromptShown=false;G.goalReady=false;G.sinceProgress=0;G.helped=false;G.jailed=0;G.blasts=[];G.blastCooldown=0;G.resetFlash=0;
+ G.mode='play';G.lives=0;G.hitStop=0;G.winTime=0;G.resultShown=false;G.catch=null;G.delivery=null;G.fx.length=0;G.texts.length=0;G.rings.length=0;G.ribbon.length=0;G.hintPath=[];G.hintTimer=0;G.levelBanner=2.7;G.tutorialTime=0;G.entryGrace=1.2;
+ Object.assign(P,{...scene.spawn,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,air:false,jumpTime:0,cooldown:0,boost:0,anim:0,idle:0,land:0,launch:0,carry:null,stepNoise:0,apex:false,blocked:0});
  if(!valid(P.x,P.y))Object.assign(P,freeNear(scene.spawn));P.lastSafe={x:P.x,y:P.y};enemies=freshEnemies();
  clearInput();$('overlay').hidden=true;showChrome(true);syncHUD(true);updateCamera(1,true);last=performance.now();accum=0;
 }
 function syncHUD(force=false){
- const count=items.filter(it=>it.status==='delivered').length;
- G.goalReady=count>=scene.required;
- $('finishLevel').hidden=!(G.mode==='play'&&scene.easy&&G.goalReady&&!P.carry&&isSafe());
- const stamp=scene.id+':'+G.lives+':'+items.map(it=>it.status).join(',')+':'+P.sneak;
- if(!force&&G.hudStamp===stamp)return;G.hudStamp=stamp;
- $('lives').innerHTML=Array.from({length:scene.maxLives},(_,i)=>`<img class="life ${i<G.lives?'':'lost'}" src="${DATA[i<G.lives?'face_laugh':'face']}" alt="${i<G.lives?'Giggle remaining':'Giggle used'}">`).join('');
- $('lives').setAttribute('aria-label',G.lives+' giggles remaining');
- if(scene.easy){const delivered=items.filter(it=>it.status==='delivered');
-  $('mission').innerHTML=[0,1,2].map((_,i)=>`<div class="goalDot ${i<count?'full':''}" aria-label="${i<count?'Treasure delivered':'Treasure to bring home'}">${i<count?imageHTML(delivered[i].id,delivered[i].name):''}</div>`).join('')+`<b id="goalCount">${count}/3</b><svg class="goalArrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h17m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="3"/></svg><div id="bagGoal">${imageHTML('door','Bring treasures home')}</div>`;
- }else $('mission').innerHTML=items.map(it=>`<div class="slot ${it.status==='delivered'?'delivered':it.status==='carried'?'carried':''}" aria-label="${it.name}: ${it.status}">${imageHTML(it.id,it.name)}</div>`).join('')+`<div id="bagGoal">${imageHTML('door','Bring treasures home')}</div>`;
- $('sneak').setAttribute('aria-pressed',String(P.sneak));
+ const count=items.filter(it=>it.status==='delivered').length,caught=enemies.filter(e=>e.state==='JAILED').length;
+ G.goalReady=scene.police?caught===enemies.length:count===items.length;$('finishLevel').hidden=true;
+ const stamp=scene.id+':'+items.map(it=>it.status).join(',')+':'+enemies.map(e=>e.state).join(',');if(!force&&G.hudStamp===stamp)return;G.hudStamp=stamp;
+ $('lives').innerHTML='';$('lives').setAttribute('aria-label','');
+ if(scene.police){$('mission').innerHTML=`<div class="v9Count">${imageHTML('star_happy','Caught')}<b>${caught}/${enemies.length}</b><span>CAUGHT</span></div>`;}
+ else{$('mission').innerHTML=`<div class="v9Count">${imageHTML('door','Treasure home')}<b>${count}/${items.length}</b><span>COLLECT ALL</span></div><div class="v9LootStrip">${items.map(it=>`<img class="${it.status==='delivered'?'done':''}" src="${DATA[it.id]}" alt="${it.name}">`).join('')}</div>`;}
 }
 function spawnFX(x,y,count=10,kind='sparkle',color=null){
  const factor=saved.reduced?.35:(enemies.some(e=>e.state==='CHASE')||G.mode==='catch')?.62:1;
@@ -487,58 +493,27 @@ function settleLanding(){
  P.lastSafe={x:P.x,y:P.y};
 }
 function updatePlayer(dt){
- P.boost=Math.max(0,P.boost-dt);P.cooldown=Math.max(0,P.cooldown-dt);P.launch=Math.max(0,P.launch-dt);P.land=Math.max(0,P.land-dt);P.blocked=Math.max(0,P.blocked-dt);
- if(input.sneak){P.sneak=!P.sneak;input.sneak=false;audio.sfx('sneak');spawnFX(P.x,P.y-30,5);syncHUD();}
- if(input.jump>0&&!P.air&&P.cooldown<=0)beginJump();
- input.jump=Math.max(0,input.jump-dt);
- if(P.air){P.jumpTime+=dt;const t=clamp(P.jumpTime/T.JUMP_TIME,0,1);P.z=4*T.JUMP_HEIGHT*t*(1-t);if(!P.apex&&t>=.5){P.apex=true;spawnFX(P.x,P.y-P.z,5);}}
- const m=movement(),speed=P.boost>0?T.BOOST:P.sneak?T.SNEAK:T.WALK;
- const a=Math.hypot(m.x,m.y)>.01?T.ACCEL:T.DECEL;P.vx=approach(P.vx,m.x*speed,a*dt);P.vy=approach(P.vy,m.y*speed,a*dt);
- const old={x:P.x,y:P.y},blocked=slide(P,P.vx*dt,P.vy*dt,T.PLAYER_R,Math.min(P.z,T.JUMP_CLEARANCE));
- const dist=hypot(P,old),moving=dist>dt*8;
- if(blocked)P.blocked=.1;
- if(moving){P.anim+=dist/(P.sneak?17:28);P.idle=0;P.dirX=m.x;P.dirY=m.y;if(Math.abs(P.vx)>15)P.facing=P.vx<0?-1:1;G.mastery.move=true;
-  if(P.sneak){G.practiceDistance+=dist;if(G.practiceDistance>38)G.mastery.sneak=true;}
- }else P.idle+=dt;
- if(!P.air&&valid(P.x,P.y))P.lastSafe={x:P.x,y:P.y};
- if(!P.air&&moving&&!P.sneak){P.stepNoise+=dt;if(P.stepNoise>=T.STEP_SOUND){P.stepNoise=0;noise(P.x,P.y,'walk');audio.sfx('step');}}
- else P.stepNoise=0;
- if(P.air&&P.jumpTime>=T.JUMP_TIME)settleLanding();
- if(P.air||P.boost>0){if(Math.floor(G.runTime*24)!==Math.floor((G.runTime-dt)*24)){G.ribbon.push({x:P.x-P.facing*19,y:P.y-P.z-22,t:0,life:.26});if(G.ribbon.length>24)G.ribbon.shift();}}
+ G.blastCooldown=Math.max(0,G.blastCooldown-dt);G.resetFlash=Math.max(0,G.resetFlash-dt);P.blocked=Math.max(0,P.blocked-dt);
+ const m=movement(),speed=T.WALK;const a=Math.hypot(m.x,m.y)>.01?T.ACCEL:T.DECEL;P.vx=approach(P.vx,m.x*speed,a*dt);P.vy=approach(P.vy,m.y*speed,a*dt);
+ const old={x:P.x,y:P.y},blocked=slide(P,P.vx*dt,P.vy*dt,T.PLAYER_R,0);const dist=hypot(P,old),moving=dist>dt*8;if(blocked)P.blocked=.1;
+ if(moving){P.anim+=dist/28;P.idle=0;P.dirX=m.x;P.dirY=m.y;if(Math.abs(P.vx)>15)P.facing=P.vx<0?-1:1;G.mastery.move=true;}else P.idle+=dt;
+ if(valid(P.x,P.y))P.lastSafe={x:P.x,y:P.y};
 }
 function nearestGoal(){
- if(P.carry)return {x:scene.home.x,y:scene.home.y,id:'door'};
- const choices=items.filter(it=>it.status==='floor');
- if(!choices.length)return {x:scene.home.x,y:scene.home.y,id:'door'};
- choices.sort((a,b)=>hypot(a,P)-hypot(b,P));
- // In Easy, guide to an immediately reachable prize before optional raised ones.
- const eligible=scene.easy&&choices.some(it=>it.z===0)?choices.filter(it=>it.z===0):choices;
- let best=null,cost=Infinity;
- for(const it of eligible.slice(0,5)){const path=navPlayer.path(P,it);if(!path.length)continue;let from=P,len=0;for(const q of path){len+=hypot(from,q);from=q;}if(len<cost){best=it;cost=len;}}
- return best||eligible[0];
+ if(scene.police){const live=enemies.filter(e=>e.state!=='JAILED');if(!live.length)return null;live.sort((a,b)=>hypot(a,P)-hypot(b,P));return{x:live[0].x,y:live[0].y,id:'star_happy',kind:'enemy'};}
+ if(P.carry)return{x:scene.home.x,y:scene.home.y,id:'door'};const choices=items.filter(it=>it.status==='floor');if(!choices.length)return{x:scene.home.x,y:scene.home.y,id:'door'};choices.sort((a,b)=>hypot(a,P)-hypot(b,P));return choices[0];
 }
 function pickupCheck(){
- if(P.carry||G.mode!=='play')return;
- const candidates=items.filter(it=>it.status==='floor'&&hypot(it,P)<T.PICKUP_RADIUS&&P.z>=it.z*.72);
- candidates.sort((a,b)=>hypot(a,P)-hypot(b,P));const it=candidates[0];if(!it)return;
- if(occluded(P,it,Math.max(P.z,it.z)+5))return;
- it.status='carried';P.carry=it.id;G.sinceProgress=0;G.hitStop=.09;G.delivery={kind:'pickup',id:it.id,x:it.x,y:it.y-it.z,t:0,life:.46};
- spawnFX(it.x,it.y-it.z-24,18);textPop(it.x,it.y-it.z-80,['book','picture','lamp','pillow','teddy','toyunicorn','robot','puzzle','flowers','teapot','ball'].includes(it.id)?'Got it!':'Yum!');audio.sfx('pickup');G.hintTimer=0;syncHUD();
+ if(scene.police||P.carry||G.mode!=='play')return;
+ const candidates=items.filter(it=>it.status==='floor'&&hypot(it,P)<T.PICKUP_RADIUS+(it.z>0?130:0));candidates.sort((a,b)=>hypot(a,P)-hypot(b,P));const it=candidates[0];if(!it)return;
+ it.status='carried';P.carry=it.id;G.sinceProgress=0;G.hitStop=.07;G.delivery={kind:'pickup',id:it.id,x:it.x,y:it.y-it.z,t:0,life:.42};spawnFX(it.x,it.y-it.z-24,18);textPop(it.x,it.y-it.z-80,'Got it!');audio.sfx('pickup');G.hintTimer=0;syncHUD();
 }
 function depositCheck(){
- if(G.mode!=='play'||P.air||!P.carry||hypot(P,scene.home)>scene.home.r)return;
- const it=items.find(it=>it.id===P.carry);if(!it||it.status!=='carried')return;
- it.status='delivered';P.carry=null;G.sinceProgress=0;G.delivery={kind:'deposit',id:it.id,x:P.x,y:P.y-82,t:0,life:.65};
- spawnFX(scene.home.x,scene.home.y-45,24);audio.sfx('deposit',scene.home.x);G.hintTimer=0;syncHUD();
- if(!saved.stickers.includes(it.id)){saved.stickers.push(it.id);save();}
- if(scene.easy){
-  if(G.goalReady&&!G.goalPromptShown){G.goalPromptShown=true;G.mode='goal';clearInput();showResult('goal');}
-  else if(items.every(it=>it.status==='delivered'))enterWin();
- }else if(items.every(it=>it.status==='delivered'))enterWin();
+ if(scene.police||G.mode!=='play'||!P.carry||hypot(P,scene.home)>scene.home.r)return;
+ const it=items.find(it=>it.id===P.carry);if(!it||it.status!=='carried')return;it.status='delivered';P.carry=null;G.sinceProgress=0;G.delivery={kind:'deposit',id:it.id,x:P.x,y:P.y-82,t:0,life:.65};spawnFX(scene.home.x,scene.home.y-45,24);audio.sfx('deposit',scene.home.x);G.hintTimer=0;syncHUD();if(!saved.stickers.includes(it.id)){saved.stickers.push(it.id);save();}if(items.every(it=>it.status==='delivered'))enterWin();
 }
-function starsEarned(){return scene.easy?1+(items.filter(it=>it.status==='delivered').length>=6?1:0)+(G.alerts===0?1:0):1+(G.catches===0?1:0)+(G.alerts===0?1:0);}
-function enterWin(){G.mode='win';G.winTime=0;G.resultShown=false;clearInput();P.vx=P.vy=0;G.rings.length=0;G.hintPath=[];G.shake=0;
- $('finishLevel').hidden=true;saved.best[scene.id]=Math.max(saved.best[scene.id]||0,starsEarned());save();spawnFX(P.x,P.y-70,65,'confetti');audio.sfx('win');textPop(P.x,P.y-142,'Home!');}
+function starsEarned(){if(scene.police)return 3;const resets=G.catches;return 1+(resets<=2?1:0)+(resets===0?1:0);}
+function enterWin(){G.mode='win';G.winTime=0;G.resultShown=false;clearInput();P.vx=P.vy=0;G.rings.length=0;G.hintPath=[];G.blasts=[];G.shake=0;$('finishLevel').hidden=true;saved.best[scene.id]=Math.max(saved.best[scene.id]||0,starsEarned());save();spawnFX(P.x,P.y-70,65,'confetti');audio.sfx('win');textPop(P.x,P.y-142,scene.police?'All caught!':'All home!');}
 function markAlert(){G.alerts++;}
 function assistFactor(){return scene.easy&&G.catches>=2?.85:1;}
 function sightTime(e){return (e.sightTime||T.SIGHT_TIME)*(assistFactor()<1?1.18:1);}
@@ -567,26 +542,15 @@ function follow(e,speed,dt){
  return hypot(e,e.target)<24;
 }
 function updateEnemy(e,dt){
- e.stateTime+=dt;e.giveup=Math.max(0,e.giveup-dt);e.seeing=sees(e);
- const st=sightTime(e),et=edgeTime(e);
- if(e.seeing){e.accum=Math.min(st,e.accum+dt);e.lastSeen={x:P.x,y:P.y};}else e.accum=Math.max(0,e.accum-dt*1.8);
- if(isSafe()){e.accum=0;e.edge=0;}
- if(e.state!=='CHASE'&&e.accum>=st)chase(e);
- else if(e.state==='CALM'&&e.accum>=et)curious(e,{x:P.x,y:P.y});
- if(e.state==='CHASE'){
-  if(e.seeing){e.lost=0;e.target={...e.lastSeen};}else{e.lost+=dt;e.target=freeNear(e.lastSeen,true);}
-  if(e.lost>=(e.loseTime||T.LOSE_TIME)*(assistFactor()<1?.8:1)){giveUp(e);return;}
-  if(e.wait>0)e.wait-=dt;else follow(e,e.chase,dt);
-  if(!isSafe()&&P.z<44&&hypot(e,P)<=T.CATCH_DISTANCE&&!occluded(e,P,0)){beginCatch(e);}
+ e.stateTime+=dt;
+ if(e.state==='JAILED'){
+  if(scene.police)return;
+  e.jailTimer-=dt;if(e.jailTimer<=0){const q=e.route[e.preJailRouteIndex%e.route.length];e.x=q[0];e.y=q[1];e.routeIndex=(e.preJailRouteIndex+1)%e.route.length;e.target={x:e.route[e.routeIndex][0],y:e.route[e.routeIndex][1]};e.path=[];e.pathTimer=0;e.wait=.55;e.state='PATROL';spawnFX(e.x,e.y-55,10);textPop(e.x,e.y-120,'Back!');}
   return;
  }
- if(e.wait>0){e.wait-=dt;return;}
- if(e.state==='CURIOUS'){
-  if(e.search>0){e.search-=dt;e.angle+=Math.sin(e.stateTime*4)*dt*.75;if(e.search<=0)patrol(e);return;}
-  if(follow(e,curiousSpeed(e),dt)){e.search=searchTime(e);e.path=[];}
- }else if(follow(e,e.patrol,dt)){
-  e.wait=1.0;e.routeIndex=(e.routeIndex+1)%e.route.length;e.target={x:e.route[e.routeIndex][0],y:e.route[e.routeIndex][1]};e.path=[];e.pathTimer=0;
- }
+ e.speedClock-=dt;if(e.speedClock<=0){e.speedMul=.72+Math.random()*.62;e.speedClock=1.7+Math.random()*2.8;}
+ if(e.wait>0)e.wait-=dt;else{const base=Math.max(78,e.patrol||86);if(follow(e,base*e.speedMul,dt)){e.wait=.45+Math.random()*.65;e.routeIndex=(e.routeIndex+1)%e.route.length;e.target={x:e.route[e.routeIndex][0],y:e.route[e.routeIndex][1]};e.path=[];e.pathTimer=0;}}
+ if(G.entryGrace<=0&&hypot(e,P)<=V9.CONTACT_DISTANCE)beginCatch(e);
 }
 function updateRings(dt){
  for(const r of G.rings){r.age+=dt;const radius=r.r*clamp(r.age/T.RING_TIME,0,1);
@@ -596,9 +560,7 @@ function updateRings(dt){
  }G.rings=G.rings.filter(r=>r.age<T.RING_TIME);
 }
 function beginCatch(e){
- if(G.mode!=='play'||isSafe())return;
- G.mode='catch';G.catch={phase:'SCOOP',time:0,enemy:e,start:{x:P.x,y:P.y},hold:{x:e.x+(Math.cos(e.angle)>=0?32:-32),y:e.y-12},plopStart:null};
- G.catches++;if(scene.easy&&G.catches>=2)G.helped=true;P.vx=P.vy=0;P.air=false;P.z=0;P.boost=0;G.rings.length=0;G.shake=saved.reduced?0:.22;clearInput();audio.glide(700,330,.3,.07);
+ if(G.mode!=='play'||e.state==='JAILED'||G.entryGrace>0)return;G.catches++;G.resetFlash=.35;P.x=scene.spawn.x;P.y=scene.spawn.y;P.vx=P.vy=0;P.lastSafe={x:P.x,y:P.y};G.entryGrace=1.0;clearInput();spawnFX(P.x,P.y-35,24);textPop(P.x,P.y-115,'Oops!');audio.glide(520,210,.22,.08);syncHUD(true);updateCamera(1,true);
 }
 function catchPosition(){
  const q=G.catch;if(!q)return {x:P.x,y:P.y,z:P.z};
@@ -615,6 +577,10 @@ function updateCatch(dt){
   if(q.time>=T.PLOP){P.x=scene.spawn.x;P.y=scene.spawn.y;P.z=0;P.vx=P.vy=0;P.land=.25;P.air=false;P.cooldown=0;P.stepNoise=0;P.lastSafe={x:P.x,y:P.y};G.catch=null;G.lives--;G.mode=G.lives>0?'play':'retry';enemies=freshEnemies();G.entryGrace=1.1;clearInput();spawnFX(P.x,P.y-10,12);syncHUD(true);if(G.mode==='retry')showResult('retry');}
  }
 }
+function jailSlot(e){const j=scene.jail||{x:scene.w-360,y:135,w:300,h:145},n=Math.max(1,enemies.length),i=Math.max(0,enemies.indexOf(e)),pad=18,cw=(j.w-pad*2)/n;return{x:j.x+pad+cw*(i+.5),y:j.y+j.h-24};}
+function sendToJail(e){if(!e||e.state==='JAILED')return;e.preJailRouteIndex=e.routeIndex;e.state='JAILED';e.jailTimer=scene.police?999999:V9.JAIL_TIME;e.path=[];e.wait=0;const q=jailSlot(e);e.x=q.x;e.y=q.y;G.jailed++;spawnFX(q.x,q.y-65,26);textPop(q.x,q.y-125,scene.police?'Caught!':'Jail!');audio.glide(360,920,.30,.12);syncHUD(true);if(scene.police&&enemies.every(x=>x.state==='JAILED'))enterWin();}
+function fireBlast(){if(G.mode!=='play'||G.blastCooldown>0)return;let d=norm(P.dirX,P.dirY);if(Math.hypot(d.x,d.y)<.1)d={x:P.facing||1,y:0};G.blastCooldown=V9.BLAST_COOLDOWN;G.mastery.blast=true;G.blasts.push({x:P.x+d.x*38,y:P.y-38+d.y*20,vx:d.x*V9.BLAST_SPEED,vy:d.y*V9.BLAST_SPEED,age:0,life:V9.BLAST_LIFE,hit:false});spawnFX(P.x+d.x*45,P.y-42+d.y*18,12);audio.glide(290,1180,.28,.13);$('blast').classList.remove('teach');}
+function updateBlasts(dt){for(const b of G.blasts){b.age+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;for(const e of enemies){if(e.state==='JAILED')continue;if(Math.hypot(b.x-e.x,b.y-(e.y-45))<=V9.BLAST_RADIUS+22){b.hit=true;sendToJail(e);break;}}}G.blasts=G.blasts.filter(b=>!b.hit&&b.age<b.life);}
 function updateEffects(dt){
  for(const p of G.fx){p.age+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.kind==='confetti'?110:32)*dt;p.vx*=Math.pow(.45,dt);p.rot+=dt*2;}
  G.fx=G.fx.filter(p=>p.age<p.life);for(const f of G.texts)f.t+=dt;G.texts=G.texts.filter(f=>f.t<f.life);
@@ -623,32 +589,10 @@ function updateEffects(dt){
  G.shake=Math.max(0,G.shake-dt);
 }
 function update(dt){
- if(G.mode==='pause'||G.mode==='loading'||document.hidden)return;
- G.clock+=dt;updateEffects(dt);
- if(G.mode==='menu')return;
- if(G.mode==='retry'||G.mode==='goal')return;
- if(G.mode==='win'){
-  G.winTime+=dt;if(Math.floor(G.winTime*3)!==Math.floor((G.winTime-dt)*3)&&G.winTime<1.5)spawnFX(P.x,P.y-100,18,'confetti');
-  if(G.winTime>=T.WIN_BEAT&&!G.resultShown)showResult('win');updateCamera(dt);return;
- }
- if(G.mode==='catch'){updateCatch(dt);updateCamera(dt);return;}
- if(G.hitStop>0){G.hitStop=Math.max(0,G.hitStop-dt);return;}
- G.runTime+=dt;G.sinceProgress+=dt;G.tutorialTime+=dt;G.levelBanner=Math.max(0,G.levelBanner-dt);G.entryGrace=Math.max(0,G.entryGrace-dt);
- updatePlayer(dt);pickupCheck();
- if(G.hitStop>0){updateCamera(dt);return;}
- depositCheck();if(G.mode!=='play'){updateCamera(dt);return;}
- updateRings(dt);for(const e of enemies){updateEnemy(e,dt);if(G.mode!=='play')break;}
- if(scene.dog&&!G.dogHappy&&hypot(P,scene.dog)<110){G.dogHappy=true;spawnFX(scene.dog.x,scene.dog.y-70,10);audio.sfx('dog',scene.dog.x);}
- G.hintTimer-=dt;if(G.hintTimer<=0){G.hintTarget=nearestGoal();G.hintPath=G.hintTarget?navPlayer.path(P,G.hintTarget):[];G.hintTimer=.55;}
- updateTutorial();syncHUD();updateCamera(dt);
+ if(G.mode==='pause'||G.mode==='loading'||document.hidden)return;G.clock+=dt;updateEffects(dt);if(G.mode==='menu')return;if(G.mode==='win'){G.winTime+=dt;if(Math.floor(G.winTime*3)!==Math.floor((G.winTime-dt)*3)&&G.winTime<1.5)spawnFX(P.x,P.y-100,18,'confetti');if(G.winTime>=T.WIN_BEAT&&!G.resultShown)showResult('win');updateCamera(dt);return;}if(G.hitStop>0){G.hitStop=Math.max(0,G.hitStop-dt);return;}
+ G.runTime+=dt;G.sinceProgress+=dt;G.tutorialTime+=dt;G.levelBanner=Math.max(0,G.levelBanner-dt);G.entryGrace=Math.max(0,G.entryGrace-dt);updatePlayer(dt);updateBlasts(dt);pickupCheck();if(G.hitStop>0){updateCamera(dt);return;}depositCheck();if(G.mode!=='play'){updateCamera(dt);return;}for(const e of enemies){updateEnemy(e,dt);if(G.mode!=='play')break;}if(scene.dog&&!G.dogHappy&&hypot(P,scene.dog)<110){G.dogHappy=true;spawnFX(scene.dog.x,scene.dog.y-70,10);audio.sfx('dog',scene.dog.x);}G.hintTimer-=dt;if(G.hintTimer<=0){G.hintTarget=nearestGoal();G.hintPath=G.hintTarget?navPlayer.path(P,G.hintTarget):[];G.hintTimer=.55;}updateTutorial();syncHUD();updateCamera(dt);
 }
-function updateTutorial(){
- const nearGoal=items.some(it=>it.status==='floor'&&it.z>0&&hypot(P,it)<175);
- const danger=enemies.some(e=>hypot(e,P)<390&&e.state!=='CHASE');
- const practice=isSafe()&&!P.carry;
- $('jump').classList.toggle('teach',!P.air&&!P.carry&&(nearGoal||(practice&&G.mastery.move&&G.mastery.sneak&&!G.mastery.jump)));
- $('sneak').classList.toggle('teach',!P.sneak&&!G.mastery.sneak&&(danger||(practice&&G.mastery.move)));
-}
+function updateTutorial(){$('blast').classList.toggle('teach',G.mode==='play'&&!G.mastery.blast&&G.tutorialTime<9);}
 /* ----------------------- RENDERING ----------------------- */
 function frame(id,x,y,w,h){const r=ATLAS[id];if(!r)return;c.drawImage(art.atlas,r.x,r.y,r.w,r.h,x,y,w,h);}
 function prop(id,x,y,width,alpha=1){
@@ -678,6 +622,7 @@ function drawRoom(){
   c.globalAlpha=.11+(Math.sin(G.clock*.65+i)+1)*.04;c.beginPath();c.arc(x,y+Math.sin(G.clock*.7+i)*4,1.4,0,TAU);c.fill();}c.restore();}
 }
 function drawDoor(){
+ if(scene.police)return;
  const d=scene.home,active=!!P.carry||G.goalReady,pulse=saved.reduced?.5:.5+.5*Math.sin(G.clock*(active?4:2));
  c.save();
  const glow=c.createRadialGradient(d.x,d.y,9,d.x,d.y,active?115:86);glow.addColorStop(0,active?'#ffe9aa70':'#b4a0eb26');glow.addColorStop(1,'#efd9ff00');c.fillStyle=glow;c.beginPath();c.ellipse(d.x,d.y,active?145:108,active?92:65,0,0,TAU);c.fill();
@@ -724,65 +669,19 @@ function drawRoute(){
 }
 function itemSort(it){let s=it.y;for(const o of scene.obstacles)if(it.z>0&&insideRect(it.x,it.y,o.r))s=Math.max(s,o.sort+1);return s;}
 function drawItem(it){
- if(it.status!=='floor')return;const selected=G.hintTarget?.id===it.id&&!P.carry,t=G.clock;
- const bob=saved.reduced?0:Math.sin(t*2.8+it.x)*3,sz=(selected?65:57)*(saved.reduced?1:1+Math.sin(t*2.5)*.025);
- const y=it.y-it.z;
- c.save();shadow(it.x,it.y,25,.22);c.strokeStyle=selected?'#fff1bce6':'#eddbd990';c.lineWidth=selected?3:2;c.setLineDash([3,6]);c.beginPath();c.ellipse(it.x,it.y+2,32,16,0,0,TAU);c.stroke();c.setLineDash([]);
- const gr=c.createRadialGradient(it.x,y-30,3,it.x,y-30,52);gr.addColorStop(0,'#ffe9b446');gr.addColorStop(1,'#ffe9b400');c.fillStyle=gr;c.beginPath();c.arc(it.x,y-30,52,0,TAU);c.fill();
- c.shadowColor='#2d123c';c.shadowBlur=4;lootArt(it.id,it.x,y+bob,sz*(scene.easy&&G.sinceProgress>=8&&selected?1.12:1));c.shadowBlur=0;
- for(let j=0;j<3;j++){const a=t*.8+j*TAU/3;star(it.x+Math.cos(a)*39,y-29+Math.sin(a)*24,3.5,'#fff2c1',a);}
- // Raised treats show a small up-arc, while floor pickups have no extra verb.
- if(selected&&it.z>0&&hypot(P,it)<185&&!P.air){c.strokeStyle='#f7e0bca8';c.lineWidth=2;c.setLineDash([4,7]);c.beginPath();c.moveTo(it.x-62,it.y);c.quadraticCurveTo(it.x-62,it.y-125,it.x,it.y-it.z-62);c.stroke();c.setLineDash([]);}
- c.restore();
+ if(it.status!=='floor')return;const selected=G.hintTarget?.id===it.id&&!P.carry,t=G.clock,bob=saved.reduced?0:Math.sin(t*2.8+it.x)*3,sz=(selected?67:58)*(saved.reduced?1:1+Math.sin(t*2.5)*.025),y=it.y-it.z;c.save();shadow(it.x,it.y,25,.22);const gr=c.createRadialGradient(it.x,y-30,3,it.x,y-30,55);gr.addColorStop(0,'#ffe9b45d');gr.addColorStop(1,'#ffe9b400');c.fillStyle=gr;c.beginPath();c.arc(it.x,y-30,55,0,TAU);c.fill();c.shadowColor='#2d123c';c.shadowBlur=4;lootArt(it.id,it.x,y+bob,sz);c.shadowBlur=0;for(let j=0;j<4;j++){const a=t*.8+j*TAU/4;star(it.x+Math.cos(a)*39,y-29+Math.sin(a)*24,3.5,'#fff2c1',a);}if(selected){c.strokeStyle='#fff1bce6';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath();c.ellipse(it.x,it.y+2,36,18,0,0,TAU);c.stroke();c.setLineDash([]);}c.restore();
 }
 function drawPlayer(){
- const moving=Math.hypot(P.vx,P.vy)>12;let id='u_idle0',q={x:P.x,y:P.y,z:P.z},angle=0,sx=1,sy=1;
- if(P.sneak)id='u_sneak'+(moving?Math.floor(P.anim)%5:0);
- else if(moving)id='u_run'+Math.floor(P.anim)%6;
- else if(P.idle>2&&Math.floor(G.clock*1.1)%5===0)id='u_idle1';
- if(P.air){const t=P.jumpTime/T.JUMP_TIME;id=t<.25?'u_jump1':t<.68?'u_jump2':'u_jump4';angle=P.facing*Math.sin(t*Math.PI)*.10;}
- else if(moving){q.y-=Math.abs(Math.sin(P.anim*Math.PI))*(P.sneak?2:3);angle=Math.sin(P.anim*2)*(P.sneak?.035:.018);}
- else q.y-=saved.reduced?0:Math.sin(G.clock*2.5)*1.5;
- if(P.launch>0){sx-=.11*P.launch/.16;sy+=.14*P.launch/.16;}
- if(P.land>0){const s=Math.sin(P.land/.25*Math.PI);sx+=s*.12;sy-=s*.10;}
- if(P.blocked>0&&moving){sx-=.05;angle*=.4;}
- if(G.catch){q=catchPosition();id=G.catch.phase==='BOOP'?'u_happy2':G.catch.phase==='PLOP'?'u_jump2':'u_jump4';angle=G.catch.phase==='BOOP'&&!saved.reduced?Math.sin(G.catch.time*22)*.09:0;}
- if(G.mode==='win'){id='u_happy'+Math.floor(G.winTime*5)%3;q.z=saved.reduced?0:Math.abs(Math.sin(Math.min(G.winTime,1.5)*7))*32*Math.max(0,1-G.winTime/2.2);}
- const jumpLift=P.air?clamp(q.z/T.JUMP_HEIGHT,0,1):0;
- if(P.air&&!saved.reduced){
-  c.save();c.lineCap='round';c.globalAlpha=.48*jumpLift;
-  const tx=q.x-P.facing*(34+38*jumpLift),ty=q.y-q.z+35;
-  palette.slice(0,4).forEach((col,i)=>{c.strokeStyle=col;c.lineWidth=4;c.beginPath();c.moveTo(tx-P.facing*i*3,ty+i*5);c.quadraticCurveTo(q.x-P.facing*54,q.y-q.z+55+i*3,q.x-P.facing*24,q.y-q.z+62+i*2);c.stroke();});
-  c.restore();
- }
- shadow(q.x,q.y,clamp(30-q.z*.09,14,30),.25);
- const airScale=saved.reduced?1:1+jumpLift*.18;actor(id,q.x,q.y-q.z,147*airScale,P.facing,saved.reduced?0:angle,sx,sy);
- if(P.carry){const pulse=saved.reduced?0:Math.sin(G.clock*4)*2;
-  // Keep the stolen object itself visible while carrying it. No inventory box or square UI frame.
-  c.save();c.shadowColor='#25142f';c.shadowBlur=5;lootArt(P.carry,q.x-P.facing*34,q.y-q.z-40+pulse,35);c.shadowBlur=0;c.restore();}
- if(enemies.some(e=>e.seeing)&&G.mode==='play'&&P.sneak){c.save();c.strokeStyle='#fff3b8';c.lineWidth=2.5;c.beginPath();c.moveTo(P.x-15,P.y-P.z-122);c.lineTo(P.x-19,P.y-P.z-132);c.moveTo(P.x+15,P.y-P.z-122);c.lineTo(P.x+19,P.y-P.z-132);c.stroke();c.restore();}
+ const moving=Math.hypot(P.vx,P.vy)>12;let id=moving?'u_run'+Math.floor(P.anim)%6:'u_idle0',q={x:P.x,y:P.y,z:0},angle=0,sx=1,sy=1;if(!moving&&P.idle>2&&Math.floor(G.clock*1.1)%5===0)id='u_idle1';if(moving){q.y-=Math.abs(Math.sin(P.anim*Math.PI))*3;angle=Math.sin(P.anim*2)*.018;}else q.y-=saved.reduced?0:Math.sin(G.clock*2.5)*1.5;if(P.blocked>0&&moving){sx-=.05;angle*=.4;}if(G.mode==='win')id='u_happy'+Math.floor(G.winTime*5)%3;shadow(q.x,q.y,30,.25);actor(id,q.x,q.y,147,P.facing,saved.reduced?0:angle,sx,sy);
+ if(scene.police){c.save();c.translate(q.x,q.y-132);c.fillStyle='#254a88';c.strokeStyle='#f1d47a';c.lineWidth=3;c.beginPath();c.ellipse(0,0,29,11,0,Math.PI,TAU);c.lineTo(24,4);c.quadraticCurveTo(0,12,-24,4);c.closePath();c.fill();c.stroke();star(0,-6,8,'#ffe27b');c.restore();}
+ if(P.carry){const pulse=saved.reduced?0:Math.sin(G.clock*4)*2;c.save();c.shadowColor='#25142f';c.shadowBlur=5;lootArt(P.carry,q.x-P.facing*34,q.y-40+pulse,35);c.shadowBlur=0;c.restore();}
+ if(G.resetFlash>0){c.save();c.globalAlpha=G.resetFlash/.35*.4;c.fillStyle='#fff3c2';c.beginPath();c.arc(q.x,q.y-55,78,0,TAU);c.fill();c.restore();}
 }
 function drawEnemy(e){
- let id;const moving=e.path.length>0&&e.wait<=0;
- if(e.sheet==='h'){id=e.state==='CURIOUS'?'h_curious'+Math.floor(e.stateTime*2)%3:moving?'h_run'+Math.floor(e.anim)%6:'h_idle'+Math.floor(e.stateTime*.8)%3;if(e.giveup>0)id='h_shrug';}
- else if(e.sheet==='w'){id=e.state==='CURIOUS'?'w_5_0':e.state==='CHASE'?'w_3_'+Math.floor(e.anim)%6:moving?'w_1_'+Math.floor(e.anim)%6:'w_2_'+Math.floor(e.stateTime*3)%6;if(e.giveup>0)id='w_5_3';}
- else{id=e.state==='CURIOUS'?'m_1_2':moving?'m_2_'+Math.floor(e.anim)%6:'m_0_'+Math.floor(e.stateTime)%6;if(e.giveup>0)id='m_4_0';}
- if(G.catch?.enemy===e)id=e.sheet==='h'?(G.catch.phase==='BOOP'?'h_catch2':'h_catch0'):e.sheet==='w'?'w_4_1':'m_3_3';
- if(G.mode==='win')id=e.sheet==='h'?'h_happy':e.sheet==='w'?'w_5_5':'m_4_5';
- const face=Math.abs(Math.cos(e.angle))<.12?1:Math.cos(e.angle)<0?-1:1;
- shadow(e.x,e.y,26,.22);actor(id,e.x,e.y-(moving&&!saved.reduced?Math.abs(Math.sin(e.anim*Math.PI))*2:0),155,face,saved.reduced?0:(e.state==='CHASE'?face*.028:0));
- if(G.catch?.enemy===e&&G.catch.phase==='BOOP'){
-  const v=catchPosition();c.save();c.strokeStyle='#edb38c';c.lineWidth=8;c.lineCap='round';c.beginPath();c.moveTo(e.x+face*14,e.y-69);c.lineTo(v.x+face*24,v.y-v.z-57);c.stroke();c.restore();
- }
+ let id;const moving=e.state!=='JAILED'&&e.path.length>0&&e.wait<=0;if(e.sheet==='h')id=moving?'h_run'+Math.floor(e.anim)%6:'h_idle'+Math.floor(e.stateTime*.8)%3;else if(e.sheet==='w')id=moving?'w_1_'+Math.floor(e.anim)%6:'w_2_'+Math.floor(e.stateTime*3)%6;else id=moving?'m_2_'+Math.floor(e.anim)%6:'m_0_'+Math.floor(e.stateTime)%6;if(e.state==='JAILED')id=e.sheet==='h'?'h_shrug':e.sheet==='w'?'w_5_3':'m_4_0';if(G.mode==='win'&&!scene.police)id=e.sheet==='h'?'h_happy':e.sheet==='w'?'w_5_5':'m_4_5';const face=Math.abs(Math.cos(e.angle||0))<.12?1:Math.cos(e.angle||0)<0?-1:1;shadow(e.x,e.y,26,.22);actor(id,e.x,e.y-(moving&&!saved.reduced?Math.abs(Math.sin(e.anim*Math.PI))*2:0),155,face,0);
+ if(scene.police){c.save();c.fillStyle='#251f31';c.globalAlpha=.88;c.beginPath();c.roundRect(e.x-25,e.y-105,50,15,7);c.fill();c.fillStyle='#fff4d4';c.globalAlpha=.85;c.beginPath();c.arc(e.x-10,e.y-98,3,0,TAU);c.arc(e.x+10,e.y-98,3,0,TAU);c.fill();c.restore();}
 }
-function drawAlertIcons(){
- if(G.mode!=='play')return;
- for(const e of enemies){if(e.state!=='CURIOUS'&&e.state!=='CHASE')continue;
-  const chase=e.state==='CHASE',pop=saved.reduced?1:1+Math.exp(-e.stateTime*6)*Math.sin(e.stateTime*17)*.23;
-  const wiggle=saved.reduced?0:Math.sin(e.stateTime*(chase?31:4))*(chase&&e.stateTime<.45?4:1);
-  c.save();c.translate(e.x+wiggle,e.y-148);c.scale(pop,pop);const size=chase?67:58;prop(chase?'bubble_bang':'bubble_q',0,0,size);c.restore();
- }
-}
+function drawAlertIcons(){return;}
 function drawDog(){if(!scene.dog)return;const p=scene.dog;shadow(p.x,p.y,22,.15);prop(G.dogHappy?'dog_happy':'dog_idle',p.x,p.y+(saved.reduced?0:Math.sin(G.clock*2)*1.5),94);
  if(!G.dogHappy)prop('biscuit',p.x-42,p.y+12,31);}
 function drawRibbon(){
@@ -798,61 +697,24 @@ function drawFX(){
  for(const f of G.texts){const a=1-f.t/f.life;c.save();c.globalAlpha=a;c.textAlign='center';c.textBaseline='middle';c.font='900 31px Trebuchet MS, sans-serif';c.strokeStyle='#492647';c.lineWidth=5;c.fillStyle='#fff1bf';c.strokeText(f.text,f.x,f.y-f.t*24);c.fillText(f.text,f.x,f.y-f.t*24);c.restore();}
  if(G.delivery){const f=G.delivery,t=clamp(f.t/f.life,0,1),dest=f.kind==='pickup'?{x:P.x,y:P.y-P.z-52}:{x:scene.home.x,y:scene.home.y-7};c.save();c.globalAlpha=1-t*.6;const x=lerp(f.x,dest.x,ease(t)),y=lerp(f.y,dest.y,ease(t))-Math.sin(t*Math.PI)*45;c.translate(x,y);c.rotate(saved.reduced?0:Math.sin(t*Math.PI)*.25);lootArt(f.id,0,0,64*(1-t*.35));c.restore();}
 }
-function drawTutorial(){
- if(G.mode!=='play'||!isSafe()||P.carry)return;
- let type=!G.mastery.move?'move':!G.mastery.sneak?'sneak':!G.mastery.jump?'jump':null;if(!type)return;
- // SHOW in miniature, TRY with real controls on the protected entry rug,
- // then USE the same verbs outside the dotted safe boundary. No reading.
- const x=83,y=Math.max(130,view.h-205),cycle=(G.clock%2.4)/2.4;
- c.save();c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#231831be';c.strokeStyle='#e5cfbd8c';c.lineWidth=2;rr(x-76,y-100,143,96,20);c.fill();c.stroke();
- c.globalAlpha=.73;const dx=type==='move'?Math.sin(cycle*TAU)*28:type==='sneak'?Math.sin(cycle*TAU)*14:0;
- const lift=type==='jump'?Math.max(0,Math.sin(cycle*Math.PI*2))*33:0;
- actor(type==='sneak'?'u_sneak'+Math.floor(cycle*10)%5:type==='jump'?'u_jump2':'u_run'+Math.floor(cycle*12)%6,x+dx,y-15-lift,80,1);
- c.globalAlpha=1;c.strokeStyle='#ffe4a1';c.lineWidth=3;c.lineCap='round';
- if(type==='move'){c.beginPath();c.arc(x+dx+7,y-53,17,0,TAU);c.stroke();c.globalAlpha=.55;c.beginPath();c.moveTo(x+dx+7,y-36);c.lineTo(x+dx+7,y-18);c.stroke();c.globalAlpha=1;}
- else if(type==='jump'){c.setLineDash([4,5]);c.beginPath();c.moveTo(x-48,y-24);c.quadraticCurveTo(x-48,y-85,x+34,y-53);c.stroke();}
- else{c.beginPath();c.ellipse(x-38,y-15,5,3,-.3,0,TAU);c.ellipse(x-25,y-11,5,3,-.3,0,TAU);c.stroke();}
- c.restore();
-}
+function drawTutorial(){return;}
 function drawScreenGuide(){
- if(G.mode!=='play'||!G.hintTarget)return;
- const goal=G.hintTarget,gx=(goal.x-view.x)*view.scale,gy=(goal.y-(goal.z||0)-32-view.y)*view.scale;
- if(gx>42&&gx<view.w-42&&gy>42&&gy<view.h-42)return;
- const cx=view.w/2,cy=view.h/2,dx=gx-cx,dy=gy-cy;
- const t=Math.min((view.w/2-35)/Math.max(1,Math.abs(dx)),(view.h/2-35)/Math.max(1,Math.abs(dy)));
- const x=cx+dx*t,y=cy+dy*t,a=Math.atan2(dy,dx);
- c.save();c.setTransform(view.dpr,0,0,view.dpr,0,0);c.translate(x,y);c.fillStyle='#33213bed';c.strokeStyle='#ffe2a7';c.lineWidth=2;c.beginPath();c.arc(0,0,26,0,TAU);c.fill();c.stroke();
- lootArt(goal.id,0,18,36);
- c.rotate(a);c.fillStyle='#ffe6b2';c.beginPath();c.moveTo(38,0);c.lineTo(29,-7);c.lineTo(29,7);c.closePath();c.fill();c.restore();
+ if(G.mode!=='play'||!G.hintTarget)return;const goal=G.hintTarget,gx=(goal.x-view.x)*view.scale,gy=(goal.y-(goal.z||0)-32-view.y)*view.scale;if(gx>42&&gx<view.w-42&&gy>42&&gy<view.h-42)return;const cx=view.w/2,cy=view.h/2,dx=gx-cx,dy=gy-cy,t=Math.min((view.w/2-35)/Math.max(1,Math.abs(dx)),(view.h/2-35)/Math.max(1,Math.abs(dy))),x=cx+dx*t,y=cy+dy*t,a=Math.atan2(dy,dx);c.save();c.setTransform(view.dpr,0,0,view.dpr,0,0);c.translate(x,y);c.fillStyle='#33213bed';c.strokeStyle='#ffe2a7';c.lineWidth=2;c.beginPath();c.arc(0,0,26,0,TAU);c.fill();c.stroke();lootArt(goal.kind==='enemy'?'star_happy':goal.id,0,18,36);c.rotate(a);c.fillStyle='#ffe6b2';c.beginPath();c.moveTo(38,0);c.lineTo(29,-7);c.lineTo(29,7);c.closePath();c.fill();c.restore();
 }
+function drawJail(){if(!enemies.length)return;const j=scene.jail||{x:scene.w-360,y:135,w:300,h:145},n=Math.max(1,enemies.length);c.save();c.globalAlpha=.88;c.fillStyle='#211b39c9';c.strokeStyle='#e6d4f2';c.lineWidth=4;rr(j.x,j.y,j.w,j.h,18);c.fill();c.stroke();const cw=j.w/n;for(let i=1;i<n;i++){c.beginPath();c.moveTo(j.x+i*cw,j.y+10);c.lineTo(j.x+i*cw,j.y+j.h-10);c.stroke();}for(let x=j.x+12;x<j.x+j.w-8;x+=18){c.lineWidth=3;c.globalAlpha=.55;c.beginPath();c.moveTo(x,j.y+9);c.lineTo(x,j.y+j.h-9);c.stroke();}c.globalAlpha=1;star(j.x+j.w/2,j.y+20,11,'#ffe186');c.restore();}
+function drawBlasts(){for(const b of G.blasts){const t=clamp(b.age/b.life,0,1),d=norm(b.vx,b.vy),tail=72;c.save();c.lineCap='round';for(let i=0;i<5;i++){c.strokeStyle=palette[i];c.globalAlpha=(1-t)*.82;c.lineWidth=8-i*.7;c.beginPath();c.moveTo(b.x-d.x*tail,b.y-d.y*tail+i*4-8);c.lineTo(b.x,b.y+i*2-4);c.stroke();}c.globalAlpha=1-t*.5;star(b.x,b.y,18,'#fff3a8',G.clock*3);c.restore();}}
 function draw(){
- c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#1b152b';c.fillRect(0,0,view.w,view.h);if(!loaded||!scene)return;
- c.save();if(G.shake>0&&!saved.reduced)c.translate(Math.sin(G.clock*57)*2,Math.cos(G.clock*46)*1.5);
- c.scale(view.scale,view.scale);c.translate(-view.x,-view.y);
- drawRoom();drawDoor();drawCones();drawRings();drawRoute();
- let playerSort=P.y;for(const o of scene.obstacles)if(P.z>o.height&&o.height<90&&circleRect(P.x,P.y,48,o.r))playerSort=Math.max(playerSort,o.sort+3);
- // Kid-readability pass: do NOT redraw rectangular/polygon chunks of the painted map
- // over actors and pickups. Those hard foreground masks made people and fruit look
- // chopped off by invisible boxes. Collision and sight blocking remain fully active;
- // only genuinely transparent foreground props are depth-sorted over gameplay sprites.
- const layers=scene.obstacles.filter(o=>o.prop).map(o=>({y:o.sort,run:()=>prop(o.prop,o.x,o.y,o.width)}));
- for(const e of enemies)layers.push({y:e.y,run:()=>drawEnemy(e)});
- if(scene.dog)layers.push({y:scene.dog.y,run:drawDog});
- for(const it of items)if(it.status==='floor')layers.push({y:itemSort(it),run:()=>drawItem(it)});
- if(!G.catch)layers.push({y:playerSort,run:drawPlayer});
- layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.run();
- drawRibbon();if(G.catch)drawPlayer();drawFX();drawTutorial();drawAlertIcons();
- c.restore();drawScreenGuide();
+ c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#1b152b';c.fillRect(0,0,view.w,view.h);if(!loaded||!scene)return;c.save();if(G.shake>0&&!saved.reduced)c.translate(Math.sin(G.clock*57)*2,Math.cos(G.clock*46)*1.5);c.scale(view.scale,view.scale);c.translate(-view.x,-view.y);drawRoom();drawDoor();drawJail();drawRoute();let playerSort=P.y;const layers=scene.obstacles.filter(o=>o.prop).map(o=>({y:o.sort,run:()=>prop(o.prop,o.x,o.y,o.width)}));for(const e of enemies)layers.push({y:e.y,run:()=>drawEnemy(e)});if(scene.dog)layers.push({y:scene.dog.y,run:drawDog});for(const it of items)if(it.status==='floor')layers.push({y:itemSort(it),run:()=>drawItem(it)});layers.push({y:playerSort,run:drawPlayer});layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.run();drawBlasts();drawFX();drawTutorial();c.restore();drawScreenGuide();
 }
 /* --------------------- INITIALIZATION --------------------- */
-function snapshot(){return {version:'8.0.0-camera-ui',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
- player:{x:P.x,y:P.y,z:P.z,vx:P.vx,vy:P.vy,sneak:P.sneak,air:P.air,boost:P.boost,carry:P.carry},
+function snapshot(){return {version:'9.0.0-rainbow-patrol',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
+ player:{x:P.x,y:P.y,vx:P.vx,vy:P.vy,carry:P.carry},
  lives:G.lives,catches:G.catches,alerts:G.alerts,items:items.map(it=>({id:it.id,status:it.status,x:it.x,y:it.y,z:it.z})),
- enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,seeing:e.seeing,accum:e.accum,lost:e.lost,target:e.target})),
- catchPhase:G.catch?.phase||null,winTime:G.winTime,resultShown:G.resultShown,rings:G.rings.length,fx:G.fx.length,
+ enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,speedMul:e.speedMul,jailTimer:e.jailTimer,target:e.target})),
+ catchPhase:null,winTime:G.winTime,resultShown:G.resultShown,blasts:G.blasts.length,jailed:enemies.filter(e=>e.state==='JAILED').length,fx:G.fx.length,
  audio:audio.ctx?.state||'not-started',muted:saved.muted,safe:scene?isSafe():true,
  camera:{...view},best:{...saved.best},mastery:{...G.mastery},saveAvailable:(()=>{try{return !!localStorage;}catch(_){return false;}})()};}
-window.SneakyUnicorn=Object.freeze({snapshot,version:'8.0.0-camera-ui'});
+window.SneakyUnicorn=Object.freeze({snapshot,version:'9.0.0-rainbow-patrol'});
 let last=performance.now(),accum=0,frameCount=0,fpsTime=0;
 function loop(now){
  const elapsed=Math.min(T.MAX_FRAME,Math.max(0,(now-last)/1000));last=now;
@@ -874,11 +736,11 @@ async function init(){
   path:(x,y,enemy=false)=> (enemy?navEnemy:navPlayer).path(P,{x,y}),
   valid:(x,y,r=T.PLAYER_R,z=0,enemy=false)=>valid(x,y,r,z,enemy),
   see:i=>sees(enemies[i]),occluded:(a,b,z=0)=>occluded(a,b,z),
-  catch:i=>beginCatch(enemies[i]),chase:i=>chase(enemies[i]),
+  catch:i=>beginCatch(enemies[i]),blast:()=>fireBlast(),jail:i=>sendToJail(enemies[i]),
   collect:pickupCheck,deposit:depositCheck,pause,resume,constants:()=>({...T}),
   level:()=>JSON.parse(JSON.stringify(scene,(key,val)=>key==='layer'?undefined:val)),
-  levels:()=>LEVELS,continueCollecting,finish:()=>{if(scene.easy&&G.goalReady&&isSafe()&&!P.carry){enterWin();draw();}},stars:starsEarned,assist:assistFactor,showMenu,
-  sizes:()=>({jump:$('jump').getBoundingClientRect().toJSON(),sneak:$('sneak').getBoundingClientRect().toJSON()}),
+  levels:()=>LEVELS,continueCollecting,finish:()=>{if(G.goalReady){enterWin();draw();}},stars:starsEarned,showMenu,
+  sizes:()=>({blast:$('blast').getBoundingClientRect().toJSON()}),
   nodes:(enemy=false)=>(enemy?navEnemy:navPlayer).open.map(i=>(enemy?navEnemy:navPlayer).point(i)),
   input:(x,y)=>{input.joy={id:-1,ox:0,oy:0,x,y};},release:clearInput,
   noise:(x,y,kind='walk')=>noise(x,y,kind),manual:v=>{flags.manual=!!v;last=performance.now();accum=0;}
@@ -896,7 +758,7 @@ init().catch(()=>{$('status').innerHTML='<div><h1>The art needs another try.</h1
  const note=document.createElement('p');note.style.cssText='font-size:12px;color:#cfb6df;margin:12px 0 0';
  note.textContent='Preparing offline copy…';document.querySelector('.panel').appendChild(note);
  function ask(worker){if(!worker)return;const channel=new MessageChannel();channel.port1.onmessage=e=>{
-  const d=e.data||{};note.textContent=d.version==='8.0.0'&&d.cached?'v8 offline copy ready':'Updating offline copy…';channel.port1.close();
+  const d=e.data||{};note.textContent=d.version==='9.0.0'&&d.cached?'v9 offline copy ready':'Updating offline copy…';channel.port1.close();
  };worker.postMessage({type:'APP_STATUS'},[channel.port2]);}
  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
   ask(reg.active);const watch=w=>{if(!w)return;w.addEventListener('statechange',()=>{if(w.state==='activated')ask(reg.active||w);});};
