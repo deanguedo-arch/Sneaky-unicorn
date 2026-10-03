@@ -26,3 +26,6 @@ POLICE UNICORN
 - Catch all five to win.
 
 No vision cones. No Jump. No Sneak. No external libraries or gameplay network requests.
+
+
+V13 highlights: magical appearing secret doors, two baby rescues per treasure level, baby-follow parade, and Halloween dumpling police patrol.

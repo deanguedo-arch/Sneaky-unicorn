@@ -192,23 +192,53 @@ const V9_PLAYABLE=[0,1,2,3,LEVELS.length-1];
 const V9={BLAST_SPEED:610,BLAST_LIFE:.90,BLAST_RADIUS:50,BLAST_COOLDOWN:.48,JAIL_TIME:2.65,CONTACT_DISTANCE:48,RESET_TIME:1.08,POLICE_HITS:3};
 const SECRET_BY_LEVEL={easy_house:'picture',easy_market:'donut',easy_restaurant:'cake',easy_toys:'picture'};
 for(const l of LEVELS){if(!l.police){l.required=l.items.length;const sid=SECRET_BY_LEVEL[l.id]||l.items[l.items.length-1]?.id;const it=l.items.find(v=>v.id===sid)||l.items[l.items.length-1];if(it)it.secret=true;}}
-const V12_EXTRA={
- easy_house:{door:[1810,835],slide:[[1450,780],[525,825]]},
- easy_market:{door:[1770,820],slide:[[1280,820],[610,430]]},
- easy_restaurant:{door:[1740,990],slide:[[1470,930],[520,650]]},
- easy_toys:{door:[1760,850],slide:[[1510,955],[650,560]]}
+
+const V13_EXTRA={
+ easy_house:{doors:[[1810,835],[332,858]],slide:[[1450,780],[525,825]]},
+ easy_market:{doors:[[1770,820],[325,840]],slide:[[1280,820],[610,430]]},
+ easy_restaurant:{doors:[[1740,990],[290,520]],slide:[[1470,930],[520,650]]},
+ easy_toys:{doors:[[1760,850],[330,620]],slide:[[1510,955],[650,560]]},
+ sneak_house:{doors:[[1360,720],[520,760]],slide:[[1260,775],[500,790]]},
+ sneak_market:{doors:[[1450,730],[250,710]],slide:[[1350,745],[670,760]]},
+ sneak_restaurant:{doors:[[1500,900],[250,550]],slide:[[1400,900],[520,700]]},
+ sneak_toys:{doors:[[1490,820],[290,640]],slide:[[1330,910],[590,610]]}
 };
+function currentSecretRoom(){return scene?.secretRooms?.[G.activeSecretRoom]||scene?.secretRoom||null;}
+function currentSecretDoor(){return scene?.secretDoors?.[G.activeSecretDoor]||scene?.secretDoor||null;}
+function babyTag(index){return `${scene.id}:baby:${index}`;}
+function defaultDoorSet(base){return [[base.w*.82,base.h*.72],[base.w*.22,base.h*.63]];}
 function cloneScene(base){
  const s=JSON.parse(JSON.stringify(base));
  if(!base.police){
-  const cfg=V12_EXTRA[base.id]||{door:[base.w*.82,base.h*.72],slide:[[base.w*.7,base.h*.72],[base.w*.28,base.h*.45]]};
-  s.baseW=base.w;s.baseH=base.h;s.jail={x:base.w-360,y:135,w:300,h:145};s.secretDoor={x:cfg.door[0],y:cfg.door[1]};
+  const cfg=V13_EXTRA[base.id]||{doors:defaultDoorSet(base),slide:[[base.w*.7,base.h*.72],[base.w*.28,base.h*.45]]};
+  s.baseW=base.w;s.baseH=base.h;s.jail={x:base.w-360,y:135,w:300,h:145};
+  s.secretDoors=(cfg.doors||defaultDoorSet(base)).map(([x,y],i)=>({x,y,id:i,revealRadius:255}));
+  s.secretDoor=s.secretDoors[0];
   s.slide={start:{x:cfg.slide[0][0],y:cfg.slide[0][1]},end:{x:cfg.slide[1][0],y:cfg.slide[1][1]}};
-  const room={x:base.w+90,y:175,w:900,h:800};
-  room.spawn={x:room.x+135,y:room.y+room.h-130};room.exit={x:room.x+95,y:room.y+room.h-90};room.baby={x:room.x+625,y:room.y+365};
-  s.secretRoom=room;s.w=base.w+1080;s.h=Math.max(base.h,1100);s.floors.push([room.x+24,room.y+24,room.w-48,room.h-48]);
+  const roomA={x:base.w+90,y:165,w:860,h:760,theme:'stars',babyColor:'#ff8fc8',label:'Moon Door'};
+  const roomB={x:base.w+1010,y:195,w:860,h:760,theme:'candy',babyColor:'#95e9ff',label:'Candy Door'};
+  for(const [i,room] of [roomA,roomB].entries()){
+   room.spawn={x:room.x+135,y:room.y+room.h-130};
+   room.exit={x:room.x+95,y:room.y+room.h-90};
+   room.baby={x:room.x+625,y:room.y+365};
+   room.index=i;
+  }
+  s.secretRooms=[roomA,roomB];
+  s.secretRoom=s.secretRooms[0];
+  s.w=base.w+1960;s.h=Math.max(base.h,1100);
+  for(const room of s.secretRooms)s.floors.push([room.x+24,room.y+24,room.w-48,room.h-48]);
  }else{
-  s.enemies.push({id:'bossBandit',sheet:'h',x:1010,y:520,angle:0,patrol:132,route:[[1010,520],[1570,510],[1640,890],[980,1030],[480,820],[520,480]],hitsNeeded:5,banditStyle:6,banditColor:'#f0b84d',speedMin:.82,speedMax:1.38,speedChangeMin:.8,speedChangeMax:2.1,boss:true});
+  s.title='Police Unicorn Halloween Patrol';
+  s.subtitle='Catch the spooky dumpling bad guys!';
+  s.halloween=true;
+  s.enemies=[
+   {id:'pumpkin',x:575,y:405,angle:0,patrol:82,route:[[575,405],[1020,350],[1320,560],[775,700],[530,540]],hitsNeeded:3,dumplingTheme:'pumpkin',banditColor:'#ee8c47',speedMin:.74,speedMax:1.24,speedChangeMin:.95,speedChangeMax:2.35},
+   {id:'ghost',x:1320,y:410,angle:3.14,patrol:94,route:[[1320,410],[1575,655],[1220,820],[910,580],[1160,420]],hitsNeeded:3,dumplingTheme:'ghost',banditColor:'#f5f1ff',speedMin:.78,speedMax:1.29,speedChangeMin:1.10,speedChangeMax:2.55},
+   {id:'bat',x:520,y:900,angle:0,patrol:104,route:[[520,900],[860,1040],[1180,945],[895,770],[590,790]],hitsNeeded:3,dumplingTheme:'bat',banditColor:'#7b5de8',speedMin:.74,speedMax:1.34,speedChangeMin:.95,speedChangeMax:2.75},
+   {id:'mummy',x:1510,y:910,angle:3.14,patrol:112,route:[[1510,910],[1680,670],[1370,580],[1230,875],[1510,1010]],hitsNeeded:3,dumplingTheme:'mummy',banditColor:'#f0dfb3',speedMin:.78,speedMax:1.24,speedChangeMin:1.10,speedChangeMax:2.35},
+   {id:'candycorn',x:960,y:650,angle:0,patrol:124,route:[[960,650],[1170,520],[1450,680],[1178,900],[760,855],[690,610]],hitsNeeded:3,dumplingTheme:'candycorn',banditColor:'#ffd973',speedMin:.74,speedMax:1.29,speedChangeMin:.95,speedChangeMax:2.55},
+   {id:'bossBandit',x:1010,y:520,angle:0,patrol:132,route:[[1010,520],[1570,510],[1640,890],[980,1030],[480,820],[520,480]],hitsNeeded:5,dumplingTheme:'boss',banditColor:'#f0b84d',speedMin:.82,speedMax:1.38,speedChangeMin:.8,speedChangeMax:2.1,boss:true}
+  ];
  }
  return s;
 }
@@ -231,11 +261,11 @@ const canvas=$('game'),c=canvas.getContext('2d',{alpha:false});
 const QA_MODE=new URLSearchParams(location.search).get('qa')==='1';
 const flags={manual:QA_MODE};
 const reducedQuery=matchMedia('(prefers-reduced-motion: reduce)');
-const PREF_KEY='sneaky-unicorn-midnight-v12';
-let saved={version:12,best:{},stickers:[],secrets:[],babies:[],muted:false,reduced:reducedQuery.matches,costume:'classic',pet:'sparkle'};
+const PREF_KEY='sneaky-unicorn-midnight-v13';
+let saved={version:13,best:{},stickers:[],secrets:[],babies:[],muted:false,reduced:reducedQuery.matches,costume:'classic',pet:'sparkle'};
 try{
  const s=JSON.parse(localStorage.getItem(PREF_KEY)||'null')||JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v11')||'null')||JSON.parse(localStorage.getItem('sneaky-unicorn-midnight-v10')||'null');
- if(s&&(s.version===9||s.version===10||s.version===11||s.version===12)){for(const l of LEVELS)saved.best[l.id]=Math.max(0,Math.min(3,Number(s.best?.[l.id])||0));
+ if(s&&(s.version===9||s.version===10||s.version===11||s.version===12||s.version===13)){for(const l of LEVELS)saved.best[l.id]=Math.max(0,Math.min(3,Number(s.best?.[l.id])||0));
  saved.stickers=Array.isArray(s.stickers)?s.stickers.filter(x=>typeof x==='string'&&x.length<32):[];
  saved.secrets=Array.isArray(s.secrets)?s.secrets.filter(x=>typeof x==='string'&&x.length<32):[];
  saved.babies=Array.isArray(s.babies)?s.babies.filter(x=>typeof x==='string'&&x.length<40):[];
@@ -276,7 +306,7 @@ const P={x:0,y:0,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,
 let enemies=[],items=[];
 const view={w:1280,h:560,dpr:1,scale:1,x:0,y:0};
 const input={keys:new Set(),jump:0,sneak:false,joy:null,drag:null,primary:false};
-Object.assign(G,{blasts:[],blastCooldown:0,jailed:0,resetFlash:0,reset:null,inSecretRoom:false,roomCooldown:0,roomReturn:null,slideRide:null,slideCooldown:0});
+Object.assign(G,{blasts:[],blastCooldown:0,jailed:0,resetFlash:0,reset:null,inSecretRoom:false,roomCooldown:0,roomReturn:null,slideRide:null,slideCooldown:0,activeSecretRoom:-1,activeSecretDoor:-1,rescuedBabies:[],followers:[],followTrail:[]});
 const playSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3L21 12 7 21Z" fill="currentColor"/></svg>';
 const repeatSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v7h7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const homeSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11L12 3l9 8M6 10v11h12V10M10 21v-7h4v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>';
@@ -444,7 +474,7 @@ function updateCamera(dt,snap=false){
  if(!scene)return;
  const vw=view.w/view.scale,vh=view.h/view.scale;
  let tx,ty;
- const region=G.inSecretRoom&&scene.secretRoom?{x:scene.secretRoom.x,y:scene.secretRoom.y,w:scene.secretRoom.w,h:scene.secretRoom.h}:{x:0,y:0,w:scene.baseW||scene.w,h:scene.baseH||scene.h};
+ const room=currentSecretRoom();const region=G.inSecretRoom&&room?{x:room.x,y:room.y,w:room.w,h:room.h}:{x:0,y:0,w:scene.baseW||scene.w,h:scene.baseH||scene.h};
  if(G.mode==='menu'){
   tx=region.x+(region.w-vw)/2;ty=region.y+(region.h-vh)/2;
  }else{
@@ -475,7 +505,7 @@ if($('treasures'))$('treasures').addEventListener('click',()=>{audio.gesture();s
 if($('closet'))$('closet').addEventListener('click',()=>{audio.gesture();showCloset();});
 function setMenuCommon(){clearInput();$('modePicker').hidden=true;$('finishLevel').hidden=true;$('overlay').hidden=false;refreshTools();$('winHero').hidden=true;$('resultButtons').innerHTML='';}
 function allRegularLevels(){return V9_PLAYABLE.map(i=>LEVELS[i]).filter(l=>!l.police);}
-function totalSecrets(){return allRegularLevels().length;}
+function totalSecrets(){return allRegularLevels().reduce((n,l)=>n+((V13_EXTRA[l.id]?.doors?.length)||2),0);}
 function costumeOptions(){return [
  {id:'classic',name:'Classic',mini:'🦄',desc:'Original unicorn'},
  {id:'princess',name:'Princess',mini:'👑',desc:'Crown and pink ribbon'},
@@ -489,8 +519,8 @@ function showTreasureRoom(){G.mode='menu';setMenuCommon();showChrome(false);$('o
 function showCloset(){G.mode='menu';setMenuCommon();showChrome(false);$('overlay').className='menu';$('levelCards').hidden=true;$('resultStars').hidden=true;$('resultButtons').hidden=false;$('resultItems').hidden=false;$('winHero').hidden=true;$('kicker').textContent='COSTUME CLOSET';$('brand').innerHTML='Costume<br>Closet';$('subline').innerHTML='Pick a silly look. Secret treasures unlock more costumes.';const cards=costumeOptions().map(opt=>{const unlocked=isCostumeUnlocked(opt);return `<button class="costumeCard ${saved.costume===opt.id?'active':''}" data-costume="${opt.id}" ${unlocked?'':'disabled'}><div class="mini">${opt.mini}</div><div>${opt.name}</div><div class="tiny">${unlocked?opt.desc:`Unlock at ${opt.unlock} secrets`}</div></button>`;}).join('');$('resultItems').innerHTML=`<div class="costumeGrid">${cards}</div>`;for(const b of $('resultItems').querySelectorAll('[data-costume]'))b.onclick=()=>{const id=b.dataset.costume;const opt=costumeOptions().find(o=>o.id===id);if(opt&&!isCostumeUnlocked(opt))return;audio.gesture();saved.costume=id;save();showCloset();};$('resultButtons').innerHTML='';resultButton('Back to places',homeSVG,showMenu,true);resultButton('Treasure room',playSVG,showTreasureRoom);}
 function showMenu(){
  G.mode='menu';G.catch=null;G.resultShown=false;setMenuCommon();showChrome(false);$('overlay').className='menu';
- $('kicker').textContent='V12 / SECRET SPARKLE RESCUE';$('brand').innerHTML='Sneaky<br>Unicorn';
- $('subline').innerHTML=`Collect everything, find hidden sparkle rooms, rescue baby unicorns, ride rainbow slides, and beat the Police Unicorn boss. <span class="unlockPill">${saved.stickers.length} treasures</span><span class="unlockPill">${saved.babies.length} babies</span>`;
+ $('kicker').textContent='V13 / MAGIC DOORS + HALLOWEEN DUMPLINGS';$('brand').innerHTML='Sneaky<br>Unicorn';
+ $('subline').innerHTML=`Collect everything, find two magical secret doors in every treasure map, rescue two baby unicorns, build a duckling parade, ride rainbow slides, and catch every Halloween dumpling bad guy. <span class="unlockPill">${saved.stickers.length} treasures</span><span class="unlockPill">${saved.babies.length} babies</span>`;
  $('modePicker').hidden=true;$('levelCards').hidden=false;$('resultStars').hidden=true;$('resultItems').hidden=true;$('resultButtons').hidden=true;
  const choices=V9_PLAYABLE.map(i=>({l:LEVELS[i],i}));
  $('levelCards').innerHTML=choices.map(({l,i})=>{const isSecret=!!SECRET_BY_LEVEL[l.id];return `<button class="levelCard" data-level="${i}" aria-label="Play ${l.title}"><img class="map" src="${DATA[l.map]}" alt="${l.title}">${isSecret?'<span class="secretBadge">SECRET</span>':''}<div class="bestStars">${[0,1,2].map(j=>`<img src="${DATA.star}" style="opacity:${j<(saved.best[l.id]||0)?1:.22}" alt="${j<(saved.best[l.id]||0)?'Earned':'Unfilled'} star">`).join('')}</div><div class="cardFoot"><span>${l.title}</span><b class="playMark">${playSVG}</b></div></button>`;}).join('');
@@ -518,16 +548,18 @@ function pause(){if(G.mode!=='play')return;G.mode='pause';showResult('pause');au
 function resume(){if(G.mode!=='pause')return;audio.gesture();G.mode='play';$('overlay').hidden=true;clearInput();last=performance.now();accum=0;}
 $('gameMenu').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();audio.gesture();pause();});
 function freshEnemies(){return scene.enemies.map((d,i)=>{const lo=d.speedMin??.74,hi=d.speedMax??1.28,cmin=d.speedChangeMin??1.1,cmax=d.speedChangeMax??2.9;return {...d,state:d.boss?'WAIT_BOSS':'PATROL',stateTime:0,routeIndex:1,path:[],pathTimer:0,wait:.45,anim:0,target:{x:d.route[1][0],y:d.route[1][1]},speedMul:lo+Math.random()*(hi-lo),speedClock:cmin+Math.random()*(cmax-cmin),jailTimer:0,preJailRouteIndex:1,jailIndex:i,hits:0,hitsNeeded:d.hitsNeeded||1,hitLock:0,stunTimer:0};});}
+
 function startLevel(index,keep=false){
  G.levelIndex=index;scene=cloneScene(LEVELS[index]);G.adventure=scene.police?'police':'collect';navPlayer=new Grid(false);navEnemy=new Grid(true);
- if(scene.secretDoor){scene.secretDoor=freeNear(scene.secretDoor);scene.slide.start=freeNear(scene.slide.start);scene.slide.end=freeNear(scene.slide.end);}
+ if(scene.secretDoors){scene.secretDoors=scene.secretDoors.map(d=>freeNear(d));scene.secretDoor=scene.secretDoors[0];scene.slide.start=freeNear(scene.slide.start);scene.slide.end=freeNear(scene.slide.end);}
  if(scene.police){for(const d of scene.enemies)if(d.boss){d.route=d.route.map(p=>{const q=freeNear({x:p[0],y:p[1]},true);return[q.x,q.y]});d.x=d.route[0][0];d.y=d.route[0][1];}}
- items=scene.items.map(d=>({...d,status:'floor'}));G.inSecretRoom=false;G.roomCooldown=0;G.roomReturn=null;G.slideRide=null;G.slideCooldown=0;G.catches=0;G.alerts=0;G.runTime=0;G.mastery={move:false,blast:false};G.dogHappy=false;G.practiceDistance=0;G.goalPromptShown=false;G.goalReady=false;G.sinceProgress=0;G.helped=false;G.jailed=0;G.blasts=[];G.blastCooldown=0;G.resetFlash=0;
+ items=scene.items.map(d=>({...d,status:'floor'}));G.inSecretRoom=false;G.roomCooldown=0;G.roomReturn=null;G.slideRide=null;G.slideCooldown=0;G.catches=0;G.alerts=0;G.runTime=0;G.mastery={move:false,blast:false};G.dogHappy=false;G.practiceDistance=0;G.goalPromptShown=false;G.goalReady=false;G.sinceProgress=0;G.helped=false;G.jailed=0;G.blasts=[];G.blastCooldown=0;G.resetFlash=0;G.activeSecretRoom=-1;G.activeSecretDoor=-1;G.rescuedBabies=[];G.followers=[];G.followTrail=[];
  G.mode='play';G.reset=null;G.lives=0;G.hitStop=0;G.winTime=0;G.resultShown=false;G.catch=null;G.delivery=null;G.fx.length=0;G.texts.length=0;G.rings.length=0;G.ribbon.length=0;G.hintPath=[];G.hintTimer=0;G.levelBanner=2.7;G.tutorialTime=0;G.entryGrace=1.2;
  Object.assign(P,{...scene.spawn,vx:0,vy:0,dirX:-1,dirY:0,facing:-1,sneak:false,z:0,air:false,jumpTime:0,cooldown:0,boost:0,anim:0,idle:0,land:0,launch:0,carry:null,stepNoise:0,apex:false,blocked:0});
  if(!valid(P.x,P.y))Object.assign(P,freeNear(scene.spawn));P.lastSafe={x:P.x,y:P.y};enemies=freshEnemies();
  clearInput();$('overlay').hidden=true;showChrome(true);syncHUD(true);updateCamera(1,true);last=performance.now();accum=0;
 }
+
 function syncHUD(force=false){
  const count=items.filter(it=>it.status==='delivered').length,caught=enemies.filter(e=>e.state==='JAILED').length;
  G.goalReady=scene.police?caught===enemies.length:count===items.length;$('finishLevel').hidden=true;
@@ -565,11 +597,15 @@ function updatePlayer(dt){
  if(moving){P.anim+=dist/28;P.idle=0;P.dirX=m.x;P.dirY=m.y;if(Math.abs(P.vx)>15)P.facing=P.vx<0?-1:1;G.mastery.move=true;}else P.idle+=dt;
  if(valid(P.x,P.y))P.lastSafe={x:P.x,y:P.y};
 }
+
 function nearestGoal(){
- if(G.inSecretRoom&&scene.secretRoom)return{x:scene.secretRoom.exit.x,y:scene.secretRoom.exit.y,id:'star_happy',kind:'roomExit'};
+ const room=currentSecretRoom();
+ if(G.inSecretRoom&&room)return{x:room.exit.x,y:room.exit.y,id:'star_happy',kind:'roomExit'};
  if(scene.police){const live=enemies.filter(e=>e.state!=='JAILED'&&e.state!=='WAIT_BOSS');if(!live.length)return null;live.sort((a,b)=>hypot(a,P)-hypot(b,P));return{x:live[0].x,y:live[0].y,id:'star_happy',kind:'enemy'};}
- if(P.carry)return{x:scene.home.x,y:scene.home.y,id:'door'};const choices=items.filter(it=>it.status==='floor');if(!choices.length)return{x:scene.home.x,y:scene.home.y,id:'door'};choices.sort((a,b)=>hypot(a,P)-hypot(b,P));return choices[0];
+ if(P.carry)return{x:scene.home.x,y:scene.home.y,id:'door'};
+ const choices=items.filter(it=>it.status==='floor');if(!choices.length)return{x:scene.home.x,y:scene.home.y,id:'door'};choices.sort((a,b)=>hypot(a,P)-hypot(b,P));return choices[0];
 }
+
 function pickupCheck(){
  if(scene.police||P.carry||G.mode!=='play')return;
  const candidates=items.filter(it=>it.status==='floor'&&hypot(it,P)<T.PICKUP_RADIUS);candidates.sort((a,b)=>hypot(a,P)-hypot(b,P));const it=candidates[0];if(!it)return;
@@ -666,10 +702,12 @@ function fireBlast(){if(G.mode!=='play'||G.blastCooldown>0)return;let d=norm(P.d
 function updateBlasts(dt){for(const b of G.blasts){b.age+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;for(const e of enemies){if(e.state==='JAILED'||e.state==='WAIT_BOSS')continue;if(Math.hypot(b.x-e.x,b.y-(e.y-45))<=V9.BLAST_RADIUS+22){if(hitEnemy(e)){b.hit=true;break;}}}}G.blasts=G.blasts.filter(b=>!b.hit&&b.age<b.life);}
 function startRainbowSlide(){if(!scene.slide||G.inSecretRoom||G.slideCooldown>0||G.slideRide)return;const s=scene.slide.start;if(hypot(P,s)>37)return;G.slideRide={time:0,duration:.88,start:{x:P.x,y:P.y},end:{x:scene.slide.end.x,y:scene.slide.end.y},trail:-1};P.vx=P.vy=0;clearInput();spawnFX(P.x,P.y-25,24,'confetti');textPop(P.x,P.y-105,'WHEEE!');audio.glide(300,1050,.48,.13);}
 function updateRainbowSlide(dt){const r=G.slideRide;if(!r)return;r.time+=dt;const t=clamp(r.time/r.duration,0,1),u=ease(t);P.x=lerp(r.start.x,r.end.x,u);P.y=lerp(r.start.y,r.end.y,u);P.z=Math.sin(Math.PI*t)*105;const step=Math.floor(r.time*32);if(step!==r.trail){r.trail=step;G.ribbon.push({x:P.x,y:P.y-P.z-18,t:0,life:.60});if(G.ribbon.length>44)G.ribbon.shift();spawnFX(P.x,P.y-P.z-22,2);}if(t>=1){P.x=r.end.x;P.y=r.end.y;P.z=0;P.vx=P.vy=0;G.slideRide=null;G.slideCooldown=1.25;G.entryGrace=Math.max(G.entryGrace,.5);spawnFX(P.x,P.y-25,26,'confetti');audio.glide(580,1100,.22,.1);}}
-function enterSecretRoom(){if(!scene.secretRoom||G.inSecretRoom||G.roomCooldown>0)return;G.roomReturn={x:P.x,y:P.y};G.inSecretRoom=true;G.roomCooldown=.9;P.x=scene.secretRoom.spawn.x;P.y=scene.secretRoom.spawn.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-35,36,'confetti');textPop(P.x,P.y-125,'Secret sparkle room!');audio.glide(420,1180,.38,.12);updateCamera(1,true);}
-function leaveSecretRoom(){if(!G.inSecretRoom||!scene.secretRoom||G.roomCooldown>0)return;const q=G.roomReturn?freeNear(G.roomReturn):freeNear(scene.secretDoor);G.inSecretRoom=false;G.roomCooldown=.9;P.x=q.x;P.y=q.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-30,30,'confetti');textPop(P.x,P.y-110,'Back we go!');audio.glide(900,430,.3,.09);updateCamera(1,true);}
-function rescueBaby(){if(!G.inSecretRoom||!scene.secretRoom)return;const tag=scene.id+':baby';if(saved.babies.includes(tag))return;const b=scene.secretRoom.baby;if(hypot(P,b)>56)return;saved.babies.push(tag);save();spawnFX(b.x,b.y-40,58,'confetti');textPop(b.x,b.y-120,'Baby rescued!');audio.sfx('win');}
-function updateWorldFeatures(dt){G.roomCooldown=Math.max(0,G.roomCooldown-dt);G.slideCooldown=Math.max(0,G.slideCooldown-dt);if(!scene.police&&scene.secretRoom){if(G.inSecretRoom){rescueBaby();if(hypot(P,scene.secretRoom.exit)<46)leaveSecretRoom();}else if(hypot(P,scene.secretDoor)<44)enterSecretRoom();}if(!G.inSecretRoom)startRainbowSlide();}
+
+function enterSecretRoom(index=0){const room=scene.secretRooms?.[index]||scene.secretRoom;if(!room||G.inSecretRoom||G.roomCooldown>0)return;G.activeSecretDoor=index;G.activeSecretRoom=index;G.roomReturn={x:P.x,y:P.y};G.inSecretRoom=true;G.roomCooldown=.9;P.x=room.spawn.x;P.y=room.spawn.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-35,36,'confetti');textPop(P.x,P.y-125,'Magic secret door!');audio.glide(420,1180,.38,.12);updateCamera(1,true);}
+function leaveSecretRoom(){const room=currentSecretRoom();const door=currentSecretDoor();if(!G.inSecretRoom||!room||G.roomCooldown>0)return;const q=G.roomReturn?freeNear(G.roomReturn):freeNear(door||scene.spawn);G.inSecretRoom=false;G.roomCooldown=.9;P.x=q.x;P.y=q.y;P.vx=P.vy=0;P.z=0;clearInput();spawnFX(P.x,P.y-30,30,'confetti');textPop(P.x,P.y-110,'Back we go!');audio.glide(900,430,.3,.09);G.activeSecretRoom=-1;G.activeSecretDoor=-1;updateCamera(1,true);}
+function rescueBaby(){const room=currentSecretRoom();if(!G.inSecretRoom||!room)return;const tag=babyTag(room.index);if(G.rescuedBabies.includes(tag))return;const b=room.baby;if(hypot(P,b)>56)return;G.rescuedBabies.push(tag);if(!saved.babies.includes(tag)){saved.babies.push(tag);save();}G.followers.push({x:b.x,y:b.y,color:room.babyColor||'#ff8fc8',phase:Math.random()*TAU});spawnFX(b.x,b.y-40,58,'confetti');textPop(b.x,b.y-120,'Baby rescued!');audio.sfx('win');}
+function updateFollowers(dt){if(!G.followTrail)G.followTrail=[];G.followTrail.unshift({x:P.x,y:P.y,z:P.z});if(G.followTrail.length>140)G.followTrail.length=140;for(let i=0;i<G.followers.length;i++){const f=G.followers[i],target=G.followTrail[Math.min(G.followTrail.length-1,10+i*12)]||G.followTrail[G.followTrail.length-1]||{x:P.x,y:P.y,z:0};const bob=saved.reduced?0:Math.sin(G.clock*5+f.phase)*3;const k=1-Math.exp(-dt*10);f.x=lerp(f.x,target.x,k);f.y=lerp(f.y,target.y+16,k);f.drawY=f.y+bob;}}
+function updateWorldFeatures(dt){G.roomCooldown=Math.max(0,G.roomCooldown-dt);G.slideCooldown=Math.max(0,G.slideCooldown-dt);const room=currentSecretRoom();if(!scene.police&&scene.secretRooms?.length){if(G.inSecretRoom&&room){rescueBaby();if(hypot(P,room.exit)<46)leaveSecretRoom();}else{for(let i=0;i<scene.secretDoors.length;i++){if(hypot(P,scene.secretDoors[i])<44){enterSecretRoom(i);break;}}}}if(!G.inSecretRoom)startRainbowSlide();updateFollowers(dt);}
 
 function updateEffects(dt){
  for(const p of G.fx){p.age+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.kind==='confetti'?110:32)*dt;p.vx*=Math.pow(.45,dt);p.rot+=dt*2;}
@@ -702,19 +740,25 @@ function actor(id,x,y,size,facing=1,angle=0,sx=1,sy=1,alpha=1){
  frame(id,-size/2,-size*184.5/192,size,size);c.restore();
 }
 function shadow(x,y,w=28,a=.22){c.save();c.globalAlpha=a;c.fillStyle='#1e102c';c.beginPath();c.ellipse(x,y+2,w,w*.30,0,0,TAU);c.fill();c.restore();}
+
 function drawRoom(){
  c.fillStyle=scene.id==='house'?'#171427':'#151829';c.fillRect(view.x,view.y,view.w/view.scale,view.h/view.scale);
- const bw=scene.baseW||scene.w,bh=scene.baseH||scene.h;c.drawImage(art[scene.map],0,0,bw,bh);if(scene.secretRoom)drawSecretRoomBackdrop(scene.secretRoom);
- for(const p of scene.extraProps||[])prop(p.id,p.x,p.y,p.width); // No decorative heart mat on grocery fixtures.
- // A dozen deterministic, subdued motes remain behind all gameplay graphics.
+ const bw=scene.baseW||scene.w,bh=scene.baseH||scene.h;c.drawImage(art[scene.map],0,0,bw,bh);
+ if(scene.secretRooms)for(const r of scene.secretRooms)drawSecretRoomBackdrop(r);
+ for(const p of scene.extraProps||[])prop(p.id,p.x,p.y,p.width);
+ if(scene.police&&scene.halloween)drawPoliceSpookyDecor();
  if(!saved.reduced){c.save();c.fillStyle='#fff1c5';for(let i=0;i<12;i++){
   const x=250+((i*117+G.clock*(2+i%3))%1060),y=110+(i*47)%160;
   c.globalAlpha=.11+(Math.sin(G.clock*.65+i)+1)*.04;c.beginPath();c.arc(x,y+Math.sin(G.clock*.7+i)*4,1.4,0,TAU);c.fill();}c.restore();}
 }
-
-function drawSecretRoomBackdrop(r){c.save();c.fillStyle='#38295c';rr(r.x,r.y,r.w,r.h,38);c.fill();c.strokeStyle='#d9b8ff';c.lineWidth=9;c.stroke();for(let yy=r.y+35;yy<r.y+r.h-25;yy+=70)for(let xx=r.x+35;xx<r.x+r.w-25;xx+=70){const even=((xx+yy)/70|0)%2;c.fillStyle=even?'#8e75c7':'#725fae';c.globalAlpha=.32;c.fillRect(xx,yy,64,64);}c.globalAlpha=1;for(let i=0;i<14;i++){const a=i*TAU/14;star(r.x+r.w/2+Math.cos(a)*300,r.y+r.h/2+Math.sin(a)*250,8+(i%3)*2,palette[i%palette.length],G.clock*.25+i);}c.fillStyle='#5d3f7c';rr(r.x+300,r.y+245,300,160,40);c.fill();c.fillStyle='#c99deb55';rr(r.x+325,r.y+270,250,110,32);c.fill();c.restore();}
-function drawWorldFeatures(){if(scene.police)return;const near=scene.secretDoor?clamp(1-hypot(P,scene.secretDoor)/230,.12,1):0;if(scene.secretDoor&&!G.inSecretRoom){c.save();c.globalAlpha=near;const d=scene.secretDoor;c.strokeStyle='#ffe7a8';c.lineWidth=4;c.setLineDash([8,7]);c.beginPath();c.arc(d.x,d.y,35,0,TAU);c.stroke();c.setLineDash([]);for(let i=0;i<7;i++){const a=G.clock*1.5+i*TAU/7;star(d.x+Math.cos(a)*42,d.y-20+Math.sin(a)*30,5,'#fff0aa',a);}c.restore();}if(scene.slide&&!G.inSecretRoom){const a=scene.slide.start,b=scene.slide.end;c.save();c.fillStyle='#2a1b43cc';c.strokeStyle='#ffd888';c.lineWidth=4;c.beginPath();c.ellipse(a.x,a.y,34,20,0,0,TAU);c.fill();c.stroke();star(a.x,a.y-5,11,'#ef9bd2',G.clock);c.strokeStyle='#a9ecff';c.setLineDash([5,8]);c.beginPath();c.ellipse(b.x,b.y,37,21,0,0,TAU);c.stroke();c.setLineDash([]);for(let i=0;i<5;i++)star(b.x-22+i*11,b.y-7+Math.sin(G.clock*3+i)*4,4,palette[i],0);c.restore();}if(G.inSecretRoom&&scene.secretRoom){const r=scene.secretRoom;c.save();c.strokeStyle='#fff0ac';c.lineWidth=4;c.beginPath();c.arc(r.exit.x,r.exit.y,38,0,TAU);c.stroke();star(r.exit.x,r.exit.y-7,12,'#ffe28b',G.clock);const tag=scene.id+':baby';if(!saved.babies.includes(tag)){shadow(r.baby.x,r.baby.y,18,.18);actor('u_idle0',r.baby.x,r.baby.y,82,1,0);c.fillStyle='#ff8fc8';c.beginPath();c.arc(r.baby.x+18,r.baby.y-68,7,0,TAU);c.fill();for(let i=0;i<5;i++){const aa=G.clock*2+i*TAU/5;star(r.baby.x+Math.cos(aa)*48,r.baby.y-50+Math.sin(aa)*26,5,'#ffe8a1',aa);}}c.restore();}}
+function drawSecretRoomBackdrop(r){c.save();const base1=r.theme==='candy'?'#3b2159':'#38295c',base2=r.theme==='candy'?'#9257c9':'#725fae';c.fillStyle=base1;rr(r.x,r.y,r.w,r.h,38);c.fill();c.strokeStyle='#ffd9ff';c.lineWidth=9;c.stroke();for(let yy=r.y+35;yy<r.y+r.h-25;yy+=70)for(let xx=r.x+35;xx<r.x+r.w-25;xx+=70){const even=((xx+yy)/70|0)%2;c.fillStyle=even?'#8e75c7':base2;c.globalAlpha=.32;c.fillRect(xx,yy,64,64);}c.globalAlpha=1;for(let i=0;i<16;i++){const a=i*TAU/16;star(r.x+r.w/2+Math.cos(a)*300,r.y+r.h/2+Math.sin(a)*250,8+(i%3)*2,palette[i%palette.length],G.clock*.25+i);}drawMagicalDoor(r.exit.x,r.exit.y+12,1,true,r.label||'Door');c.fillStyle='#5d3f7c';rr(r.x+300,r.y+245,300,160,40);c.fill();c.fillStyle='#c99deb55';rr(r.x+325,r.y+270,250,110,32);c.fill();c.restore();}
+function drawMagicalDoor(x,y,alpha=1,inside=false,label=''){c.save();c.globalAlpha=alpha;const glow=c.createRadialGradient(x,y-38,10,x,y-38,80);glow.addColorStop(0,inside?'#fff1b0aa':'#ffe59c88');glow.addColorStop(1,'#ffe59c00');c.fillStyle=glow;c.beginPath();c.arc(x,y-38,82,0,TAU);c.fill();c.fillStyle=inside?'#7d51bf':'#5f3e88';c.strokeStyle='#ffd986';c.lineWidth=5;c.beginPath();c.moveTo(x-34,y+20);c.lineTo(x-34,y-25);c.arc(x,y-25,34,Math.PI,0);c.lineTo(x+34,y+20);c.closePath();c.fill();c.stroke();c.fillStyle='#b8f2ff';c.globalAlpha=alpha*.75;c.beginPath();c.moveTo(x-24,y+8);c.lineTo(x-24,y-20);c.arc(x,y-20,24,Math.PI,0);c.lineTo(x+24,y+8);c.closePath();c.fill();c.globalAlpha=alpha;for(let i=0;i<8;i++){const a=G.clock*1.7+i*TAU/8;star(x+Math.cos(a)*45,y-24+Math.sin(a)*33,5,'#fff0aa',a);}if(label&&!inside){c.fillStyle='#fff3c6';c.font='900 16px Trebuchet MS';c.textAlign='center';c.fillText(label,x,y-84);}c.restore();}
+function drawPoliceSpookyDecor(){c.save();c.globalAlpha=.94;for(const p of [[280,340],[1660,430],[520,1030],[1750,1030]]){c.fillStyle='#f59d3d';c.beginPath();c.arc(p[0],p[1],28,0,TAU);c.fill();c.strokeStyle='#5c2c1f';c.lineWidth=3;c.stroke();c.fillStyle='#2d1830';c.beginPath();c.arc(p[0]-8,p[1]-4,4,0,TAU);c.arc(p[0]+8,p[1]-4,4,0,TAU);c.fill();c.beginPath();c.moveTo(p[0]-10,p[1]+10);c.quadraticCurveTo(p[0],p[1]+18,p[0]+10,p[1]+10);c.stroke();c.strokeStyle='#4a8c44';c.beginPath();c.moveTo(p[0],p[1]-28);c.lineTo(p[0],p[1]-40);c.stroke();}
+ for(const p of [[760,315],[1260,325],[930,1040]]){c.fillStyle='#fff5fe';c.beginPath();c.arc(p[0],p[1],22,Math.PI,0);c.lineTo(p[0]+22,p[1]+20);c.quadraticCurveTo(p[0],p[1]+34,p[0]-22,p[1]+20);c.closePath();c.fill();c.fillStyle='#352441';c.beginPath();c.arc(p[0]-7,p[1],3,0,TAU);c.arc(p[0]+7,p[1],3,0,TAU);c.fill();}
+ c.fillStyle='#5e3051';c.strokeStyle='#ffd27f';c.lineWidth=4;rr(1350,235,220,72,20);c.fill();c.stroke();c.fillStyle='#fff3ca';c.font='900 26px Trebuchet MS';c.textAlign='center';c.fillText('SPOOKY SQUISH PARK',1460,280);c.restore();}
+function drawWorldFeatures(){if(scene.police)return;const room=currentSecretRoom();if(scene.secretDoors&&!G.inSecretRoom){for(let i=0;i<scene.secretDoors.length;i++){const d=scene.secretDoors[i],dist=hypot(P,d),appear=clamp((250-dist)/90,0,1);if(appear<=0)continue;drawMagicalDoor(d.x,d.y,appear,false,i===0?'Moon Door':'Candy Door');}}if(scene.slide&&!G.inSecretRoom){const a=scene.slide.start,b=scene.slide.end;c.save();c.fillStyle='#2a1b43cc';c.strokeStyle='#ffd888';c.lineWidth=4;c.beginPath();c.ellipse(a.x,a.y,34,20,0,0,TAU);c.fill();c.stroke();star(a.x,a.y-5,11,'#ef9bd2',G.clock);c.strokeStyle='#a9ecff';c.setLineDash([5,8]);c.beginPath();c.ellipse(b.x,b.y,37,21,0,0,TAU);c.stroke();c.setLineDash([]);for(let i=0;i<5;i++)star(b.x-22+i*11,b.y-7+Math.sin(G.clock*3+i)*4,4,palette[i],0);c.restore();}if(G.inSecretRoom&&room){c.save();const tag=babyTag(room.index);if(!G.rescuedBabies.includes(tag)){shadow(room.baby.x,room.baby.y,18,.18);actor('u_idle0',room.baby.x,room.baby.y,82,1,0);c.fillStyle=room.babyColor||'#ff8fc8';c.beginPath();c.arc(room.baby.x+18,room.baby.y-68,7,0,TAU);c.fill();for(let i=0;i<5;i++){const aa=G.clock*2+i*TAU/5;star(room.baby.x+Math.cos(aa)*48,room.baby.y-50+Math.sin(aa)*26,5,'#ffe8a1',aa);}}c.restore();}}
 function drawDoor(){
+
  if(scene.police)return;
  const d=scene.home,active=!!P.carry||G.goalReady,pulse=saved.reduced?.5:.5+.5*Math.sin(G.clock*(active?4:2));
  c.save();
@@ -765,13 +809,16 @@ function drawItem(it){
  if(it.status!=='floor')return;const selected=G.hintTarget?.id===it.id&&!P.carry,t=G.clock,bob=saved.reduced?0:Math.sin(t*2.8+it.x)*3,sz=(selected?67:58)*(saved.reduced?1:1+Math.sin(t*2.5)*.025),y=it.y-it.z;c.save();shadow(it.x,it.y,25,.22);const gr=c.createRadialGradient(it.x,y-30,3,it.x,y-30,it.secret?72:55);gr.addColorStop(0,it.secret?'#fff2af88':'#ffe9b45d');gr.addColorStop(1,'#ffe9b400');c.fillStyle=gr;c.beginPath();c.arc(it.x,y-30,it.secret?72:55,0,TAU);c.fill();c.shadowColor='#2d123c';c.shadowBlur=4;lootArt(it.id,it.x,y+bob,it.secret?sz+7:sz);c.shadowBlur=0;for(let j=0;j<(it.secret?6:4);j++){const a=t*.8+j*TAU/(it.secret?6:4);star(it.x+Math.cos(a)*(it.secret?47:39),y-29+Math.sin(a)*(it.secret?31:24),it.secret?4.7:3.5,it.secret?'#ffe88a':'#fff2c1',a);}if(selected){c.strokeStyle='#fff1bce6';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath();c.ellipse(it.x,it.y+2,36,18,0,0,TAU);c.stroke();c.setLineDash([]);}c.restore();
 }
 
+
 function drawFollowerPet(){
  if(!saved.pet||saved.pet==='none')return;
  const tx=P.x-P.facing*38,ty=P.y+36+(saved.reduced?0:Math.sin(G.clock*5)*2);
  if(saved.babies.length){shadow(tx,ty,14,.12);actor('u_idle0',tx,ty,58,-P.facing,0);c.save();c.fillStyle='#ff8fc8';c.beginPath();c.arc(tx+11,ty-47,5,0,TAU);c.fill();c.restore();return;}
  c.save();shadow(tx,ty,15,.12);c.translate(tx,ty-14);c.scale(.85,.85);c.fillStyle='#ffd882';c.beginPath();for(let j=0;j<10;j++){const a=-Math.PI/2+j*Math.PI/5,rad=j%2?6:12;c.lineTo(Math.cos(a)*rad,Math.sin(a)*rad);}c.closePath();c.fill();c.fillStyle='#3e2b56';c.beginPath();c.arc(-3,-1,1.7,0,TAU);c.arc(3,-1,1.7,0,TAU);c.fill();c.strokeStyle='#3e2b56';c.lineWidth=1.4;c.beginPath();c.arc(0,2.4,4,0,.9*Math.PI);c.stroke();c.restore();
 }
+function drawBabyChain(){for(let i=G.followers.length-1;i>=0;i--){const f=G.followers[i],y=f.drawY||f.y;shadow(f.x,y,18,.14);actor('u_idle0',f.x,y,74,1,0);c.save();c.fillStyle=f.color||'#ff8fc8';c.beginPath();c.arc(f.x+13,y-59,6,0,TAU);c.fill();c.strokeStyle='#fff2b1';c.lineWidth=2;for(let j=0;j<3;j++)star(f.x-20+j*10,y-58+(j%2?-4:0),4,'#ffe8a1',G.clock*2+j);c.restore();}}
 function drawCostume(){
+
  const x=P.x,y=P.y;
  c.save();
  if(saved.costume==='princess'){c.fillStyle='#f3d76e';c.strokeStyle='#fff1bf';c.lineWidth=2;c.beginPath();c.moveTo(x-14,y-128);c.lineTo(x-7,y-141);c.lineTo(x,y-128);c.lineTo(x+7,y-141);c.lineTo(x+14,y-128);c.closePath();c.fill();c.stroke();}
@@ -787,22 +834,31 @@ function drawPlayer(){
  if(P.carry){const pulse=saved.reduced?0:Math.sin(G.clock*4)*2;c.save();c.shadowColor='#25142f';c.shadowBlur=5;lootArt(P.carry,q.x-P.facing*34,q.y-40+pulse,35);c.shadowBlur=0;c.restore();}
  if(G.resetFlash>0){c.save();c.globalAlpha=G.resetFlash/.35*.4;c.fillStyle='#fff3c2';c.beginPath();c.arc(q.x,q.y-55,78,0,TAU);c.fill();c.restore();}
 }
+
+function drawHalloweenDumpling(e){
+ const theme=e.dumplingTheme||'pumpkin',moving=e.state!=='JAILED'&&e.path.length>0&&e.wait<=0,plop=(moving&&!saved.reduced?Math.abs(Math.sin(e.anim*Math.PI))*7:0),size=e.boss?74:52,x=e.x,y=e.y-plop;
+ const fills={pumpkin:'#f08f42',ghost:'#f8f3ff',bat:'#7f66eb',mummy:'#f0dfb3',candycorn:'#ffd86e',boss:'#f3a645'};
+ const fill=fills[theme]||e.banditColor||'#f08f42';
+ shadow(x,y,e.boss?38:28,.20);c.save();c.translate(x,y-24);c.scale(1,e.boss?1.08:1);
+ c.fillStyle=fill;c.strokeStyle='#523250';c.lineWidth=4;c.beginPath();c.ellipse(0,0,size,size*.82,0,0,TAU);c.fill();c.stroke();
+ c.fillStyle='#35253f';c.beginPath();c.arc(-size*.22,-size*.08,4.5,0,TAU);c.arc(size*.22,-size*.08,4.5,0,TAU);c.fill();c.lineWidth=3;c.beginPath();c.moveTo(-size*.18,size*.16);c.quadraticCurveTo(0,size*.28,size*.18,size*.16);c.stroke();
+ if(theme==='pumpkin'||theme==='boss'){c.strokeStyle='#cf6f1e';for(let k=-1;k<=1;k++){c.beginPath();c.moveTo(k*size*.18,-size*.55);c.quadraticCurveTo(k*size*.10,0,k*size*.18,size*.52);c.stroke();}c.strokeStyle='#4a8a47';c.beginPath();c.moveTo(0,-size*.72);c.lineTo(0,-size*.92);c.stroke();}
+ if(theme==='ghost'){c.fillStyle='#fff8ff';c.beginPath();c.moveTo(-size*.60,size*.18);for(let j=0;j<5;j++){const px=-size*.60+j*size*.30;c.quadraticCurveTo(px+size*.10,size*.52,px+size*.20,size*.20);}c.lineTo(size*.60,size*.20);c.closePath();c.fill();}
+ if(theme==='bat'){c.fillStyle='#5b41c8';c.beginPath();c.moveTo(-size*.56,-size*.05);c.quadraticCurveTo(-size*.95,-size*.45,-size*.52,-size*.52);c.quadraticCurveTo(-size*.34,-size*.26,-size*.08,-size*.18);c.fill();c.beginPath();c.moveTo(size*.56,-size*.05);c.quadraticCurveTo(size*.95,-size*.45,size*.52,-size*.52);c.quadraticCurveTo(size*.34,-size*.26,size*.08,-size*.18);c.fill();}
+ if(theme==='mummy'){c.strokeStyle='#fff7df';for(let j=-2;j<=2;j++){c.beginPath();c.moveTo(-size*.58,j*size*.13);c.lineTo(size*.58,(j*size*.13)+(j%2?5:-5));c.stroke();}}
+ if(theme==='candycorn'){c.fillStyle='#fff5dd';c.beginPath();c.moveTo(-size*.12,-size*.64);c.lineTo(0,-size*.98);c.lineTo(size*.12,-size*.64);c.closePath();c.fill();c.fillStyle='#fff1a2';c.beginPath();c.ellipse(0,size*.15,size*.56,size*.26,0,0,TAU);c.fill();}
+ if(e.boss){c.fillStyle='#ffd968';c.strokeStyle='#fff0a4';c.lineWidth=3;c.beginPath();c.moveTo(-30,-size-38);c.lineTo(-18,-size-61);c.lineTo(0,-size-42);c.lineTo(18,-size-61);c.lineTo(30,-size-38);c.closePath();c.fill();c.stroke();c.fillStyle='#3b2349';c.font='900 16px Trebuchet MS';c.textAlign='center';c.fillText('BOSS',0,-size-66);}
+ c.restore();
+ const need=e.hitsNeeded||3,remaining=Math.max(0,need-(e.hits||0));for(let i=0;i<need;i++)star(e.x+(i-(need-1)/2)*24,e.y-118-(e.boss?18:0),7,i<remaining?'#ffe883':'#5b4a68',G.clock*1.8+i);
+ if(e.stunTimer>0){for(let i=0;i<3;i++)star(e.x+Math.cos(G.clock*6+i*TAU/3)*29,e.y-112+Math.sin(G.clock*6+i*TAU/3)*10,5,'#fff4a8',G.clock*3);}
+}
 function drawEnemy(e){
  if(e.state==='WAIT_BOSS')return;
+ if(scene.police){drawHalloweenDumpling(e);return;}
  let id;const moving=e.state!=='JAILED'&&e.path.length>0&&e.wait<=0;if(e.sheet==='h')id=moving?'h_run'+Math.floor(e.anim)%6:'h_idle'+Math.floor(e.stateTime*.8)%3;else if(e.sheet==='w')id=moving?'w_1_'+Math.floor(e.anim)%6:'w_2_'+Math.floor(e.stateTime*3)%6;else id=moving?'m_2_'+Math.floor(e.anim)%6:'m_0_'+Math.floor(e.stateTime)%6;if(e.state==='JAILED')id=e.sheet==='h'?'h_shrug':e.sheet==='w'?'w_5_3':'m_4_0';if(G.mode==='win'&&!scene.police)id=e.sheet==='h'?'h_happy':e.sheet==='w'?'w_5_5':'m_4_5';const face=Math.abs(Math.cos(e.angle||0))<.12?1:Math.cos(e.angle||0)<0?-1:1,actorSize=e.boss?190:155;shadow(e.x,e.y,e.boss?34:26,.22);actor(id,e.x,e.y-(moving&&!saved.reduced?Math.abs(Math.sin(e.anim*Math.PI))*2:0),actorSize,face,0);
- if(scene.police){
-  const style=e.banditStyle||0,col=e.banditColor||palette[style%palette.length];c.save();
-  if(e.boss){c.fillStyle='#ffd968';c.strokeStyle='#fff0a4';c.lineWidth=3;c.beginPath();c.moveTo(e.x-30,e.y-145);c.lineTo(e.x-18,e.y-168);c.lineTo(e.x,e.y-149);c.lineTo(e.x+18,e.y-168);c.lineTo(e.x+30,e.y-145);c.closePath();c.fill();c.stroke();c.fillStyle='#3b2349';c.font='900 16px Trebuchet MS';c.textAlign='center';c.fillText('BOSS',e.x,e.y-174);}
-  // Silly bandit costume: beanie, striped vest and eye mask painted over a unique base character.
-  c.globalAlpha=.94;c.fillStyle=col;c.beginPath();c.arc(e.x,e.y-124,24,Math.PI,TAU);c.lineTo(e.x+23,e.y-115);c.lineTo(e.x-23,e.y-115);c.closePath();c.fill();
-  c.fillStyle='#231c2c';c.beginPath();c.roundRect(e.x-29,e.y-104,58,18,8);c.fill();c.fillStyle='#fff4d4';c.beginPath();c.arc(e.x-11,e.y-96,3.2,0,TAU);c.arc(e.x+11,e.y-96,3.2,0,TAU);c.fill();
-  c.globalAlpha=.78;c.fillStyle='#26202f';c.beginPath();c.roundRect(e.x-27,e.y-77,54,31,10);c.fill();c.fillStyle=col;for(let yy=e.y-72;yy<e.y-48;yy+=10)c.fillRect(e.x-25,yy,50,5);
-  const need=e.hitsNeeded||3,remaining=Math.max(0,need-(e.hits||0));for(let i=0;i<need;i++)star(e.x+(i-(need-1)/2)*24,e.y-151,7,i<remaining?'#ffe883':'#5b4a68',G.clock*1.8+i);
-  if(e.stunTimer>0){for(let i=0;i<3;i++)star(e.x+Math.cos(G.clock*6+i*TAU/3)*29,e.y-132+Math.sin(G.clock*6+i*TAU/3)*10,5,'#fff4a8',G.clock*3);}
-  c.restore();
- }
 }
 function drawAlertIcons(){return;}
+
 function drawDog(){if(!scene.dog)return;const p=scene.dog;shadow(p.x,p.y,22,.15);prop(G.dogHappy?'dog_happy':'dog_idle',p.x,p.y+(saved.reduced?0:Math.sin(G.clock*2)*1.5),94);
  if(!G.dogHappy)prop('biscuit',p.x-42,p.y+12,31);}
 function drawRibbon(){
@@ -825,17 +881,17 @@ function drawScreenGuide(){
 function drawJail(){if(!enemies.length)return;const j=scene.jail||{x:scene.w-360,y:135,w:300,h:145},n=Math.max(1,enemies.length);c.save();c.globalAlpha=.88;c.fillStyle='#211b39c9';c.strokeStyle='#e6d4f2';c.lineWidth=4;rr(j.x,j.y,j.w,j.h,18);c.fill();c.stroke();const cw=j.w/n;for(let i=1;i<n;i++){c.beginPath();c.moveTo(j.x+i*cw,j.y+10);c.lineTo(j.x+i*cw,j.y+j.h-10);c.stroke();}for(let x=j.x+12;x<j.x+j.w-8;x+=18){c.lineWidth=3;c.globalAlpha=.55;c.beginPath();c.moveTo(x,j.y+9);c.lineTo(x,j.y+j.h-9);c.stroke();}c.globalAlpha=1;star(j.x+j.w/2,j.y+20,11,'#ffe186');c.restore();}
 function drawBlasts(){for(const b of G.blasts){const t=clamp(b.age/b.life,0,1),d=norm(b.vx,b.vy),tail=72;c.save();c.lineCap='round';for(let i=0;i<5;i++){c.strokeStyle=palette[i];c.globalAlpha=(1-t)*.82;c.lineWidth=8-i*.7;c.beginPath();c.moveTo(b.x-d.x*tail,b.y-d.y*tail+i*4-8);c.lineTo(b.x,b.y+i*2-4);c.stroke();}c.globalAlpha=1-t*.5;star(b.x,b.y,18,'#fff3a8',G.clock*3);c.restore();}}
 function draw(){
- c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#1b152b';c.fillRect(0,0,view.w,view.h);if(!loaded||!scene)return;c.save();if(G.shake>0&&!saved.reduced)c.translate(Math.sin(G.clock*57)*2,Math.cos(G.clock*46)*1.5);c.scale(view.scale,view.scale);c.translate(-view.x,-view.y);drawRoom();drawDoor();drawJail();drawWorldFeatures();drawRoute();let playerSort=P.y;const layers=scene.obstacles.filter(o=>o.prop).map(o=>({y:o.sort,run:()=>prop(o.prop,o.x,o.y,o.width)}));for(const e of enemies)layers.push({y:e.y,run:()=>drawEnemy(e)});if(scene.dog)layers.push({y:scene.dog.y,run:drawDog});for(const it of items)if(it.status==='floor')layers.push({y:itemSort(it),run:()=>drawItem(it)});layers.push({y:playerSort,run:drawPlayer});layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.run();drawBlasts();drawFX();drawTutorial();c.restore();drawScreenGuide();
+ c.setTransform(view.dpr,0,0,view.dpr,0,0);c.fillStyle='#1b152b';c.fillRect(0,0,view.w,view.h);if(!loaded||!scene)return;c.save();if(G.shake>0&&!saved.reduced)c.translate(Math.sin(G.clock*57)*2,Math.cos(G.clock*46)*1.5);c.scale(view.scale,view.scale);c.translate(-view.x,-view.y);drawRoom();drawDoor();drawJail();drawWorldFeatures();drawRoute();let playerSort=P.y;const layers=scene.obstacles.filter(o=>o.prop).map(o=>({y:o.sort,run:()=>prop(o.prop,o.x,o.y,o.width)}));for(const e of enemies)layers.push({y:e.y,run:()=>drawEnemy(e)});if(scene.dog)layers.push({y:scene.dog.y,run:drawDog});for(const it of items)if(it.status==='floor')layers.push({y:itemSort(it),run:()=>drawItem(it)});if(G.followers.length)layers.push({y:Math.max(...G.followers.map(f=>(f.drawY||f.y)))+4,run:drawBabyChain});layers.push({y:playerSort,run:drawPlayer});layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.run();drawBlasts();drawFX();drawTutorial();c.restore();drawScreenGuide();
 }
 /* --------------------- INITIALIZATION --------------------- */
-function snapshot(){return {version:'12.0.0-secret-sparkle-rescue',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
+function snapshot(){return {version:'13.0.0-magic-doors-halloween-dumplings',mode:G.mode,adventure:G.adventure,level:scene?.id,goalReady:G.goalReady,sinceProgress:G.sinceProgress,helped:G.helped,required:scene?.required,maxLives:scene?.maxLives,
  player:{x:P.x,y:P.y,vx:P.vx,vy:P.vy,carry:P.carry},
  lives:G.lives,catches:G.catches,alerts:G.alerts,items:items.map(it=>({id:it.id,status:it.status,x:it.x,y:it.y,z:it.z})),
  enemies:enemies.map(e=>({id:e.id,x:e.x,y:e.y,angle:e.angle,state:e.state,speedMul:e.speedMul,jailTimer:e.jailTimer,hits:e.hits,hitsNeeded:e.hitsNeeded,target:e.target})),
  catchPhase:G.reset?'SPARKLE_RESET':null,winTime:G.winTime,resultShown:G.resultShown,blasts:G.blasts.length,jailed:enemies.filter(e=>e.state==='JAILED').length,fx:G.fx.length,inSecretRoom:G.inSecretRoom,slideRide:!!G.slideRide,babies:[...saved.babies],
  audio:audio.ctx?.state||'not-started',muted:saved.muted,safe:scene?isSafe():true,
  camera:{...view},best:{...saved.best},mastery:{...G.mastery},saveAvailable:(()=>{try{return !!localStorage;}catch(_){return false;}})()};}
-window.SneakyUnicorn=Object.freeze({snapshot,version:'12.0.0-secret-sparkle-rescue'});
+window.SneakyUnicorn=Object.freeze({snapshot,version:'13.0.0-magic-doors-halloween-dumplings'});
 let last=performance.now(),accum=0,frameCount=0,fpsTime=0;
 function loop(now){
  const elapsed=Math.min(T.MAX_FRAME,Math.max(0,(now-last)/1000));last=now;
